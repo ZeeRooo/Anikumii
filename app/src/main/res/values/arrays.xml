@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string-array name="intervalPrefValues"> <!-- In m.seconds -->
+        <item>3600000</item>
+        <item>10800000</item>
+        <item>21600000</item>
+        <item>43200000</item>
+    </string-array>
+
+    <string-array name="mal_status">
+        <item>Mirando</item>
+        <item>Completado</item>
+        <item>En espera</item>
+        <item>Abandonado</item>
+        <item>Pienso verlo</item>
+    </string-array>
+    <string-array name="mal_priority">
+        <item>Baja</item>
+        <item>Media</item>
+        <item>Alta</item>
+    </string-array>
+    <string-array name="mal_source">
+        <item>Disco duro</item>
+        <item>Disco externo</item>
+        <item>NAS</item>
+        <item>Blu-Ray</item>
+        <item>DVD / CD</item>
+        <item>VHS</item>
+        <item>Ninguno</item>
+    </string-array>
+    <string-array name="mal_rewatch">
+        <item>Muy baja</item>
+        <item>Baja</item>
+        <item>Media</item>
+        <item>Alta</item>
+        <item>Muy alta</item>
+    </string-array>
+    <string-array name="mal_score">
+        <item>1 (Pésimo)</item>
+        <item>2 (Horrible)</item>
+        <item>3 (Muy malo)</item>
+        <item>4 (Malo)</item>
+        <item>5 (Promedio)</item>
+        <item>6 (Bien)</item>
+        <item>7 (Bueno)</item>
+        <item>8 (Muy bueno)</item>
+        <item>9 (Genial)</item>
+        <item>10 (Obra maestra)</item>
+    </string-array>
+    <string-array name="typeFilter">
+        <item>Anime</item>
+        <item>Película</item>
+        <item>Especial</item>
+        <item>OVA</item>
+    </string-array>
+</resources>

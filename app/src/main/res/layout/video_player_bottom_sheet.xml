@@ -1,0 +1,52 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottom_sheet_videoPlayer"
+    android:layout_width="450dp"
+    android:layout_height="100dp"
+    android:layout_gravity="center_horizontal"
+    android:layout_margin="10dp"
+    android:background="#bf2F353A"
+    android:gravity="center_horizontal"
+    app:behavior_peekHeight="1dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <ImageButton
+        android:id="@+id/changeServer"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_margin="15dp"
+        android:contentDescription="@string/changeServer"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/ic_public" />
+
+    <ImageButton
+        android:id="@+id/unseenAflv"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_margin="15dp"
+        android:layout_toEndOf="@id/changeServer"
+        android:contentDescription="@string/unseen"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/ic_unseen" />
+
+    <ImageButton
+        android:id="@+id/downloadEpisode"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_margin="15dp"
+        android:layout_toEndOf="@id/unseenAflv"
+        android:contentDescription="@string/download"
+        android:scaleType="fitXY"
+        app:srcCompat="@android:drawable/stat_sys_download" />
+
+    <ImageButton
+        android:id="@+id/streamButtom"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_margin="15dp"
+        android:layout_toEndOf="@id/downloadEpisode"
+        android:contentDescription="@string/bottom_sheet_stream"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/cast" />
+
+</RelativeLayout>

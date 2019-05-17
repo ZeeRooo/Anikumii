@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar" />
+
+    <RelativeLayout
+        android:id="@+id/pref_accLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/listTilePaddingTopBottom"
+        android:paddingTop="@dimen/listTilePaddingTopBottom"
+        android:paddingEnd="@dimen/listTilePaddingTopBottom"
+        android:paddingBottom="@dimen/listTilePaddingTopBottom"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/pref_malAvatar"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            app:srcCompat="@drawable/ic_launcher_foreground" />
+
+        <TextView
+            android:id="@+id/pref_malName"
+            style="?android:textAppearanceListItemSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/pref_malAvatar"
+            android:layout_toEndOf="@id/pref_malAvatar"
+            android:padding="10dp"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/pref_malAvatar"
+            android:layout_toEndOf="@id/pref_malAvatar"
+            android:padding="10dp"
+            android:text="@string/myanimelist"
+            android:textColor="#B2FFFFFF"
+            android:textSize="12sp" />
+
+        <ImageView
+            android:id="@+id/pref_aflvAvatar"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_below="@id/pref_malAvatar"
+            android:layout_marginTop="5dp"
+            app:srcCompat="@drawable/ic_launcher_foreground" />
+
+        <TextView
+            android:id="@+id/pref_aflvName"
+            style="?android:textAppearanceListItemSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/pref_aflvAvatar"
+            android:layout_toEndOf="@id/pref_aflvAvatar"
+            android:padding="10dp"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/pref_aflvAvatar"
+            android:layout_toEndOf="@id/pref_aflvAvatar"
+            android:padding="10dp"
+            android:text="@string/animeflv"
+            android:textColor="#B2FFFFFF"
+            android:textSize="12sp" />
+    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/settings_fragmentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

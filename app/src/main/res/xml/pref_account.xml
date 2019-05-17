@@ -1,0 +1,24 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="Administrar">
+        <PreferenceScreen
+            android:key="pref_account_login"
+            android:summary="@string/bothSites"
+            android:title="@string/log_in" />
+        <PreferenceScreen
+            android:key="pref_account_logOut"
+            android:summary="@string/bothSites"
+            android:title="@string/log_out" />
+    </PreferenceCategory>
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="nav_malAccount"
+        android:summary="@string/pref_malInformationSummary"
+        android:title="@string/pref_malInformation" />
+
+    <PreferenceScreen
+        android:key="pref_updateAccounts"
+        android:title="@string/updateAccountsInfo" />
+
+</PreferenceScreen>

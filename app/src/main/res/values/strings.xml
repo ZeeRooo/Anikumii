@@ -1,0 +1,130 @@
+<resources>
+    <string name="app_name">Anikumii!!2</string>
+    <string name="latest_episodes">Últimos episodios</string>
+    <string name="searchAnime">Buscar anime&#8230;</string>
+    <string name="search_failed">No se encontraron resultados</string>
+    <string name="nav_home">Inicio</string>
+    <string name="nav_all_anime">Todos</string>
+    <string name="nav_prox_animes">Próximos</string>
+    <string name="nav_live_animes">En emisión</string>
+    <string name="log_in">Iniciar sesión</string>
+    <string name="log_out">Cerrar sesión</string>
+    <string name="nav_settings">Ajustes</string>
+    <string name="section_more">Más %s</string>
+    <string name="rating">de 5.0 estrellas</string>
+
+    <string name="bottom_sheet_newFav">Agregar a favoritos</string>
+    <string name="bottom_sheet_removeFav">Remover de favoritos</string>
+    <string name="bottom_sheet_newPending">Agregar a animes que pienso ver</string>
+    <string name="bottom_sheet_removePending">Remover de animes que pienso ver</string>
+    <string name="bottom_sheet_follow">Agregar a animes que veo</string>
+    <string name="bottom_sheet_unfollow">Remover de animes que veo</string>
+    <string name="bottom_sheet_stream">Stream</string>
+
+    <string name="bottom_sheet_stream_summary">Ingrese la dirección ip que aparece arriba en un navegador conctado a la misma red que este dispositivo y disfrute del video.</string>
+    <string name="bottom_sheet_stream_disconnect">Desconectar</string>
+
+    <string name="navigation_drawer_open">Abrir el drawer</string>
+    <string name="navigation_drawer_close">Cerrar el drawer</string>
+
+    <!-- Strings related to login -->
+    <string name="lost_password">¿Olvidaste tu contraseña?</string>
+    <string name="login_error">Correo o contraseña inválidos</string>
+    <string name="new_account">¿No tienes cuenta? REGISTRATE</string>
+    <string name="register_success">¡Perfil creado exitosamente! Verifique con su correo y luego inicie sesión en la app. Si la confirmación no aparece, pruebe con otro nombre.</string>
+    <string name="prompt_email">Correo electrónico</string>
+    <string name="prompt_password">Contraseña</string>
+    <string name="prompt_user">Nombre de usuario</string>
+    <string name="error_invalid_email">Este correo es incorrecto</string>
+    <string name="error_invalid_password">Esta contraseña es muy corta</string>
+    <string name="error_field_required">Este campo es requerido</string>
+
+    <string name="close">Cerrar</string>
+
+    <string name="readMore">Leer más</string>
+    <string name="readLess">Leer menos</string>
+
+    <string name="share">Compartir</string>
+
+    <string name="prevEpisode">Episodio anterior</string>
+    <string name="pauseplay">Pausa / Play</string>
+    <string name="episodesList">Lista de episodios</string>
+    <string name="nextEpisode">Próximo episodio</string>
+    <string name="unseen">Quitar de vistos</string>
+    <string name="aboutApp">La aplicación nació con el objetivo de ser el cliente móvil de AnimeFLV.net. En respuesta al interés demostrado hacia mi proyecto decidí desvincularlo totalmente. Vale aclarar que este proyecto es totalmente independiente de la página anteriormente mencionada, la cual posee absolutamente todos los derechos por los animes e información brindada (a excepción de la hoja de datos de MyAnimeList).</string>
+    <string name="updateDB">Actualizar base de datos</string>
+    <string name="information">Información</string>
+    <string name="argument">Argumento</string>
+    <string name="statics">Estadísticas</string>
+    <string name="contactMe">Enviar mail al programador</string>
+    <string name="basicParams">Parámetros básicos</string>
+    <string name="stateChooser">Selecciona un estado</string>
+    <string name="mal_seenEpisodesNumber">Número de episodios vistos %d</string>
+    <string name="rate">Valorar</string>
+    <string name="advancedParams">Parámetros avanzados</string>
+    <string name="mal_startDate">¿Cuándo comenzó a verlo?</string>
+    <string name="mal_endDate">¿Cuándo lo finalizó?</string>
+    <string name="addtags">Ingrese tags</string>
+    <string name="mal_priority">Prioridad</string>
+    <string name="mal_priorityChooser">Seleccione una prioridad</string>
+    <string name="source">Fuente</string>
+    <string name="mal_sourceChooser">Seleccione una fuente</string>
+    <string name="mal_rewatchTimes">Cantidad de veces que lo volviste a ver %d</string>
+    <string name="mal_rewatchProbability">Probabilidad de reverlo</string>
+    <string name="mal_rewatchProbabilityChooser">¿Cuanta probabilidad hay de que revea el anime?</string>
+    <string name="newComment">Agrega un comentario</string>
+    <string name="mal_deletefromList">Eliminar anime de la lista</string>
+    <string name="myanimelist">MyAnimeList</string>
+    <string name="animeflv">AnimeFLV</string>
+    <string name="mal_startDateText">Comenzó a verlo: %d / %d / %d</string>
+    <string name="mal_endDateText">Lo finalizó: %d / %d / %d</string>
+    <string name="warning_not_logged">No iniciaste sesión en %s</string>
+    <string name="bothSites">En MyAnimeList o AnimeFLV</string>
+    <string name="pref_malInformation">Información de MyAnimeList</string>
+    <string name="pref_malInformationSummary">Se mostrará su cuenta de MyAnimeList en lugar de AnimeFLV en el panel de navegación</string>
+    <string name="updateAccountsInfo">Actualizar información de las cuentas</string>
+
+
+    <string name="permission_denied">Permiso denegado, no se pudo descargar</string>
+    <string name="download">Descargar</string>
+    <string name="changeServer">Cambiar de server</string>
+    <string name="more">Más</string>
+
+    <string name="rxerror">Se ha producido un error</string>
+    <string name="comments">Comentarios</string>
+    <string name="enablePip">Picture-in-Picture</string>
+    <string name="enablePipSummary">Continuar reproduciendo en miniatura tras tocar el botón de home</string>
+    <string name="defaultServer">Server por defecto</string>
+    <string name="defaultServerSummary">El server por defecto es %s</string>
+
+    <string name="columnsSummary">Vertical / Horizontal: %d / %d</string>
+    <string name="columnsTitle">Columnas según la orientación</string>
+
+    <string name="checkUpdates">Buscar actualizaciones</string>
+
+    <string name="disableAcraTitle">Desactivar el informe de fallos</string>
+    <string name="disableAcraSummary">Enviar reportes de fallos al desarrollador via mail (SIN INFORMACIÓN PERSONAL)</string>
+
+    <string name="notifications">Notificaciones</string>
+    <string name="notificationsSummary">Activa o desactiva las notificaciones</string>
+    <string name="headsUp">Heads-up</string>
+    <string name="headsUpSummary">Mostrar vista previa de la notificación en la parte superior de la pantalla</string>
+    <string name="notifInterval">Tiempo entre notificaciones</string>
+    <string name="notifIntervalSummary">Se notificará cada %s</string>
+
+    <string name="portrait">En vertical</string>
+    <string name="landscape">En horizontal</string>
+
+    <string name="zippyshare">Zippyshare</string>
+    <string name="streamango">Streamango</string>
+    <string name="unload_video">Espere a que el video sea procesado</string>
+    <string name="downloadMessage">\"Seleccione un gestor de descarga. Se recomienda utilizar la opción Anikumii!!\"</string>
+    <string name="mediafire">MediaFire</string>
+
+    <string-array name="intervalPrefTitles">
+        <item>1 hora</item>
+        <item>3 horas</item>
+        <item>6 horas</item>
+        <item>12 horas</item>
+    </string-array>
+</resources>

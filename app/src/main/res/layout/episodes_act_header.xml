@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/listPaddingEnd"
+    android:paddingEnd="@dimen/listPaddingEnd"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroups"
+        style="@style/Widget.MaterialComponents.Chip.Action"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        app:chipSpacing="4dp" />
+
+    <com.zeerooo.anikumii2.anikumiiparts.AnimeRatingView
+        android:id="@+id/AnimeRatingView"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="53dp"
+        android:layout_height="53dp"
+        android:layout_below="@id/chipGroups"
+        android:layout_alignParentStart="true"
+        android:max="50"
+        android:progressDrawable="@drawable/circular_progress" />
+
+    <TextView
+        android:id="@+id/nextEpisode_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/AnimeRatingView"
+        android:layout_marginTop="4dp"
+        android:layout_toEndOf="@id/AnimeRatingView"
+        android:gravity="top"
+        android:textAllCaps="false"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/animeType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/AnimeRatingView"
+        android:layout_marginBottom="4dp"
+        android:layout_toEndOf="@id/AnimeRatingView"
+        android:gravity="bottom"
+        android:textAllCaps="false"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/anime_about"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/AnimeRatingView"
+        android:layout_margin="5dp"
+        android:ellipsize="end"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        android:textColor="@android:color/secondary_text_dark"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/readMore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/anime_about"
+        android:layout_alignEnd="@id/anime_about"
+        android:text="@string/readMore"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        android:textStyle="bold" />
+
+    <ImageButton
+        android:id="@+id/add_anime_fav"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/anime_about"
+        android:layout_alignParentStart="true"
+        android:tint="#FB3447"
+        app:srcCompat="@drawable/ic_favorite" />
+
+    <ImageButton
+        android:id="@+id/add_anime_follow"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/anime_about"
+        android:layout_toEndOf="@id/add_anime_fav"
+        android:tint="#14BBF0"
+        app:srcCompat="@drawable/ic_follow" />
+
+    <ImageButton
+        android:id="@+id/add_anime_pending"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/anime_about"
+        android:layout_toEndOf="@id/add_anime_follow"
+        android:tint="#FFC107"
+        app:srcCompat="@drawable/ic_pending" />
+
+</RelativeLayout>

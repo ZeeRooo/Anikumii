@@ -1,0 +1,181 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/act_login_rootView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.zeerooo.anikumii2.activities.LoginActivity">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/login_error_cardview"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:layout_above="@id/relative_layout"
+        android:layout_margin="4dp"
+        android:visibility="gone"
+        app:cardBackgroundColor="#f2dede"
+        app:cardElevation="1dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/login_error"
+            android:textColor="#b6444b"
+            android:textSize="20sp" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <ProgressBar
+        android:id="@+id/login_progress"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_above="@id/relative_layout"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="4dp"
+        android:visibility="invisible" />
+
+    <RelativeLayout
+        android:id="@+id/relative_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/create_an_account"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/text_input_email"
+            style="@style/LoginTextInputLayoutStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="16dp"
+            app:hintTextColor="@color/celestito">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/email"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="textEmailAddress"
+                android:maxLines="1"
+                android:singleLine="true" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/text_input_password"
+            style="@style/LoginTextInputLayoutStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_input_email"
+            android:layout_marginBottom="16dp"
+            app:hintTextColor="@color/celestito"
+            app:passwordToggleContentDescription="Mostrar u ocultar contraseña"
+            app:passwordToggleEnabled="true"
+            app:passwordToggleTint="@color/celestito">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="@string/prompt_password"
+                android:imeActionId="6"
+                android:imeOptions="actionUnspecified"
+                android:inputType="textPassword"
+                android:maxLines="1"
+                android:singleLine="true" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/log_in_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_input_password"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="26dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:tint="@android:color/white"
+            app:backgroundTint="@color/celestito"
+            app:fabSize="normal"
+            app:srcCompat="@drawable/ic_next" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/log_in_facebook"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/log_in_button"
+            android:layout_alignBottom="@id/log_in_button"
+            android:layout_marginEnd="10dp"
+            android:layout_toStartOf="@id/log_in_button"
+            android:tint="@android:color/white"
+            app:backgroundTint="#3d5b99"
+            app:fabSize="normal"
+            app:srcCompat="@drawable/ic_facebook" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_input_password"
+            android:layout_alignParentStart="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="lostPasswordOnClick"
+            android:text="@string/lost_password" />
+
+    </RelativeLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/create_an_account"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/radioButton"
+        android:layout_marginTop="20dp"
+        android:text="@string/new_account"
+        android:textAllCaps="false"
+        app:backgroundTint="@color/white_secondary" />
+
+    <RadioGroup
+        android:id="@+id/radioButton"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginRight="40dp"
+        android:background="@drawable/circular_rectangle_shape"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/animeflvBtn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/toggle_background"
+            android:button="@null"
+            android:gravity="center"
+            android:text="@string/animeflv"
+            android:textColor="@android:color/white" />
+
+        <RadioButton
+            android:id="@+id/malBtn"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_margin="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/toggle_background"
+            android:button="@null"
+            android:gravity="center"
+            android:text="@string/myanimelist"
+            android:textColor="@android:color/white" />
+    </RadioGroup>
+</RelativeLayout>

@@ -1,0 +1,30 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceScreen
+        android:key="pref_updateDB"
+        android:title="@string/updateDB" />
+    <PreferenceScreen
+        android:key="pref_checkUpdates"
+        android:title="@string/checkUpdates" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="acra.disable"
+        android:summary="@string/disableAcraSummary"
+        android:title="@string/disableAcraTitle" />
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="enablePip"
+        android:summary="@string/enablePipSummary"
+        android:title="@string/enablePip" />
+    <PreferenceScreen
+        android:key="defaultServer"
+        android:summary="@string/defaultServerSummary"
+        android:title="@string/defaultServer" />
+    <PreferenceScreen
+        android:key="gridColumns"
+        android:title="@string/columnsTitle" />
+    <!--<PreferenceScreen
+         android:key="generateTxtDB"
+         android:title="Generate TXT from DB" />-->
+
+</PreferenceScreen>

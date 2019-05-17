@@ -1,0 +1,67 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="Sobre el proyecto">
+        <PreferenceScreen
+            android:enabled="true"
+            android:layout="@layout/about"
+            android:selectable="false" />
+        <PreferenceScreen android:title="Conoce mis otros proyectos">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/ZeeRooo" />
+        </PreferenceScreen>
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Sin ellos la aplicación no sería posible. ¡Gracias!">
+        <PreferenceScreen android:title="TioAnime">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://tioanime.com/" />
+        </PreferenceScreen>
+        <PreferenceScreen android:title="MyAnimeList">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://myanimelist.net/" />
+        </PreferenceScreen>
+        <PreferenceScreen android:title="Jikan API">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://jikan.moe/" />
+        </PreferenceScreen>
+        <PreferenceScreen
+            android:summary="por bumptech"
+            android:title="glide">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/bumptech/glide" />
+        </PreferenceScreen>
+        <PreferenceScreen
+            android:summary="por jhy"
+            android:title="jsoup">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/jhy/jsoup" />
+        </PreferenceScreen>
+        <PreferenceScreen
+            android:summary="por ReactiveX"
+            android:title="RxAndroid">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/ReactiveX/RxAndroid" />
+        </PreferenceScreen>
+        <PreferenceScreen
+            android:summary="por ACRA"
+            android:title="acra">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/ACRA/acra" />
+        </PreferenceScreen>
+        <PreferenceScreen
+            android:summary="por KhunHtetzNaing"
+            android:title="xGetter">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/KhunHtetzNaing/xGetter" />
+        </PreferenceScreen>
+    </PreferenceCategory>
+
+</PreferenceScreen>

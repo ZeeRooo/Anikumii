@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:theme="@style/ThemeOverlay.MaterialComponents.Light">
+
+    <ImageView
+        android:id="@+id/suggerenceIcon"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_centerVertical="true"
+        android:paddingStart="@dimen/listPaddingEnd"
+        android:scaleType="center" />
+
+    <TextView
+        android:id="@+id/suggerencesTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:paddingStart="@dimen/listTextPaddingStart"
+        android:paddingEnd="@dimen/listPaddingEnd"
+        android:paddingBottom="@dimen/listTextPaddingTopBottom"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
+
+    <TextView
+        android:id="@+id/suggerenceType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:fontFamily="sans-serif"
+        android:paddingStart="@dimen/listTextPaddingStart"
+        android:paddingTop="@dimen/listTextPaddingTopBottom"
+        android:paddingEnd="@dimen/listPaddingEnd"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:textColor="#777"
+        android:textSize="14sp" />
+
+</RelativeLayout>
