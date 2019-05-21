@@ -6,12 +6,13 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.cursoradapter.widget.SimpleCursorAdapter;
+
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.zeerooo.anikumii2.Anikumii;
 import com.zeerooo.anikumii2.R;
 import com.zeerooo.anikumii2.anikumiiparts.glide.GlideApp;
-
-import androidx.cursoradapter.widget.SimpleCursorAdapter;
 
 /**
  * Created by ZeeRooo on 10/02/18
@@ -32,6 +33,6 @@ public class SearchCursorAdapter extends SimpleCursorAdapter {
         type.setText(cursor.getString(2));
 
         ImageView icon = view.findViewById(R.id.suggerenceIcon);
-        GlideApp.with(context).load("https://tioanime.com/uploads/portadas/" + cursor.getString(3) + ".jpg").apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).circleCrop()).into(icon);
+        GlideApp.with(context).load(Anikumii.dominium + "/uploads/portadas/" + cursor.getString(3) + ".jpg").apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).circleCrop()).into(icon);
     }
 }

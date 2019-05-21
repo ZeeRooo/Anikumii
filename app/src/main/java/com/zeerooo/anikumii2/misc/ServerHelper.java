@@ -18,12 +18,7 @@ public class ServerHelper extends NanoHTTPD {
 
     @Override
     public Response serve(IHTTPSession session) {
-        return NanoHTTPD.newFixedLengthResponse("<head>\n" +
-                "<link rel=\"icon\" type=\"image/png\" href=\"https://i.imgur.com/5UQdpiW.png\" />\n" +
-                "<title>" + title + "</title>\n" +
-                "</head>\n" +
-                "\n" +
-                "<video height=\"500dp\" width=\"500dp\" controls autoplay><source src=\"" + url + "\" type=\"video/mp4\"></video>");
+        return NanoHTTPD.newFixedLengthResponse("<head><link rel=\"icon\" type=\"image/png\" href=\"https://i.imgur.com/5UQdpiW.png\" /><title>" + title + "</title></head><video autoplay controls><source src=\"" + url + "\" type=\"video/mp4\"></video>");
     }
 
     public void setUrl(String url) {

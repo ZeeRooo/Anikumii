@@ -4,8 +4,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.database.MatrixCursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.BaseColumns;
@@ -30,15 +30,8 @@ import androidx.core.view.GravityCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.cursoradapter.widget.CursorAdapter;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.viewpager.widget.ViewPager;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.chip.Chip;
@@ -46,27 +39,31 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
 import com.zeerooo.anikumii2.Anikumii;
 import com.zeerooo.anikumii2.R;
-import com.zeerooo.anikumii2.adapters.AdapterAnimes;
 import com.zeerooo.anikumii2.adapters.SearchCursorAdapter;
+import com.zeerooo.anikumii2.adapters.ViewPagerAdapter;
+import com.zeerooo.anikumii2.anikumiiparts.AnikumiiConnection;
 import com.zeerooo.anikumii2.anikumiiparts.AnikumiiDialog;
 import com.zeerooo.anikumii2.anikumiiparts.AnikumiiInputChip;
-import com.zeerooo.anikumii2.anikumiiparts.AnikumiiRecyclerView;
 import com.zeerooo.anikumii2.anikumiiparts.AnikumiiSharedPreferences;
 import com.zeerooo.anikumii2.anikumiiparts.AnikumiiUiHelper;
 import com.zeerooo.anikumii2.anikumiiparts.glide.GlideApp;
+import com.zeerooo.anikumii2.fragments.TioAnimeFragment;
+import com.zeerooo.anikumii2.fragments.TioHentaiFragment;
 import com.zeerooo.anikumii2.misc.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONTokener;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
@@ -79,18 +76,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private final String[] preloadGenres = {"Acción", "Artes Marciales", "Aventuras", "Carreras", "Ciencia Ficción", "Comedia", "Demencia", "Demonios", "Deportes", "Drama", "Ecchi", "Escolares", "Espacial", "Fantasía", "Harem", "Historico", "Infantil", "Josei", "Juegos", "Magia", "Mecha", "Militar", "Misterio", "Música", "Parodia", "Policía", "Psicológico", "Recuentos de la vida", "Romance", "Samurai", "Seinen", "Shoujo", "Shounen", "Sobrenatural", "Superpoderes", "Suspenso", "Terror", "Vampiros", "Yaoi", "Yuri"}; //40
     private Toolbar searchToolbar = null;
     private MenuItem searchItem;
-    private AnikumiiRecyclerView anikumiiRecyclerView;
-    private boolean canGoBack, isDisposed;
+    private boolean isDisposed;
     private DrawerLayout drawer;
     private NavigationView navigationView;
     private AnikumiiSharedPreferences mPreferences;
-    private String userName_str, userCookie, types;
+    private String userName_str, types;
     private MatrixCursor matrixCursor;
-    private FloatingActionButton filterFAB;
     private SearchCursorAdapter searchCursorAdapter;
-    private GridLayoutManager gridLayoutManager;
-    private AnikumiiInputChip anikumiiInputChip;
     private PublishSubject<String> publishSubject;
+    private JSONArray jsonArray;
+    private boolean canGoBack;
+    private FloatingActionButton filterFAB;
+    private AnikumiiInputChip anikumiiInputChip;
+    private ViewPagerAdapter viewPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,19 +100,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Setup the toolbar
         Toolbar mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-        setToolbarTitle(getString(R.string.latest_episodes));
 
-        anikumiiRecyclerView = findViewById(R.id.new_animes_recycler_view);
-        anikumiiRecyclerView.setAdapter(new AdapterAnimes(this, false));
-        anikumiiRecyclerView.setElementClass(".episodes > li > article");
-        anikumiiRecyclerView.setToLoad("https://tioanime.com/");
-        anikumiiRecyclerView.setDynamicListener((byte) 20);
-        anikumiiRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        anikumiiRecyclerView.setHasFixedSize(true);
+        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), 1);
+        viewPagerAdapter.addFragment(new TioAnimeFragment(), "Anime");
+        viewPagerAdapter.addFragment(new TioHentaiFragment(), "Hentai");
+
+        ViewPager viewPager = findViewById(R.id.episodes_viewPager);
+
+        TabLayout tabLayout = findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
+
+        viewPager.setAdapter(viewPagerAdapter);
 
         drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
         navigationView.setCheckedItem(R.id.nav_home);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -133,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         filterFAB = findViewById(R.id.filterFAB);
         filterFAB.setOnClickListener((View v) -> {
             // TODO: Saca esto
-            Snackbar snackbar = AnikumiiUiHelper.Snackbar(anikumiiRecyclerView, "Actualmente sólo se puede seleccionar un género; y los tipos de anime tampoco funcionan. Esto se debe a restricciones del sitio web.", Snackbar.LENGTH_INDEFINITE);
+            Snackbar snackbar = AnikumiiUiHelper.Snackbar(drawer, "Actualmente sólo se puede seleccionar un género; y los tipos de anime tampoco funcionan. Esto se debe a restricciones del sitio web.", Snackbar.LENGTH_INDEFINITE);
             snackbar.setAction("Ok", (View view) -> {
                 snackbar.dismiss();
                 filterDialog();
@@ -141,48 +142,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             snackbar.show();
         });
 
-        userCookie = ((Anikumii) getApplication()).getUserCookie();//"f;f;f;f;f;f"
-
-        if (!userCookie.equals("f;f;f") || mPreferences.getString("MALuserAvatar", null) != null)
-            navigationView.getMenu().findItem(R.id.nav_log_in).setVisible(false);
-
-        gridLayoutManager = new GridLayoutManager(this, mPreferences.getInt("gridColumnsPortrait", Math.round((float) getResources().getDisplayMetrics().widthPixels / 300)));
-        anikumiiRecyclerView.setLayoutManager(gridLayoutManager);
-    }
-
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)
-            gridLayoutManager.setSpanCount(mPreferences.getInt("gridColumnsLandscape", Math.round((float) getResources().getDisplayMetrics().heightPixels / 300)));
-        else
-            gridLayoutManager.setSpanCount(mPreferences.getInt("gridColumnsPortrait", Math.round((float) getResources().getDisplayMetrics().widthPixels / 300)));
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        if (searchToolbar.hasExpandedActionView())
-            searchItem.collapseActionView();
-
-        anikumiiRecyclerView.exit();
+        navigationView.getMenu().findItem(R.id.nav_log_in).setVisible(mPreferences.getString("MALuserAvatar", null) == null);
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_home:
-                reactiveRecyclerView(getString(R.string.latest_episodes), "https://tioanime.com/", ".episodes > li > article", (byte) 20);
+                viewPagerAdapter.getCurrentFragment().reactiveRecyclerView(getString(R.string.latest_episodes), Anikumii.dominium, "article.episode", (byte) 20);
                 filterFAB.hide();
+                canGoBack = true;
                 break;
             case R.id.nav_all_anime:
-                reactiveRecyclerView(getString(R.string.nav_all_anime), "https://tioanime.com/directorio", "article.anime", (byte) 19);
+                viewPagerAdapter.getCurrentFragment().reactiveRecyclerView(getString(R.string.nav_all_anime), Anikumii.dominium + "directorio", "article.anime", (byte) 19);
                 filterFAB.show();
+                canGoBack = true;
                 break;
             case R.id.nav_live_animes:
-                reactiveRecyclerView(getString(R.string.nav_live_animes), "https://tioanime.com/directorio?estado=emision", "article.anime", (byte) 19);
+                viewPagerAdapter.getCurrentFragment().reactiveRecyclerView(getString(R.string.nav_live_animes), Anikumii.dominium + "directorio?estado=emision", "article.anime", (byte) 19);
                 canGoBack = true;
                 filterFAB.hide();
                 break;
@@ -198,14 +175,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (searchToolbar.hasExpandedActionView())
+            searchItem.collapseActionView();
+    }
+
+    @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START))
             drawer.closeDrawer(GravityCompat.START);
         else if (searchToolbar.hasExpandedActionView()) {
-            publishSubject.onComplete();
             searchItem.collapseActionView();
         } else if (canGoBack) {
-            reactiveRecyclerView(getString(R.string.latest_episodes), "https://tioanime.com/", ".episodes > li > article", (byte) 20);
+            viewPagerAdapter.getCurrentFragment().reactiveRecyclerView(getString(R.string.latest_episodes), Anikumii.dominium, "article.episode", (byte) 20);
             canGoBack = false;
             filterFAB.hide();
         } else
@@ -213,16 +197,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onNewIntent(Intent intent) {
-        setIntent(intent);
-
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
         if (intent.getBooleanExtra("loadHeaderInfo", false))
-            setHeaderInfo(true);
+            setHeaderInfo();
+
+        if (intent.getBooleanExtra("reloadMain", false))
+            onConfigurationChanged(getResources().getConfiguration());
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.searchAnime) {
+            filterFAB.hide();
+
             searchStuff();
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
@@ -241,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.mainactivity_menu, menu);
 
-        setHeaderInfo(false);
+        setHeaderInfo();
         return true;
     }
 
@@ -277,9 +265,146 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         anim.start();
     }
 
-    private void setToolbarTitle(String title) {
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setTitle(title);
+    private void setHeaderInfo() {
+        String userAvatar_str;
+
+        userAvatar_str = mPreferences.getString("MALuserAvatar", "imageNotFound");
+        userName_str = mPreferences.getString("MALuserName", "user_nameNotFound");
+
+        navigationView.getMenu().findItem(R.id.nav_log_in).setVisible(userName_str.equals("user_nameNotFound"));
+
+        ImageView userAvatar = findViewById(R.id.user_avatar);
+        if (userAvatar != null)
+            if (!userAvatar_str.equals("imageNotFound")) {
+                userAvatar.setOnClickListener((View view) -> {
+                    startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("https://myanimelist.net/profile/" + userName_str)));
+
+                });
+                GlideApp.with(MainActivity.this).load(userAvatar_str).apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).circleCrop()).into(userAvatar);
+            } else
+                GlideApp.with(MainActivity.this).load(getResources().getDrawable(R.mipmap.ic_launcher)).into(userAvatar);
+
+        if (!userName_str.equals("user_nameNotFound")) {
+            TextView userName = findViewById(R.id.user_name);
+            userName.setText(userName_str);
+        }
+    }
+
+    // Thanks to Jaison Fernando for the great tutorial.
+    // http://droidmentor.com/searchview-animation-like-whatsapp/
+    private void searchToolbar() {
+        searchToolbar = findViewById(R.id.searchtoolbar);
+        searchToolbar.inflateMenu(R.menu.menu_search);
+        Menu search_menu = searchToolbar.getMenu();
+
+        searchItem = search_menu.findItem(R.id.action_filter_search);
+
+        searchCursorAdapter = new SearchCursorAdapter(this, R.layout.item_search_suggerence, null, new String[]{BaseColumns._ID, "animeTitle", "animeType", "animeId"}, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
+        final SearchView searchView = (SearchView) search_menu.findItem(R.id.action_filter_search).getActionView();
+        searchView.setSuggestionsAdapter(searchCursorAdapter);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                searchItem.collapseActionView();
+
+                viewPagerAdapter.getCurrentFragment().reactiveRecyclerView(query, Anikumii.dominium + "directorio?q=" + query, "article.anime", (byte) 19);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                publishSubject.onNext(newText);
+                return true;
+            }
+        });
+
+        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+            @Override
+            public boolean onSuggestionSelect(int position) {
+                return false;
+            }
+
+            @Override
+            public boolean onSuggestionClick(int position) {
+                String type;
+                if (Anikumii.dominium.startsWith("https://tioanime.com/"))
+                    type = "/anime/";
+                else
+                    type = "/hentai/";
+
+                startActivity(new Intent(MainActivity.this, EpisodesActivity.class).putExtra("animeUrl", Anikumii.dominium + type + matrixCursor.getString(4)));
+
+                searchItem.collapseActionView();
+                return true;
+            }
+        });
+
+        searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+                    circleReveal(false);
+                else
+                    searchToolbar.setVisibility(View.INVISIBLE);
+
+                publishSubject.onComplete();
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                return true;
+            }
+        });
+    }
+
+    private void searchStuff() {
+        if (isDisposed)
+            publishSubject = PublishSubject.create();
+
+        AnikumiiConnection anikumiiConnection = new AnikumiiConnection();
+
+
+        publishSubject
+                .debounce(300, TimeUnit.MILLISECONDS)
+                .filter((String s) -> !s.isEmpty())
+                .distinctUntilChanged()
+                .observeOn(Schedulers.io())
+                .doOnNext(new Consumer<String>() {
+                    @Override
+                    public void accept(String query) throws IOException, JSONException {
+                        jsonArray = (JSONArray) new JSONTokener(anikumiiConnection.getStringResponse("POST", Anikumii.dominium + "/api/search", "value=" + query)).nextValue();
+
+                        matrixCursor = new MatrixCursor(new String[]{BaseColumns._ID, "animeTitle", "animeType", "animeId", "animeUrl"});
+
+                        for (byte a = 0; a < jsonArray.length(); a++)
+                            matrixCursor.addRow(new Object[]{1, jsonArray.getJSONObject(a).getString("title"), Utils.getTypeFromNumber(jsonArray.getJSONObject(a).getString("type")), jsonArray.getJSONObject(a).getString("id"), jsonArray.getJSONObject(a).getString("slug")});
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<String>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                    }
+
+                    @Override
+                    public void onNext(String s) {
+                        searchCursorAdapter.changeCursor(matrixCursor);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        AnikumiiUiHelper.Snackbar(drawer, getString(R.string.rxerror), Snackbar.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        if (matrixCursor != null && !matrixCursor.isClosed())
+                            matrixCursor.close();
+                        isDisposed = true;
+                    }
+                });
     }
 
     private void filterDialog() {
@@ -292,9 +417,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ImageButton allGenres = dialogView.findViewById(R.id.allGenres);
         AnikumiiUiHelper.transparentBackground(allGenres);
         allGenres.setOnClickListener((View v) -> {
-            AnikumiiDialog genresDialog = new AnikumiiDialog(MainActivity.this);
-            NestedScrollView genresScroll = new NestedScrollView(MainActivity.this);
-            ChipGroup chipGroup = new ChipGroup(MainActivity.this);
+            AnikumiiDialog genresDialog = new AnikumiiDialog(this);
+            NestedScrollView genresScroll = new NestedScrollView(this);
+            ChipGroup chipGroup = new ChipGroup(this);
             chipGroup.setSingleSelection(true); // por ahora
             chipGroup.setPadding(10, 10, 10, 10);
 
@@ -358,7 +483,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 genresBuilder.append("?genero=").append(anikumiiInputChip.get(count).replace(" ", "-"));
             }
 
-            reactiveRecyclerView("Filtrados", "https://tioanime.com/directorio" + genresBuilder, "article.anime", (byte) 19);
+            viewPagerAdapter.getCurrentFragment().reactiveRecyclerView("Filtrados", Anikumii.dominium + "directorio" + genresBuilder, "article.anime", (byte) 19);
             anikumiiInputChip.clear();
         });
 
@@ -368,172 +493,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
         filterDialog.initialize("Filtros", dialogView);
-    }
-
-    private void setHeaderInfo(boolean loadCookies) {
-        if (loadCookies)
-            userCookie = ((Anikumii) getApplication()).getUserCookie();//"f;f;f;f;f;f"
-
-        boolean myanimelist = mPreferences.getBoolean("nav_malAccount", false);
-        String userAvatar_str;
-
-        if (myanimelist) {
-            userAvatar_str = mPreferences.getString("MALuserAvatar", "imageNotFound");
-            userName_str = mPreferences.getString("MALuserName", "user_nameNotFound");
-        } else {
-            userName_str = mPreferences.getString("userName", "user_nameNotFound");
-            userAvatar_str = mPreferences.getString("UserAvatar", "imageNotFound");
-        }
-
-        if (!userAvatar_str.equals("imageNotFound")) {
-            ImageView userAvatar = findViewById(R.id.user_avatar);
-            if (userAvatar != null) {
-                if (!myanimelist)
-                    userAvatar.setOnClickListener((View view) -> {
-                        Intent profile = new Intent(MainActivity.this, AboutUserActivity.class);
-                        profile.putExtra("url", "https://animeflv.net/perfil/" + userName_str).putExtra("userName", userName_str);
-                        startActivity(profile);
-
-                    });
-                GlideApp.with(MainActivity.this).load(userAvatar_str).apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).circleCrop()).into(userAvatar);
-            }
-        }
-
-        if (!userName_str.equals("user_nameNotFound")) {
-            TextView userName = findViewById(R.id.user_name);
-            if (userName != null)
-                userName.setText(userName_str);
-        }
-    }
-
-    private void reactiveRecyclerView(String title, String toLoad, String elementClass, byte maxDisplayedItems) {
-        anikumiiRecyclerView.clearArray();
-        anikumiiRecyclerView.setAdapter(new AdapterAnimes(this, false));
-        anikumiiRecyclerView.setToLoad(toLoad);
-        anikumiiRecyclerView.setElementClass(elementClass);
-        anikumiiRecyclerView.setDynamicListener(maxDisplayedItems);
-
-        canGoBack = true;
-
-        setToolbarTitle(title);
-    }
-
-    // Thanks to Jaison Fernando for the great tutorial.
-    // http://droidmentor.com/searchview-animation-like-whatsapp/
-    private void searchToolbar() {
-        searchToolbar = findViewById(R.id.searchtoolbar);
-        searchToolbar.inflateMenu(R.menu.menu_search);
-        Menu search_menu = searchToolbar.getMenu();
-
-        searchItem = search_menu.findItem(R.id.action_filter_search);
-        searchCursorAdapter = new SearchCursorAdapter(this, R.layout.item_search_suggerence, null, new String[]{BaseColumns._ID, "animeTitle", "animeType", "animeId"}, null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
-        final SearchView searchView = (SearchView) search_menu.findItem(R.id.action_filter_search).getActionView();
-        searchView.setSuggestionsAdapter(searchCursorAdapter);
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                searchItem.collapseActionView();
-
-                reactiveRecyclerView(query, "https://tioanime.com/directorio?q=" + query, "article.anime", (byte) 19);
-                isDisposed = true;
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                publishSubject.onNext(newText);
-                return true;
-            }
-        });
-
-        searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
-            @Override
-            public boolean onSuggestionSelect(int position) {
-                return false;
-            }
-
-            @Override
-            public boolean onSuggestionClick(int position) {
-                Intent episodesAct = new Intent(MainActivity.this, EpisodesActivity.class);
-                episodesAct.putExtra("animeUrl", matrixCursor.getString(4)).putExtra("animeName", matrixCursor.getString(1));
-                startActivity(episodesAct);
-
-                searchItem.collapseActionView();
-                return true;
-            }
-        });
-
-        searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
-            @Override
-            public boolean onMenuItemActionCollapse(MenuItem item) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                    circleReveal(false);
-                else
-                    searchToolbar.setVisibility(View.INVISIBLE);
-
-                if (matrixCursor != null && !matrixCursor.isClosed())
-                    matrixCursor.close();
-
-                return true;
-            }
-
-            @Override
-            public boolean onMenuItemActionExpand(MenuItem item) {
-                return true;
-            }
-        });
-    }
-
-    private void searchStuff() {
-        if (isDisposed)
-            publishSubject = PublishSubject.create();
-
-        publishSubject
-                .debounce(300, TimeUnit.MILLISECONDS)
-                .filter((String s) -> !s.isEmpty())
-                .distinctUntilChanged()
-                .observeOn(Schedulers.io())
-                .doOnNext(new Consumer<String>() {
-                    @Override
-                    public void accept(String query) throws Exception {
-                        RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
-                        StringRequest postRequest = new StringRequest(Request.Method.POST, "https://tioanime.com/api/search",
-                                new Response.Listener<String>() {
-                                    @Override
-                                    public void onResponse(String response) {
-                                        try {
-                                            JSONArray jsonArray = (JSONArray) new JSONTokener(response).nextValue();
-
-                                            matrixCursor = new MatrixCursor(new String[]{BaseColumns._ID, "animeTitle", "animeType", "animeId", "animeUrl"});
-
-                                            for (byte a = 0; a < jsonArray.length(); a++)
-                                                matrixCursor.addRow(new Object[]{1, jsonArray.getJSONObject(a).get("title").toString(), Utils.getTypeFromNumber(jsonArray.getJSONObject(a).get("type").toString()), jsonArray.getJSONObject(a).get("id").toString(), "/anime/" + jsonArray.getJSONObject(a).get("slug").toString()});
-
-                                            searchCursorAdapter.changeCursor(matrixCursor);
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                },
-                                (VolleyError error) -> error.printStackTrace()
-                        ) {
-                            @Override
-                            protected Map<String, String> getParams() {
-                                Map<String, String> params = new HashMap<String, String>();
-                                params.put("value", query);
-
-                                return params;
-                            }
-                        };
-                        queue.add(postRequest);
-                    }
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnError((Throwable throwable) -> {
-                    if (!isDestroyed())
-                        AnikumiiUiHelper.Snackbar(anikumiiRecyclerView, getString(R.string.rxerror), Snackbar.LENGTH_LONG).show();
-                })
-                .subscribe();
     }
 }

@@ -3,8 +3,6 @@ package com.zeerooo.anikumii2.activities;
 import android.animation.Animator;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,11 +13,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.work.Constraints;
+import androidx.work.NetworkType;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
@@ -34,17 +39,6 @@ import com.zeerooo.anikumii2.services.NotificationService;
 
 import java.util.concurrent.TimeUnit;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceFragmentCompat;
-import androidx.work.Constraints;
-import androidx.work.Data;
-import androidx.work.NetworkType;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkManager;
-
 public class SettingsActivity extends AppCompatActivity {
     public static boolean loadHeaderInfo, reloadMain;
 
@@ -56,8 +50,10 @@ public class SettingsActivity extends AppCompatActivity {
         Toolbar mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
 
-        if (getSupportActionBar() != null)
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setSubtitle(BuildConfig.VERSION_NAME);
+        }
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -83,10 +79,10 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (loadHeaderInfo)
-            startActivity(new Intent(this, MainActivity.class).putExtra("loadHeaderInfo", true));
-        if (reloadMain)
-            startActivity(new Intent(this, MainActivity.class));
+        if (loadHeaderInfo || reloadMain) {
+            startActivity(new Intent(this, MainActivity.class).putExtra("loadHeaderInfo", loadHeaderInfo).putExtra("reloadMain", reloadMain));
+            reloadMain = false;
+        }
     }
 
     public static class SettingsFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
@@ -139,8 +135,8 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     public static class AccountFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
-        private TextView aflvName, malName;
-        private ImageView aflvAvatarView, malAvatarView;
+        private TextView tioName, malName;
+        private ImageView tioAvatarView, malAvatarView;
         private boolean sync = true;
 
         @Override
@@ -168,7 +164,6 @@ public class SettingsActivity extends AppCompatActivity {
 
             findPreference("pref_account_login").setOnPreferenceClickListener(this);
             findPreference("pref_account_logOut").setOnPreferenceClickListener(this);
-            findPreference("nav_malAccount").setOnPreferenceClickListener(this);
             findPreference("pref_updateAccounts").setOnPreferenceClickListener(this);
         }
 
@@ -188,14 +183,6 @@ public class SettingsActivity extends AppCompatActivity {
                     GlideApp.with(getActivity()).load(malAvatar).apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).circleCrop()).into(malAvatarView);
                 malName = getActivity().findViewById(R.id.pref_malName);
                 malName.setText(getPreferenceManager().getSharedPreferences().getString("MALuserName", getString(R.string.warning_not_logged, "MyAnimeList")));
-
-                String aflvAvatar = getPreferenceManager().getSharedPreferences().getString("UserAvatar", null);
-                aflvAvatarView = getActivity().findViewById(R.id.pref_aflvAvatar);
-                if (aflvAvatar != null)
-                    GlideApp.with(getActivity()).load(aflvAvatar).apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).circleCrop()).into(aflvAvatarView);
-                aflvName = getActivity().findViewById(R.id.pref_aflvName);
-                aflvName.setText(getPreferenceManager().getSharedPreferences().getString("userName", getString(R.string.warning_not_logged, "AnimeFLV")));
-                sync = false;
             }
         }
 
@@ -207,46 +194,11 @@ public class SettingsActivity extends AppCompatActivity {
                     sync = true;
                     break;
                 case "pref_account_logOut":
-                    AnikumiiDialog anikumiiDialog = new AnikumiiDialog(getActivity());
-
-                    LinearLayout linearLayout = new LinearLayout(getActivity());
-                    linearLayout.setOrientation(LinearLayout.VERTICAL);
-
-                    final CheckBox mal = new CheckBox(getActivity());
-                    mal.setText(getString(R.string.myanimelist));
-                    mal.setTextSize(16);
-                    mal.setPadding(15, 25, 0, 15);
-                    linearLayout.addView(mal);
-
-                    final CheckBox aflv = new CheckBox(getActivity());
-                    aflv.setText(getString(R.string.animeflv));
-                    aflv.setTextSize(16);
-                    aflv.setPadding(15, 25, 0, 15);
-                    linearLayout.addView(aflv);
-
-                    anikumiiDialog.setButton(DialogInterface.BUTTON_POSITIVE, getText(android.R.string.ok), (DialogInterface dialogInterface, int i) -> {
-                        if (mal.isChecked()) {
-                            getPreferenceManager().getSharedPreferences().edit().remove("MALuserName").apply();
-                            getPreferenceManager().getSharedPreferences().edit().remove("MALuserAvatar").apply();
-                            getPreferenceManager().getSharedPreferences().edit().remove("mal").apply();
-                            malName.setText(getString(R.string.app_name));
-                            malAvatarView.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_launcher_foreground));
-                            loadHeaderInfo = true;
-                        }
-
-                        if (aflv.isChecked()) {
-                            getPreferenceManager().getSharedPreferences().edit().remove("UserCookie").apply();
-                            getPreferenceManager().getSharedPreferences().edit().remove("UserAvatar").apply();
-                            getPreferenceManager().getSharedPreferences().edit().remove("userName").apply();
-                            aflvName.setText(getString(R.string.app_name));
-                            aflvAvatarView.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_launcher_foreground));
-                            loadHeaderInfo = true;
-                        }
-                    });
-                    anikumiiDialog.addCancelButton();
-                    anikumiiDialog.initialize(getString(R.string.log_out), linearLayout);
-                    break;
-                case "nav_malAccount":
+                    getPreferenceManager().getSharedPreferences().edit().remove("MALuserName").apply();
+                    getPreferenceManager().getSharedPreferences().edit().remove("MALuserAvatar").apply();
+                    getPreferenceManager().getSharedPreferences().edit().remove("mal").apply();
+                    malName.setText(getString(R.string.app_name));
+                    malAvatarView.setImageDrawable(getActivity().getResources().getDrawable(R.drawable.ic_launcher_foreground));
                     loadHeaderInfo = true;
                     break;
                 case "pref_updateAccounts":
@@ -272,42 +224,45 @@ public class SettingsActivity extends AppCompatActivity {
             workManager = WorkManager.getInstance();
 
             findPreference("notifInterval").setOnPreferenceChangeListener(this);
-            findPreference("enableNotif").setOnPreferenceClickListener(this);
+            findPreference("enableNotif").setOnPreferenceChangeListener(this);
             findPreference("headsUp").setOnPreferenceClickListener(this);
         }
 
         @Override
         public boolean onPreferenceClick(Preference preference) {
-            switch (preference.getKey()) {
-                case "headsUp":
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                        startActivity(new Intent().setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.fromParts("package", getActivity().getPackageName(), null)));
-                    break;
-                case "enableNotif":
-                    notificationStuff(preference.getSharedPreferences().getString("notifInterval", "3600000"));
-                    break;
-            }
+            if (preference.getKey().equals("headsUp"))
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                    startActivity(new Intent().setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.fromParts("package", getActivity().getPackageName(), null)));
             return true;
         }
 
         private void notificationStuff(String notifInterval) {
-            workManager.cancelAllWork();
-
             workManager.enqueue(new PeriodicWorkRequest.Builder(NotificationService.class, Integer.valueOf(notifInterval), TimeUnit.MILLISECONDS)
                     .setConstraints(new Constraints.Builder()
                             .setRequiredNetworkType(NetworkType.CONNECTED)
-                            .build())
-                    .setInputData(new Data.Builder()
-                            .putBoolean("updateDb", false)
-                            .putBoolean("firstRun", false)
                             .build())
                     .build());
         }
 
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
-            if (preference.getKey().equals("notifInterval"))
-                notificationStuff(newValue.toString());
+            switch (preference.getKey()) {
+                case "notifInterval":
+                    workManager.cancelAllWork();
+                    notificationStuff(newValue.toString());
+                    break;
+                case "enableNotif":
+                    if ((boolean) newValue)
+                        workManager.enqueue(new PeriodicWorkRequest.Builder(NotificationService.class, Integer.valueOf(preference.getSharedPreferences().getString("notifInterval", "3600000")), TimeUnit.MILLISECONDS)
+                                .setConstraints(new Constraints.Builder()
+                                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                                        .build())
+                                .build());
+                    else
+                        workManager.cancelAllWork();
+
+                    break;
+            }
             return true;
         }
     }
@@ -320,20 +275,9 @@ public class SettingsActivity extends AppCompatActivity {
             getPreferenceManager().setSharedPreferencesName("ZeeRooo@Anikumii!!");
             getPreferenceManager().setSharedPreferencesMode(MODE_PRIVATE);
 
-            Preference updateApp;
-            updateApp = findPreference("pref_checkUpdates");
-            updateApp.setOnPreferenceClickListener(this);
-            updateApp.setSummary("Versión actual: " + BuildConfig.VERSION_NAME);
-
             findPreference("defaultServer").setOnPreferenceClickListener(this);
-
-            Preference updateDb = findPreference("pref_updateDB");
-            updateDb.setOnPreferenceClickListener(this);
-            updateDb.setSummary(getPreferenceManager().getSharedPreferences().getString("lastDbUpdate", "Nunca actualizada"));
-
             findPreference("defaultServer").setSummary(getString(R.string.defaultServerSummary, getPreferenceManager().getSharedPreferences().getString("defaultServer", "Zippyshare")));
 
-          //findPreference("generateTxtDB").setOnPreferenceClickListener(this);
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
                 getPreferenceScreen().removePreference(findPreference("enablePip"));
 
@@ -347,41 +291,9 @@ public class SettingsActivity extends AppCompatActivity {
         @Override
         public boolean onPreferenceClick(Preference preference) {
             switch (preference.getKey()) {
-                case "pref_checkUpdates":
-                    startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("https://drive.google.com/open?id=19Ry_KW8SDQz7RiQFjyBc8BMq7lsDxFn3")));
-                    break;
                 case "defaultServer":
                     AnikumiiDialog defaultServer = new AnikumiiDialog(getActivity());
-
-                    ChipGroup chipGroup = new ChipGroup(getActivity());
-                    chipGroup.setPadding(30, 30, 30, 30);
-                    chipGroup.setSingleSelection(true);
-
-                    Chip streamangoChip = new Chip(getActivity());
-                    streamangoChip.setText(getString(R.string.streamango));
-                    streamangoChip.setCheckable(true);
-                    streamangoChip.setTextColor(Color.BLACK);
-                    streamangoChip.setChipBackgroundColor(ColorStateList.valueOf(Color.WHITE));
-                    streamangoChip.setChecked(preference.getSharedPreferences().getString("defaultServer", "Zippyshare").equals("Streamango"));
-                    chipGroup.addView(streamangoChip);
-
-                    Chip zippyshareChip = new Chip(getActivity());
-                    zippyshareChip.setText(getString(R.string.zippyshare));
-                    zippyshareChip.setCheckable(true);
-                    zippyshareChip.setChipBackgroundColor(ColorStateList.valueOf(Color.parseColor("#fffdd1")));
-                    zippyshareChip.setTextColor(Color.BLACK);
-                    zippyshareChip.setChecked(preference.getSharedPreferences().getString("defaultServer", "Zippyshare").equals("Zippyshare"));
-                    chipGroup.addView(zippyshareChip);
-
-                    Chip mediafireChip = new Chip(getActivity());
-                    mediafireChip.setText(getString(R.string.mediafire));
-                    mediafireChip.setCheckable(true);
-                    mediafireChip.setChipBackgroundColor(ColorStateList.valueOf(Color.parseColor("#0077ff")));
-                    mediafireChip.setTextColor(Color.BLACK);
-                    mediafireChip.setChecked(preference.getSharedPreferences().getString("defaultServer", "Zippyshare").equals("MediaFire"));
-                    chipGroup.addView(mediafireChip);
-
-                    chipGroup.setOnCheckedChangeListener((ChipGroup group, int checkedId) -> {
+                    defaultServer.serverDialog(preference.getSharedPreferences().getString("defaultServer", "Zippyshare")).setOnCheckedChangeListener((ChipGroup group, int checkedId) -> {
                         if (checkedId != -1) {
                             preference.getSharedPreferences().edit().putString("defaultServer", (String) ((Chip) group.findViewById(checkedId)).getText()).apply();
                             findPreference("defaultServer").setSummary(getString(R.string.defaultServerSummary, (String) ((Chip) group.findViewById(checkedId)).getText()));
@@ -389,18 +301,6 @@ public class SettingsActivity extends AppCompatActivity {
                             defaultServer.dismiss();
                         }
                     });
-
-                    defaultServer.initialize(getString(R.string.changeServer), chipGroup);
-                    break;
-                case "pref_updateDB":
-                    WorkManager.getInstance().enqueue(new OneTimeWorkRequest.Builder(NotificationService.class)
-                            .setConstraints(new Constraints.Builder()
-                                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                                    .build())
-                            .setInputData(new Data.Builder()
-                                    .putBoolean("updateDb", true)
-                                    .build())
-                            .build());
                     break;
                 case "gridColumns":
                     AnikumiiDialog columnsDialog = new AnikumiiDialog(getActivity());
@@ -433,36 +333,6 @@ public class SettingsActivity extends AppCompatActivity {
 
                     columnsDialog.initialize(getString(R.string.columnsTitle), dialogView);
                     break;
-             /*   case "generateTxtDB":
-                    System.out.println("Generating");
-                    try {
-                        File directory = new File(Environment.getExternalStorageDirectory() + "/Anikumii!!/txt/");
-                        if (!directory.exists())
-                            directory.mkdirs();
-
-                        File file = new File(directory + "/database.anikumii2");
-                        if (!file.exists())
-                            file.createNewFile();
-
-                        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file.getAbsoluteFile()), "UTF-8"));
-
-                        DataBaseHelper db = new DataBaseHelper(getActivity());
-                        Cursor cursor = db.getReadableDatabase().rawQuery("SELECT * FROM AnimesDB ORDER BY TITLE", null);
-                        writer.append("<!-- Fuente: AnimeFLV.net ¡Muchas gracias! // Source: AnimeFLV.net -->\n");
-                        while (cursor.moveToNext()) {
-                            writer.append("<a href=\"").append(cursor.getString(3)).append("\"><p class=\"id\">").append(cursor.getString(5)).append("</p><p class=\"Title\">").append(cursor.getString(1)).append("</p><p class=\"Type\">").append(cursor.getString(2)).append("</p><p class=\"Genres\">").append(cursor.getString(4).replace(";", ",")).append("</p></a>\n");
-                            writer.flush();
-                        }
-
-                        writer.close();
-                        cursor.close();
-                        db.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-                        System.out.println("Finished");
-                    }
-                    break;*/
             }
             return true;
         }

@@ -3,9 +3,7 @@ package com.htetznaing.xgetter;
 import android.util.Base64;
 
 import com.htetznaing.xgetter.Core.Fruits;
-import com.htetznaing.xgetter.Model.XModel;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,10 +13,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -124,55 +120,19 @@ public class XGetter {
         js = base64Encode(js);
     }
 
-    private void okru(String url) {
+    public String okru(String url) {
         try {
-            String html = Jsoup.connect(url).userAgent("Mozilla/5.0 (Linux; Android 4.1.1; Galaxy Nexus Build/JRO03C) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19").get().body().toString();
-            String json = getJson(html);
+            String html = Jsoup.connect(url).userAgent("Mozilla/5.0 (Linux; Android 4.1.1; Galaxy Nexus Build/JRO03C) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19").get().getElementsByClass("vid-card_cnt h-mod").attr("data-options");
+            String json = new JSONObject(html.replace("&quot;", "\"")).getJSONObject("flashvars").getString("metadata");
+            JSONArray jsonArray = new JSONObject(json).getJSONArray("videos");
 
-            json = StringEscapeUtils.unescapeHtml4(json);
-
-            json = new JSONObject(json).getJSONObject("flashvars").getString("metadata");
-            if (json != null) {
-                JSONArray jsonArray = new JSONObject(json).getJSONArray("videos");
-                ArrayList<XModel> models = new ArrayList<>();
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    url = jsonArray.getJSONObject(i).getString("url");
-                    String name = jsonArray.getJSONObject(i).getString("name");
-                    if (name.equals("mobile")) {
-                        putModel(url, "144p", models);
-                    } else if (name.equals("lowest")) {
-                        putModel(url, "240p", models);
-                    } else if (name.equals("low")) {
-                        putModel(url, "360p", models);
-                    } else if (name.equals("sd")) {
-                        putModel(url, "480p", models);
-                    } else if (name.equals("hd")) {
-                        putModel(url, "HD", models);
-                    } else if (name.equals("full")) {
-                        putModel(url, "Full HD", models);
-                    } else if (name.equals("quad")) {
-                        putModel(url, "2K", models);
-                    } else if (name.equals("ultra")) {
-                        putModel(url, "4K", models);
-                    } else {
-                        putModel(url, "Default", models);
-                    }
-                }
-                // onComplete.onTaskCompleted(models, true);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                url = jsonArray.getJSONObject(i).getString("url");
             }
         } catch (IOException | JSONException | NullPointerException e) {
             e.printStackTrace();
         }
-    }
-
-    private String getJson(String html) {
-        final String regex = "data-options=\"(.*?)\"";
-        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-        final Matcher matcher = pattern.matcher(html);
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-        return null;
+        return url;
     }
 
     public String rapidVideo(String mUrl) throws IOException {
@@ -243,30 +203,10 @@ public class XGetter {
 
 
     private String base64Encode(String text) {
-        byte[] data = new byte[0];
-        try {
-            data = text.getBytes("UTF-8");
-            return Base64.encodeToString(data, Base64.DEFAULT);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return Base64.encodeToString(text.getBytes(StandardCharsets.UTF_8), Base64.DEFAULT);
     }
 
     private String base64Decode(String text) {
-        byte[] data = Base64.decode(text, Base64.DEFAULT);
-        try {
-            return new String(data, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private void putModel(String url, String quality, ArrayList<XModel> model) {
-        XModel xModel = new XModel();
-        xModel.setUrl(url);
-        xModel.setQuality(quality);
-        model.add(xModel);
+        return new String(Base64.decode(text, Base64.DEFAULT), StandardCharsets.UTF_8);
     }
 }

@@ -1,17 +1,15 @@
 <resources>
-    <string name="app_name">Anikumii!!2</string>
+    <string name="app_name">Anikumii!! - Tio</string>
     <string name="latest_episodes">Últimos episodios</string>
     <string name="searchAnime">Buscar anime&#8230;</string>
     <string name="search_failed">No se encontraron resultados</string>
     <string name="nav_home">Inicio</string>
     <string name="nav_all_anime">Todos</string>
-    <string name="nav_prox_animes">Próximos</string>
     <string name="nav_live_animes">En emisión</string>
     <string name="log_in">Iniciar sesión</string>
     <string name="log_out">Cerrar sesión</string>
     <string name="nav_settings">Ajustes</string>
-    <string name="section_more">Más %s</string>
-    <string name="rating">de 5.0 estrellas</string>
+    <string name="rating">de 10 estrellas</string>
 
     <string name="bottom_sheet_newFav">Agregar a favoritos</string>
     <string name="bottom_sheet_removeFav">Remover de favoritos</string>
@@ -31,15 +29,10 @@
     <string name="lost_password">¿Olvidaste tu contraseña?</string>
     <string name="login_error">Correo o contraseña inválidos</string>
     <string name="new_account">¿No tienes cuenta? REGISTRATE</string>
-    <string name="register_success">¡Perfil creado exitosamente! Verifique con su correo y luego inicie sesión en la app. Si la confirmación no aparece, pruebe con otro nombre.</string>
-    <string name="prompt_email">Correo electrónico</string>
     <string name="prompt_password">Contraseña</string>
-    <string name="prompt_user">Nombre de usuario</string>
     <string name="error_invalid_email">Este correo es incorrecto</string>
     <string name="error_invalid_password">Esta contraseña es muy corta</string>
     <string name="error_field_required">Este campo es requerido</string>
-
-    <string name="close">Cerrar</string>
 
     <string name="readMore">Leer más</string>
     <string name="readLess">Leer menos</string>
@@ -51,8 +44,6 @@
     <string name="episodesList">Lista de episodios</string>
     <string name="nextEpisode">Próximo episodio</string>
     <string name="unseen">Quitar de vistos</string>
-    <string name="aboutApp">La aplicación nació con el objetivo de ser el cliente móvil de AnimeFLV.net. En respuesta al interés demostrado hacia mi proyecto decidí desvincularlo totalmente. Vale aclarar que este proyecto es totalmente independiente de la página anteriormente mencionada, la cual posee absolutamente todos los derechos por los animes e información brindada (a excepción de la hoja de datos de MyAnimeList).</string>
-    <string name="updateDB">Actualizar base de datos</string>
     <string name="information">Información</string>
     <string name="argument">Argumento</string>
     <string name="statics">Estadísticas</string>
@@ -75,14 +66,11 @@
     <string name="newComment">Agrega un comentario</string>
     <string name="mal_deletefromList">Eliminar anime de la lista</string>
     <string name="myanimelist">MyAnimeList</string>
-    <string name="animeflv">AnimeFLV</string>
     <string name="mal_startDateText">Comenzó a verlo: %d / %d / %d</string>
     <string name="mal_endDateText">Lo finalizó: %d / %d / %d</string>
     <string name="warning_not_logged">No iniciaste sesión en %s</string>
-    <string name="bothSites">En MyAnimeList o AnimeFLV</string>
-    <string name="pref_malInformation">Información de MyAnimeList</string>
-    <string name="pref_malInformationSummary">Se mostrará su cuenta de MyAnimeList en lugar de AnimeFLV en el panel de navegación</string>
-    <string name="updateAccountsInfo">Actualizar información de las cuentas</string>
+    <string name="bothSites">En MyAnimeList</string>
+    <string name="updateAccountsInfo">Actualizar información de la cuenta</string>
 
 
     <string name="permission_denied">Permiso denegado, no se pudo descargar</string>
@@ -99,8 +87,6 @@
 
     <string name="columnsSummary">Vertical / Horizontal: %d / %d</string>
     <string name="columnsTitle">Columnas según la orientación</string>
-
-    <string name="checkUpdates">Buscar actualizaciones</string>
 
     <string name="disableAcraTitle">Desactivar el informe de fallos</string>
     <string name="disableAcraSummary">Enviar reportes de fallos al desarrollador via mail (SIN INFORMACIÓN PERSONAL)</string>
@@ -120,6 +106,8 @@
     <string name="unload_video">Espere a que el video sea procesado</string>
     <string name="downloadMessage">\"Seleccione un gestor de descarga. Se recomienda utilizar la opción Anikumii!!\"</string>
     <string name="mediafire">MediaFire</string>
+    <string name="okru">ok.ru</string>
+    <string name="rapidvideo">Rapidvideo</string>
 
     <string-array name="intervalPrefTitles">
         <item>1 hora</item>

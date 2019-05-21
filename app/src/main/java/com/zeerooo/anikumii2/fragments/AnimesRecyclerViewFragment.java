@@ -28,11 +28,10 @@ public class AnimesRecyclerViewFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (getActivity() != null && getArguments() != null) {
             toLoad = getArguments().getString("toLoad");
-            if (toLoad.startsWith("https://tioanime.com/directorio")) {
-                getActivity().findViewById(R.id.collapsing_appbarlayout).setVisibility(View.GONE);
-                getActivity().findViewById(R.id.episodesActRecyclerView).setVisibility(View.GONE);
-            } else
-                getActivity().findViewById(R.id.aboutUser_linear).setVisibility(View.GONE);
+            // if (toLoad.contains(".com/directorio")) {
+            getActivity().findViewById(R.id.collapsing_appbarlayout).setVisibility(View.GONE);
+            getActivity().findViewById(R.id.episodesActRecyclerView).setVisibility(View.GONE);
+            //  }
         }
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.main_app_bar, container, false);
@@ -52,12 +51,9 @@ public class AnimesRecyclerViewFragment extends Fragment {
             recyclerView.setHasFixedSize(true);
 
             if (getArguments() != null) {
-            /*    if (toLoad.startsWith("SELECT "))
-                    recyclerView.initDB();*/
-
                 mToolbar.setTitle(getArguments().getString("genre"));
 
-                recyclerView.setAdapter(new AdapterAnimes(getActivity(), false));
+                recyclerView.setAdapter(new AdapterAnimes(getActivity()));
                 recyclerView.setElementClass(getArguments().getString("element"));
                 recyclerView.setToLoad(toLoad);
                 recyclerView.setDynamicListener((byte) 19);
@@ -68,12 +64,11 @@ public class AnimesRecyclerViewFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        if (getActivity() != null && getArguments() != null)
-            if (toLoad.startsWith("https://tioanime.com/directorio")) {
-                recyclerView.exit();
-                getActivity().findViewById(R.id.collapsing_appbarlayout).setVisibility(View.VISIBLE);
-                getActivity().findViewById(R.id.episodesActRecyclerView).setVisibility(View.VISIBLE);
-            } else
-                getActivity().findViewById(R.id.aboutUser_linear).setVisibility(View.VISIBLE);
+        if (getActivity() != null && getArguments() != null) {
+            //  if (toLoad.contains(".com/directorio")) {
+            recyclerView.exit();
+            getActivity().findViewById(R.id.collapsing_appbarlayout).setVisibility(View.VISIBLE);
+            getActivity().findViewById(R.id.episodesActRecyclerView).setVisibility(View.VISIBLE);
+        }
     }
 }

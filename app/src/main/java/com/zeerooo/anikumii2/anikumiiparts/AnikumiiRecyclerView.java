@@ -11,15 +11,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.zeerooo.anikumii2.Anikumii;
 import com.zeerooo.anikumii2.R;
 import com.zeerooo.anikumii2.adapters.AdapterAnimes;
 import com.zeerooo.anikumii2.adapters.AdapterEpisodes;
+import com.zeerooo.anikumii2.fragments.MALInfoFragment;
 import com.zeerooo.anikumii2.misc.ItemsModel;
 import com.zeerooo.anikumii2.misc.Utils;
 
-import org.jsoup.Jsoup;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
@@ -35,12 +38,13 @@ import io.reactivex.schedulers.Schedulers;
 public class AnikumiiRecyclerView extends RecyclerView {
     private ArrayList<ItemsModel> arrayList = new ArrayList<>();
     private short page;
-    private int findFirstVisibleItemPosition;
-    private String toLoad, elementClass;
+    private int findFirstVisibleItemPosition, textColor;
+    private String toLoad, elementClass, title, number, img_url, chapterUrl, episodesStr;
     private boolean loading;
     private Disposable disposable;
     private OnScrollListener listener;
     private Observable<Short> observable;
+    private Document doc;
 
     public AnikumiiRecyclerView(@NonNull Context context) {
         super(context, null);
@@ -65,10 +69,7 @@ public class AnikumiiRecyclerView extends RecyclerView {
     public void exit() {
         if (!disposable.isDisposed())
             disposable.dispose();
-    }
-
-    public void clearArray() {
-        arrayList.clear();
+        loading = false;
     }
 
     public void setDynamicListener(final byte maxDisplayedItems) {
@@ -87,7 +88,7 @@ public class AnikumiiRecyclerView extends RecyclerView {
                                 super.onScrolled(recyclerView, dx, dy);
                                 if (getLayoutManager().getItemCount() > maxDisplayedItems) {
 
-                                    if (toLoad.startsWith("https://tioanime.com/anime/"))
+                                    if (toLoad.contains("/anime/") || toLoad.contains("/hentai/"))
                                         findFirstVisibleItemPosition = ((LinearLayoutManager) getLayoutManager()).findFirstVisibleItemPosition();
                                     else
                                         findFirstVisibleItemPosition = ((GridLayoutManager) getLayoutManager()).findFirstVisibleItemPosition();
@@ -97,6 +98,7 @@ public class AnikumiiRecyclerView extends RecyclerView {
                                         loading = true;
                                     }
                                 } else {
+                                    loading = false;
                                     removeOnScrollListener(this);
                                     emitter.onComplete();
                                 }
@@ -121,7 +123,7 @@ public class AnikumiiRecyclerView extends RecyclerView {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((Short short1) -> {
                             loading = false;
-                            if (toLoad.startsWith("https://tioanime.com/anime/"))
+                            if (toLoad.contains("/anime/") || toLoad.contains("/hentai/"))
                                 ((AdapterEpisodes) getAdapter()).addAll(arrayList);
                             else
                                 ((AdapterAnimes) Objects.requireNonNull(getAdapter())).addAll(arrayList);
@@ -142,14 +144,11 @@ public class AnikumiiRecyclerView extends RecyclerView {
 
     private void setArrayList(String toLoad, String elementClass) throws Exception {
         arrayList.clear();
-        String title, number = "", img_url, chapterUrl, titleNumber, episodesStr;
-        Document doc;
-        int textColor;
-System.out.println(toLoad + "&p=" + page);
+
         doc = AnikumiiWebHelper.go(toLoad + "&p=" + page, getContext()).get();
 
         try {
-            if (toLoad.startsWith("https://tioanime.com/anime/")) {
+            if (toLoad.contains("/anime/") || toLoad.contains("/hentai/")) {
 
                 title = doc.selectFirst("h1.title").text();
 
@@ -158,7 +157,7 @@ System.out.println(toLoad + "&p=" + page);
                 if (page == 1) {
                     arrayList.add(0, null); //Blank space for the header
 
-                    page = Short.parseShort(Utils.getNumberFromString(episodesStr, "\\[(\\d+)").replace("[", ""));
+                    page = Short.parseShort(Utils.matcher(episodesStr, "\\[(\\d+)"));
                 }
 
                 for (short episodesCount = page; (episodesCount > page - 12) && (episodesCount > 0); episodesCount--) {
@@ -167,7 +166,7 @@ System.out.println(toLoad + "&p=" + page);
                     /* else*/
                     textColor = -1275068417;
 
-                    arrayList.add(new ItemsModel(title, "Episodio " + episodesCount, "https://tioanime.com/uploads/portadas/" + elementClass.split("---")[1] + ".jpg", episodesStr.split("\",\"")[1] + "-" + episodesCount, textColor));
+                    arrayList.add(new ItemsModel(title, "Episodio " + episodesCount, Anikumii.dominium + "/uploads/portadas/" + elementClass.split("---")[1] + ".jpg", episodesStr.split("\",\"")[1] + "-" + episodesCount, textColor));
 
                     page--;
                 }
@@ -175,24 +174,25 @@ System.out.println(toLoad + "&p=" + page);
                 Elements episodes = doc.select(elementClass);
 
                 for (short episodesCount = 0; episodesCount < episodes.size(); episodesCount++) {
+                    title = episodes.get(episodesCount).getElementsByClass("title").text();
 
-                    titleNumber = episodes.get(episodesCount).getElementsByClass("title").text();
-
-                    title = titleNumber.split(" [0-9]")[0];
-                    if (elementClass.equals(".episodes > li > article"))
-                        number = "Episodio " + Utils.getNumberFromString(titleNumber, "[0-9]+");
+                    if (elementClass.equals("article.episode")) {
+                        number = Utils.matcher(title, "(\\d+)\\D*$");
+                        title = title.replace(number, "");
+                    } else
+                        number = "Anime / OVA / Pelicula / Especial";
 
                     img_url = episodes.get(episodesCount).getElementsByTag("img").attr("src");
                     chapterUrl = episodes.get(episodesCount).select("a").attr("href");
 
-                    arrayList.add(new ItemsModel(title, number, img_url, chapterUrl));
+                    arrayList.add(new ItemsModel(title, "Episodio " + number, img_url, chapterUrl));
                 }
                 page++;
             }
         } catch (IndexOutOfBoundsException e) {
             removeOnScrollListener(listener);
         } finally {
-            if (arrayList.isEmpty())
+            if (arrayList.isEmpty() && getLayoutManager().getItemCount() < 1)
                 Snackbar.make(AnikumiiRecyclerView.this, getContext().getString(R.string.search_failed), Snackbar.LENGTH_LONG).show();
         }
     }

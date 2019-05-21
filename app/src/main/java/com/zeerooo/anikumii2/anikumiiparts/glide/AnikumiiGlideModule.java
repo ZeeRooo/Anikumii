@@ -16,7 +16,7 @@ public class AnikumiiGlideModule extends AppGlideModule {
 
     @Override
     public void registerComponents(@NonNull Context context, @NonNull Glide glide, @NonNull Registry registry) {
-        registry.prepend(String.class, InputStream.class, new AnikumiiModelLoaderFactory(context));
+        registry.prepend(String.class, InputStream.class, new AnikumiiModelLoaderFactory(/*context*/));
 
         super.registerComponents(context, glide, registry);
     }

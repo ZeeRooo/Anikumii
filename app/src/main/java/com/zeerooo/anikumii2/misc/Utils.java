@@ -5,10 +5,10 @@ import java.util.regex.Pattern;
 
 public class Utils {
 
-    public static String getNumberFromString(String string, String regex) {
+    public static String matcher(String string, String regex) {
         Matcher m = Pattern.compile(regex).matcher(string);
         while (m.find()) {
-            return m.group(0);
+            return m.group(1);
         }
         return null;
     }

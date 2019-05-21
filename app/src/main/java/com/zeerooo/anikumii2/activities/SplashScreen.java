@@ -36,7 +36,7 @@ public class SplashScreen extends AppCompatActivity {
                 super.onPageStarted(view, url, bitmap);
                 String cookie = CookieManager.getInstance().getCookie(url);
                 if (cookie != null && cookie.contains("cf_clearance")) {
-                    ((Anikumii) getApplicationContext()).setCloudFlare(cookie.substring(cookie.indexOf("cf_clearance=") + 13).split(";")[0]);
+                   // ((Anikumii) getApplicationContext()).setCloudFlare(cookie.substring(cookie.indexOf("cf_clearance=") + 13).split(";")[0]);
                     loadUrl(getIntent().getDataString());
                 }
             }
@@ -61,8 +61,6 @@ public class SplashScreen extends AppCompatActivity {
             startActivity(new Intent(this, MainActivity.class));
         } else if (dataString.contains("anime/")) {
             startActivity(new Intent(this, EpisodesActivity.class).putExtra("animeUrl", dataString.split("animeflv.net")[1]));
-        } else if (dataString.contains("perfil/")) {
-            startActivity(new Intent(this, AboutUserActivity.class).putExtra("userName", dataString.split("perfil/")[1]).putExtra("url", dataString));
         }
     }
 }

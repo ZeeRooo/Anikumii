@@ -18,8 +18,12 @@
     <style name="ToolbarEpisodes" parent="ThemeOverlay.MaterialComponents.ActionBar">
         <item name="android:shadowColor">@android:color/black</item>
         <item name="android:shadowRadius">4</item>
-        <item name="android:textColor">@android:color/primary_text_dark_nodisable</item>
-        <item name="colorOnPrimary">@android:color/primary_text_dark_nodisable</item>
+        <item name="android:textColorPrimary">@android:color/primary_text_dark_nodisable</item>
+    </style>
+
+    <style name="TabLayout" parent="Widget.MaterialComponents.TabLayout">
+        <item name="tabTextColor">@android:color/secondary_text_dark_nodisable</item>
+        <item name="tabSelectedTextColor">@android:color/primary_text_dark_nodisable</item>
     </style>
 
     <style name="LoginTextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">

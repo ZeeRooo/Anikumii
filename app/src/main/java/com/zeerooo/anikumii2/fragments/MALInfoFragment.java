@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -27,20 +28,8 @@ import com.zeerooo.anikumii2.R;
 import com.zeerooo.anikumii2.anikumiiparts.AnikumiiUiHelper;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-
-import javax.net.ssl.HttpsURLConnection;
-
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableObserver;
-import io.reactivex.schedulers.Schedulers;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -53,7 +42,10 @@ public class MALInfoFragment extends Fragment {
     private short episodes;
     private int malID;
     private StringBuilder genre = new StringBuilder(), stringBuilder = new StringBuilder();
-    private String title_english, title_japanese, synonyms, score, type, premiered, airedStatus, synopsis, source, duration, classification, background, rank, popularity, members, favorites, producers, licensor, studio, animeName;
+    private String title_english, title_japanese, synonyms, score, type, premiered, airedStatus, synopsis, source, duration, classification, background, rank, popularity, members, favorites, producers, licensor, studio;
+    public static JSONObject MAL;
+    private boolean isFirstTime = true;
+    private ImageButton goToSite, editStats;
 
     public MALInfoFragment() {
         // Required empty public constructor
@@ -66,107 +58,62 @@ public class MALInfoFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (getArguments() != null && getActivity() != null) {
-            animeName = getArguments().getString("anime_name");
+    public void setMenuVisibility(boolean menuVisible) {
+        super.setMenuVisibility(menuVisible);
 
-            ImageButton goToSite = getActivity().findViewById(R.id.goToMAL);
-            AnikumiiUiHelper.transparentBackground(goToSite);
-            goToSite.setVisibility(View.VISIBLE);
-            goToSite.setOnClickListener((View view) -> startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("https://myanimelist.net/anime/" + malID))));
+        if (menuVisible && isFirstTime) {
+            if (getArguments() != null && getActivity() != null) {
+                malID = getArguments().getInt("malID");
 
-            ImageButton editStats = getActivity().findViewById(R.id.editStats);
-            AnikumiiUiHelper.transparentBackground(editStats);
-            editStats.setVisibility(View.VISIBLE);
-            editStats.setOnClickListener((View view) -> {
-                if (getActivity().getSharedPreferences("ZeeRooo@Anikumii!!", MODE_PRIVATE).getString("MALuserAvatar", null) == null) {
-                    AnikumiiUiHelper.Snackbar(getActivity().findViewById(R.id.act_episodes_rootView), getActivity().getString(R.string.warning_not_logged, "MyAnimeList"), Snackbar.LENGTH_LONG).show();
-                } else {
-                    Bundle bundle = new Bundle();
-                    bundle.putInt("malID", malID);
-                    bundle.putShort("episodes", episodes);
-                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    MALEditFragment fragment = new MALEditFragment();
-                    fragment.setArguments(bundle);
-                    fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.replace(R.id.MALAbout, fragment);
-                    fragmentTransaction.commit();
-                }
-            });
-        }
+                goToSite.setVisibility(View.VISIBLE);
+                goToSite.setOnClickListener((View view) -> startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("https://myanimelist.net/anime/" + malID))));
 
-        Observable
-                .just(true)
-                .subscribeOn(Schedulers.computation())
-                .doOnNext((Boolean aBoolean) -> networkRequest())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableObserver<Object>() {
-                    @Override
-                    public void onNext(Object o) {
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        if (isAdded() && getView() != null)
-                            AnikumiiUiHelper.Snackbar(getView(), getString(R.string.rxerror), Snackbar.LENGTH_LONG).show();
-
-                        e.printStackTrace();
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        if (isAdded())
-                            onCompleted();
-
-                        dispose();
+                editStats.setVisibility(View.VISIBLE);
+                editStats.setOnClickListener((View view) -> {
+                    if (getActivity().getSharedPreferences("ZeeRooo@Anikumii!!", MODE_PRIVATE).getString("MALuserAvatar", null) == null) {
+                        AnikumiiUiHelper.Snackbar(getActivity().findViewById(R.id.act_episodes_rootView), getActivity().getString(R.string.warning_not_logged, "MyAnimeList"), Snackbar.LENGTH_LONG).show();
+                    } else {
+                        Bundle bundle = new Bundle();
+                        bundle.putInt("malID", malID);
+                        bundle.putShort("episodes", episodes);
+                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                        MALEditFragment fragment = new MALEditFragment();
+                        fragment.setArguments(bundle);
+                        fragmentTransaction.addToBackStack(null);
+                        fragmentTransaction.replace(R.id.MALAbout, fragment);
+                        fragmentTransaction.commit();
                     }
                 });
-    }
 
-    private String encodeString(String url) {
-        return url.replace("<", "%3C").replace(">", "%3E").replace("#", "%23").replace("%", "%25")
-                .replace("{", "%7B").replace("}", "%7D").replace("|", "%7C").replace("\\", "%5C")
-                .replace("^", "%5E").replace("~", "%7E").replace("[", "%5B").replace("]", "%5D")
-                .replace("`", "%60").replace(";", "%3B").replace("/", "%2F").replace("?", "%3F")
-                .replace(":", "%3A").replace("@", "%40").replace("=", "%3D").replace("&", "%26")
-                .replace("$", "%24").replace("+", "%2B").replace(",", "%2C").replace(" ", "%20");
-    }
-
-    private void networkRequest() throws Exception {
-        // animeName = getAnime(animeName);
-        HttpsURLConnection conn = (HttpsURLConnection) new URL("https://api.jikan.moe/v3/search/anime?q=" + encodeString(animeName)).openConnection();
-        //  HttpsURLConnection conn = (HttpsURLConnection) new URL("https://myanimelist.net/search/prefix.json?type=anime&keyword=" + animeName).openConnection();
-        conn.setRequestMethod("GET");
-        conn.setUseCaches(true);
-
-        JSONObject MAL = (JSONObject) new JSONTokener(getJson(conn)).nextValue();
-        JSONArray jsonArray = MAL.getJSONArray("results");
-       /* JSONArray jsonArray = MAL.getJSONArray("categories").getJSONObject(0).getJSONArray("items");
-
-        for (int i = 0; i < jsonArray.length(); ++i) {
-            MAL = jsonArray.getJSONObject(i);
-            if (MAL.getString("name").equals(animeName))
-                malID = MAL.getString("id");
-        }
-
-        if (malID == null)
-            malID = jsonArray.getJSONObject(0).getString("id");*/
-        for (byte i = 0; i < jsonArray.length(); ++i) {
-            if (jsonArray.getJSONObject(i).getString("title").equals(animeName)) {
-                malID = jsonArray.getJSONObject(i).getInt("mal_id");
-                break;
+                try {
+                    networkRequest();
+                } catch (JSONException e) {
+                    AnikumiiUiHelper.Snackbar(getView(), getString(R.string.rxerror), Snackbar.LENGTH_LONG).show();
+                } finally {
+                    onCompleted();
+                    isFirstTime = false;
+                }
             }
         }
+    }
 
-        if (malID == 0)
-            malID = jsonArray.getJSONObject(0).getInt("mal_id");
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        goToSite = getActivity().findViewById(R.id.goToMAL);
+        AnikumiiUiHelper.transparentBackground(goToSite);
+        editStats = getActivity().findViewById(R.id.editStats);
+        AnikumiiUiHelper.transparentBackground(editStats);
+    }
 
-        conn = (HttpsURLConnection) new URL("https://api.jikan.moe/v3/anime/" + malID).openConnection();
-        conn.disconnect();
-
-        MAL = (JSONObject) new JSONTokener(getJson(conn)).nextValue();
+    private void networkRequest() throws JSONException {
+        // -- statics
+        score = "Valoracion: " + MAL.getString("score") + " (por " + MAL.getString("rank") + " usuarios)";
+        rank = "Rango: #" + MAL.getString("scored_by");
+        popularity = "Popularidad: " + MAL.getString("popularity");
+        members = "Miembros: " + MAL.getString("members");
+        favorites = "Favoritos: " + MAL.getString("favorites");
 
         // -- info
         title_english = "Título inglés: " + Html.fromHtml(MAL.getString("title_english"));
@@ -217,37 +164,15 @@ public class MALInfoFragment extends Fragment {
         classification = "Clasificación: " + MAL.getString("rating");
         synopsis = "Sinopsis: " + Html.fromHtml(MAL.getString("synopsis"));
         background = "Background: " + Html.fromHtml(MAL.getString("background"));
-
-        // -- statics
-        score = "Valoracion: " + MAL.getString("score") + " (por " + MAL.getString("rank") + " usuarios)";
-        rank = "Rango: #" + MAL.getString("scored_by");
-        popularity = "Popularidad: " + MAL.getString("popularity");
-        members = "Miembros: " + MAL.getString("members");
-        favorites = "Favoritos: " + MAL.getString("favorites");
     }
 
- /*   private String getAnime(String string) {
-        return string.toLowerCase().replace(":", "").replace("(", "").replace(")", "");
-    }*/
-
-    private String arrayToString(JSONObject MAL, String jsonArray) throws Exception {
+    private String arrayToString(JSONObject MAL, String jsonArray) throws JSONException {
         for (byte i = 0; i < MAL.getJSONArray(jsonArray).length(); ++i) {
             stringBuilder.append(MAL.getJSONArray(jsonArray).getJSONObject(i).getString("name"));
             if (i != MAL.getJSONArray(jsonArray).length() - 1)
                 stringBuilder.append(", ");
         }
         return stringBuilder.toString();
-    }
-
-    private String getJson(HttpsURLConnection connection) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        StringBuilder xml = new StringBuilder();
-        String line;
-        while ((line = bufferedReader.readLine()) != null)
-            xml.append(line);
-        bufferedReader.close();
-        connection.disconnect();
-        return xml.toString();
     }
 
     private SpannableStringBuilder getBold(String s) {
@@ -261,7 +186,7 @@ public class MALInfoFragment extends Fragment {
 
     private void onCompleted() {
         for (byte count = 1; count < 22; count++) {
-            String text = null;
+            String text = "";
 
             switch (count) {
                 case 1:

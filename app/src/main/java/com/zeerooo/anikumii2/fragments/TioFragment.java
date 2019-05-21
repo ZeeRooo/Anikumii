@@ -19,16 +19,16 @@ import java.util.ArrayList;
  * Created by ZeeRooo on 24/02/18
  */
 
-public class TioFLVFragment extends Fragment {
+public class TioFragment extends Fragment {
 
-    public TioFLVFragment() {
+    public TioFragment() {
         // Required empty public constructor
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_animeflv_episodes, container, false);
+        return inflater.inflate(R.layout.fragment_tio_episodes, container, false);
     }
 
     @Override
@@ -45,11 +45,11 @@ public class TioFLVFragment extends Fragment {
                 ArrayList<String> genreList = getArguments().getStringArrayList("genreList");
                 ArrayList<String> listRel = getArguments().getStringArrayList("listRel");
 
-                final AdapterEpisodes adapterEpisodes = new AdapterEpisodes(getActivity(), getArguments().getString("animeId"), getArguments().getString("ratingStr"), getArguments().getString("nextEpisode_date"), getArguments().getString("anime_about"), getArguments().getString("animeType"), genreList, listRel, getArguments().getBoolean("isFav"), getArguments().getBoolean("isFollowing"), getArguments().getBoolean("isPending"));
+                final AdapterEpisodes adapterEpisodes = new AdapterEpisodes(getActivity(), getArguments().getString("ratingStr"), getArguments().getString("nextEpisode_date"), getArguments().getString("anime_about"), getArguments().getString("animeType"), genreList, listRel, getArguments().getBoolean("isFav"), getArguments().getBoolean("isFollowing"), getArguments().getBoolean("isPending"));
 
                 anikumiiRecyclerView.setAdapter(adapterEpisodes);
                 anikumiiRecyclerView.setElementClass("ul.episodes-list list-unstyled > li > a" + "---" + getArguments().getString("animeId"));
-                anikumiiRecyclerView.setToLoad("https://tioanime.com" + getArguments().getString("animeUrl"));
+                anikumiiRecyclerView.setToLoad(getArguments().getString("animeUrl"));
                 anikumiiRecyclerView.setDynamicListener((byte) 12);
             }
         }

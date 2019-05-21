@@ -13,7 +13,7 @@
 
     <application
         android:name="com.zeerooo.anikumii2.Anikumii"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -21,49 +21,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
- <!--       <activity
-            android:name="com.zeerooo.anikumii2.activities.SplashScreen"
-            android:launchMode="singleTop"
-            android:noHistory="true"
-            android:resizeableActivity="true"
-            android:theme="@style/AppTheme">
-
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="m.animeflv.net"
-                    android:path=""
-                    android:pathPattern="/"
-                    android:scheme="https" />
-                <data
-                    android:host="animeflv.net"
-                    android:path=""
-                    android:pathPattern="/"
-                    android:scheme="https" />
-
-                <data
-                    android:host="m.animeflv.net"
-                    android:pathPrefix="/anime"
-                    android:scheme="https" />
-                <data
-                    android:host="animeflv.net"
-                    android:pathPrefix="/anime"
-                    android:scheme="https" />
-
-                <data
-                    android:host="m.animeflv.net"
-                    android:pathPrefix="/perfil"
-                    android:scheme="https" />
-                <data
-                    android:host="animeflv.net"
-                    android:pathPrefix="/perfil"
-                    android:scheme="https" />
-            </intent-filter>
-        </activity>-->
         <activity
             android:name="com.zeerooo.anikumii2.activities.MainActivity"
             android:configChanges="orientation|screenSize|screenLayout"
@@ -83,15 +40,26 @@
 
                 <data
                     android:host="tioanime.com"
-                    android:path=""
                     android:pathPattern="/"
                     android:scheme="https" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.EpisodesActivity"
+            android:name="com.zeerooo.anikumii2.activities.EpisodesActivity"
             android:configChanges="orientation|screenSize|screenLayout"
-            android:resizeableActivity="true" />
+            android:resizeableActivity="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="tioanime.com"
+                    android:pathPrefix="/anime"
+                    android:scheme="https" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activities.LoginActivity"
             android:configChanges="orientation|screenSize|screenLayout"
@@ -99,11 +67,6 @@
             android:launchMode="singleTop"
             android:resizeableActivity="true"
             android:theme="@style/Login" />
-        <activity
-            android:name=".activities.AboutUserActivity"
-            android:configChanges="orientation|screenSize|screenLayout"
-            android:launchMode="singleTop"
-            android:resizeableActivity="true" />
         <activity
             android:name=".activities.SettingsActivity"
             android:configChanges="orientation|screenSize"
@@ -115,7 +78,19 @@
             android:launchMode="singleTop"
             android:resizeableActivity="true"
             android:screenOrientation="sensorLandscape"
-            android:supportsPictureInPicture="true" />
+            android:supportsPictureInPicture="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="tioanime.com"
+                    android:pathPrefix="/ver"
+                    android:scheme="https" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".activities.CommentsActivity"
             android:configChanges="orientation|screenSize|screenLayout"
@@ -125,9 +100,6 @@
         <!-- Let's use IntentServices instead of AsyncTask -->
         <service
             android:name=".services.AccountsService"
-            android:enabled="true" />
-        <service
-            android:name=".services.AnimeFlvApiService"
             android:enabled="true" />
         <service
             android:name=".services.MALApiService"

@@ -4,10 +4,41 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/toolbar" />
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
 
-    <com.zeerooo.anikumii2.anikumiiparts.AnikumiiRecyclerView
-        android:id="@+id/new_animes_recycler_view"
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_scrollFlags="scroll|enterAlways|snap">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/searchtoolbar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/white"
+                android:theme="@style/ThemeOverlay.MaterialComponents.Light"
+                android:visibility="invisible" />
+        </RelativeLayout>
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabs"
+            style="@style/TabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            app:tabMode="fixed" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/episodes_viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
@@ -19,7 +50,7 @@
         android:layout_margin="16dp"
         android:visibility="gone"
         app:fabSize="normal"
-        app:layout_anchor="@id/new_animes_recycler_view"
+        app:layout_anchor="@id/episodes_viewPager"
         app:layout_anchorGravity="bottom|end"
         app:layout_behavior="com.zeerooo.anikumii2.misc.ScrollAwareFABBehavior"
         app:rippleColor="#01bcf2"

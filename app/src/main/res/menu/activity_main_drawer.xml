@@ -20,9 +20,7 @@
             android:title="@string/nav_live_animes" />
     </group>
 
-    <group
-        android:id="@+id/nul"
-        android:menuCategory="system">
+    <group android:id="@+id/d" android:menuCategory="system">
         <item
             android:id="@+id/nav_log_in"
             android:icon="@drawable/ic_account"

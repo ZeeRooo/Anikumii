@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 
 public class AnimeRatingView extends ProgressBar {
     private String number;
+    private short aShort;
     private Paint paint;
     private Rect rect;
     private byte xPos, yPos;
@@ -26,9 +27,14 @@ public class AnimeRatingView extends ProgressBar {
 
     public void setAnimatesProgress() {
         ObjectAnimator
-                .ofInt(this, "Progress", 0, Integer.valueOf(number.replace(".", "")))
+                .ofInt(this, "Progress", 0, aShort)
                 .setDuration(1000)
                 .start();
+    }
+
+    @Override
+    public synchronized void setProgress(int progress) {
+        super.setProgress(progress);
     }
 
     @Override
@@ -39,13 +45,10 @@ public class AnimeRatingView extends ProgressBar {
         yPos = (byte) ((getHeight() / 2) - ((paint.descent() + paint.ascent()) / 2));
     }
 
-    @Override
-    public synchronized void setProgress(int progress) {
-        super.setProgress(progress);
-    }
-
     public void init(String number) {
         this.number = number;
+
+        aShort = Short.valueOf(number.replace(".", ""));
 
         paint = new Paint();
         rect = new Rect();
@@ -53,23 +56,16 @@ public class AnimeRatingView extends ProgressBar {
         paint.setTextAlign(Paint.Align.CENTER);
 
         int color;
-        switch ((byte) Double.parseDouble(number)) {
-            case 1:
-                color = Color.parseColor("#e32228");
-                break;
-            case 2:
-                color = Color.parseColor("#f27127");
-                break;
-            case 3:
-                color = Color.parseColor("#f7cb19");
-                break;
-            case 4:
-                color = Color.parseColor("#73b045");
-                break;
-            default:
-                color = Color.parseColor("#03804e");
-                break;
-        }
+        if (aShort < 11)
+            color = Color.parseColor("#e32228");
+        else if (aShort < 21)
+            color = Color.parseColor("#f27127");
+        else if (aShort < 31)
+            color = Color.parseColor("#f7cb19");
+        else if (aShort < 41)
+            color = Color.parseColor("#73b045");
+        else
+            color = Color.parseColor("#03804e");
 
         GradientDrawable gradientDrawable = (GradientDrawable) getProgressDrawable();
         gradientDrawable.setColor(color);

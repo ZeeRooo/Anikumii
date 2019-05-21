@@ -8,8 +8,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.zeerooo.anikumii2.Anikumii;
 import com.zeerooo.anikumii2.R;
 import com.zeerooo.anikumii2.activities.EpisodesActivity;
 import com.zeerooo.anikumii2.activities.VPlayerActivity;
@@ -18,9 +22,6 @@ import com.zeerooo.anikumii2.misc.ItemsModel;
 
 import java.util.ArrayList;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 /**
  * Created by ZeeRooo on 05/01/18
  */
@@ -28,11 +29,9 @@ import androidx.recyclerview.widget.RecyclerView;
 public class AdapterAnimes extends RecyclerView.Adapter<AdapterAnimes.MyViewHolder> {
     private Context context;
     private ArrayList<ItemsModel> animeList = new ArrayList<>();
-    private boolean miniCard;
 
-    public AdapterAnimes(Context context, boolean miniCard) {
+    public AdapterAnimes(Context context) {
         this.context = context;
-        this.miniCard = miniCard;
     }
 
     public void addAll(ArrayList<ItemsModel> arrayList) {
@@ -44,10 +43,7 @@ public class AdapterAnimes extends RecyclerView.Adapter<AdapterAnimes.MyViewHold
     @NonNull
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView;
-        if (miniCard)
-            itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_about_user_anime, parent, false);
-        else
-            itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_anime, parent, false);
+        itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_anime, parent, false);
         return new MyViewHolder(itemView);
     }
 
@@ -55,10 +51,9 @@ public class AdapterAnimes extends RecyclerView.Adapter<AdapterAnimes.MyViewHold
     public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
         ItemsModel items = animeList.get(position);
         holder.title.setText(items.getTitle());
-        if (!miniCard)
-            holder.number.setText(items.getNumber());
+        holder.number.setText(items.getNumber());
 
-        GlideApp.with(context).load("https://tioanime.com" + items.getImg_url()).apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)).into(holder.img);
+        GlideApp.with(context).load(Anikumii.dominium + items.getImg_url()).apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)).into(holder.img);
     }
 
     @Override
@@ -72,14 +67,9 @@ public class AdapterAnimes extends RecyclerView.Adapter<AdapterAnimes.MyViewHold
 
         MyViewHolder(View view) {
             super(view);
-            if (!miniCard) {
-                number = view.findViewById(R.id.chapter_count);
-                title = view.findViewById(R.id.chapter_name);
-                img = view.findViewById(R.id.chapter_img);
-            } else {
-                title = view.findViewById(R.id.anime_name);
-                img = view.findViewById(R.id.anime_image);
-            }
+            number = view.findViewById(R.id.chapter_count);
+            title = view.findViewById(R.id.chapter_name);
+            img = view.findViewById(R.id.chapter_img);
             view.setOnClickListener(this);
         }
 
@@ -88,11 +78,11 @@ public class AdapterAnimes extends RecyclerView.Adapter<AdapterAnimes.MyViewHold
             final ItemsModel items = animeList.get(getAdapterPosition());
             if (items.getChapterUrl().contains("/ver/")) {
                 Intent videoAct = new Intent(context, VPlayerActivity.class);
-                videoAct.putExtra("chapterUrl", "https://tioanime.com/" + items.getChapterUrl()).putExtra("chapterTitle", items.getTitle()).putExtra("chapterNumber", items.getNumber());
+                videoAct.putExtra("chapterUrl", Anikumii.dominium + items.getChapterUrl());
                 context.startActivity(videoAct);
             } else {
                 Intent episodesAct = new Intent(context, EpisodesActivity.class);
-                episodesAct.putExtra("animeUrl", items.getChapterUrl()).putExtra("animeName", items.getTitle());
+                episodesAct.putExtra("animeUrl", Anikumii.dominium + items.getChapterUrl());
                 context.startActivity(episodesAct);
             }
         }
