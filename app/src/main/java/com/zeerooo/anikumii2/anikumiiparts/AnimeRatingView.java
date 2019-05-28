@@ -15,7 +15,7 @@ import android.widget.ProgressBar;
  */
 
 public class AnimeRatingView extends ProgressBar {
-    private String number;
+    private String number = "0.0";
     private short aShort;
     private Paint paint;
     private Rect rect;
@@ -23,6 +23,8 @@ public class AnimeRatingView extends ProgressBar {
 
     public AnimeRatingView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        paint = new Paint();
+        rect = new Rect();
     }
 
     public void setAnimatesProgress() {
@@ -39,10 +41,10 @@ public class AnimeRatingView extends ProgressBar {
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        super.onLayout(changed, left, top, right, bottom);
         paint.setTextSize(getWidth() / 3);
         xPos = (byte) (getWidth() / 2 - rect.centerX());
         yPos = (byte) ((getHeight() / 2) - ((paint.descent() + paint.ascent()) / 2));
+        super.onLayout(changed, left, top, right, bottom);
     }
 
     public void init(String number) {
@@ -50,8 +52,6 @@ public class AnimeRatingView extends ProgressBar {
 
         aShort = Short.valueOf(number.replace(".", ""));
 
-        paint = new Paint();
-        rect = new Rect();
         paint.setAntiAlias(true);
         paint.setTextAlign(Paint.Align.CENTER);
 

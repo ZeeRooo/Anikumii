@@ -80,24 +80,17 @@
         android:tint="#FB3447"
         app:srcCompat="@drawable/ic_favorite" />
 
-    <ImageButton
-        android:id="@+id/add_anime_follow"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/searchEpisodes"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/anime_about"
+        android:layout_toStartOf="@id/readMore"
         android:layout_toEndOf="@id/add_anime_fav"
-        android:tint="#14BBF0"
-        app:srcCompat="@drawable/ic_follow" />
-
-    <ImageButton
-        android:id="@+id/add_anime_pending"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/anime_about"
-        android:layout_toEndOf="@id/add_anime_follow"
-        android:tint="#FFC107"
-        app:srcCompat="@drawable/ic_pending" />
+        android:inputType="number"
+        android:voiceSearchMode="showVoiceSearchButton|launchRecognizer"
+        app:queryHint="@string/search_by_number"
+        app:searchIcon="@drawable/ic_search"
+        app:tooltipText="@string/search_by_number" />
 
 </RelativeLayout>

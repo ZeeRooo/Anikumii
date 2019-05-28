@@ -8,6 +8,7 @@ import android.os.Parcelable;
  */
 
 public class ItemsModel implements Parcelable {
+
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         public ItemsModel createFromParcel(Parcel in) {
             return new ItemsModel(in);
@@ -17,7 +18,8 @@ public class ItemsModel implements Parcelable {
             return new ItemsModel[size];
         }
     };
-    private final String title, number, img_url, chapterUrl;
+
+    private String title, number, img_url, chapterUrl;
     // private boolean seen;
     private int textColor;
 

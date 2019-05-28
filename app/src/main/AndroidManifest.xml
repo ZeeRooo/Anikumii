@@ -7,12 +7,10 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <!--<uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />-->
 
     <application
-        android:name="com.zeerooo.anikumii2.Anikumii"
+        android:name=".Anikumii"
         android:allowBackup="false"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
@@ -22,12 +20,12 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
-            android:name="com.zeerooo.anikumii2.activities.MainActivity"
+            android:name=".activities.MainActivity"
             android:configChanges="orientation|screenSize|screenLayout"
             android:launchMode="singleTop"
             android:resizeableActivity="true"
             android:theme="@style/AppTheme">
-            <intent-filter>
+             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -42,10 +40,14 @@
                     android:host="tioanime.com"
                     android:pathPattern="/"
                     android:scheme="https" />
+                <data
+                    android:host="tiohentai.com"
+                    android:pathPattern="/"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
         <activity
-            android:name="com.zeerooo.anikumii2.activities.EpisodesActivity"
+            android:name=".activities.EpisodesActivity"
             android:configChanges="orientation|screenSize|screenLayout"
             android:resizeableActivity="true">
             <intent-filter>
@@ -57,6 +59,10 @@
                 <data
                     android:host="tioanime.com"
                     android:pathPrefix="/anime"
+                    android:scheme="https" />
+                <data
+                    android:host="tiohentai.com"
+                    android:pathPrefix="/hentai"
                     android:scheme="https" />
             </intent-filter>
         </activity>
@@ -89,22 +95,23 @@
                     android:host="tioanime.com"
                     android:pathPrefix="/ver"
                     android:scheme="https" />
+                <data
+                    android:host="tiohentai.com"
+                    android:pathPrefix="/ver"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
         <activity
             android:name=".activities.CommentsActivity"
             android:configChanges="orientation|screenSize|screenLayout"
             android:launchMode="singleTop"
-            android:resizeableActivity="true" />
-
-        <!-- Let's use IntentServices instead of AsyncTask -->
+            android:resizeableActivity="true" /> <!-- Let's use IntentServices instead of AsyncTask -->
         <service
             android:name=".services.AccountsService"
             android:enabled="true" />
         <service
             android:name=".services.MALApiService"
             android:enabled="true" />
-
     </application>
 
 </manifest>

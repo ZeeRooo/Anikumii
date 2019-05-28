@@ -13,10 +13,6 @@
 
     <string name="bottom_sheet_newFav">Agregar a favoritos</string>
     <string name="bottom_sheet_removeFav">Remover de favoritos</string>
-    <string name="bottom_sheet_newPending">Agregar a animes que pienso ver</string>
-    <string name="bottom_sheet_removePending">Remover de animes que pienso ver</string>
-    <string name="bottom_sheet_follow">Agregar a animes que veo</string>
-    <string name="bottom_sheet_unfollow">Remover de animes que veo</string>
     <string name="bottom_sheet_stream">Stream</string>
 
     <string name="bottom_sheet_stream_summary">Ingrese la dirección ip que aparece arriba en un navegador conctado a la misma red que este dispositivo y disfrute del video.</string>
@@ -104,10 +100,12 @@
     <string name="zippyshare">Zippyshare</string>
     <string name="streamango">Streamango</string>
     <string name="unload_video">Espere a que el video sea procesado</string>
-    <string name="downloadMessage">\"Seleccione un gestor de descarga. Se recomienda utilizar la opción Anikumii!!\"</string>
+    <string name="downloadMessage">Seleccione un gestor de descarga. Se recomienda utilizar la opción Anikumii!!</string>
     <string name="mediafire">MediaFire</string>
     <string name="okru">ok.ru</string>
     <string name="rapidvideo">Rapidvideo</string>
+
+    <string name="search_by_number">Buscar por número</string>
 
     <string-array name="intervalPrefTitles">
         <item>1 hora</item>

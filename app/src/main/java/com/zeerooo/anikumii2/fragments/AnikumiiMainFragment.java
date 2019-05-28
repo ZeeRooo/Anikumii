@@ -1,4 +1,4 @@
-package com.zeerooo.anikumii2.anikumiiparts;
+package com.zeerooo.anikumii2.fragments;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -7,15 +7,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.zeerooo.anikumii2.R;
 import com.zeerooo.anikumii2.adapters.AdapterAnimes;
+import com.zeerooo.anikumii2.adapters.AdapterMain;
+import com.zeerooo.anikumii2.anikumiiparts.AnikumiiRecyclerView;
+import com.zeerooo.anikumii2.anikumiiparts.AnikumiiSharedPreferences;
 
 public class AnikumiiMainFragment extends Fragment {
 
-    private AnikumiiRecyclerView anikumiiRecyclerView;
+    public AnikumiiRecyclerView anikumiiRecyclerView;
     private GridLayoutManager gridLayoutManager;
     private AnikumiiSharedPreferences mPreferences;
 
@@ -25,10 +27,8 @@ public class AnikumiiMainFragment extends Fragment {
         if (getActivity() != null && getView() != null) {
             mPreferences = new AnikumiiSharedPreferences(getActivity());
 
-            anikumiiRecyclerView = getView().findViewById(R.id.new_animes_recycler_view);
-            anikumiiRecyclerView.setAdapter(new AdapterAnimes(getActivity()));
-            anikumiiRecyclerView.setItemAnimator(new DefaultItemAnimator());
-            //  anikumiiRecyclerView.setHasFixedSize(true);
+            anikumiiRecyclerView = getView().findViewById(R.id.recyclerView);
+            anikumiiRecyclerView.setAdapter(new AdapterAnimes());
 
             gridLayoutManager = new GridLayoutManager(getActivity(), mPreferences.getInt("gridColumnsPortrait", Math.round((float) getResources().getDisplayMetrics().widthPixels / 300)));
             anikumiiRecyclerView.setLayoutManager(gridLayoutManager);
@@ -45,18 +45,11 @@ public class AnikumiiMainFragment extends Fragment {
             gridLayoutManager.setSpanCount(mPreferences.getInt("gridColumnsPortrait", Math.round((float) getResources().getDisplayMetrics().widthPixels / 300)));
     }
 
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        anikumiiRecyclerView.exit();
-    }
-
     public void reactiveRecyclerView(String title, String toLoad, String elementClass, byte maxDisplayedItems) {
-        anikumiiRecyclerView.setAdapter(new AdapterAnimes(getActivity()));
+        ((AdapterMain) anikumiiRecyclerView.getAdapter()).removeItemsFromArray();
         anikumiiRecyclerView.setToLoad(toLoad);
         anikumiiRecyclerView.setElementClass(elementClass);
-        anikumiiRecyclerView.setDynamicListener(maxDisplayedItems);
+        anikumiiRecyclerView.setMaxDisplayedItems(maxDisplayedItems);
 
         ((Toolbar) getActivity().findViewById(R.id.toolbar)).setTitle(title);
     }

@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 
 import com.zeerooo.anikumii2.Anikumii;
 import com.zeerooo.anikumii2.R;
-import com.zeerooo.anikumii2.anikumiiparts.AnikumiiMainFragment;
 
 public class TioHentaiFragment extends AnikumiiMainFragment {
 
@@ -22,7 +21,7 @@ public class TioHentaiFragment extends AnikumiiMainFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_tio_main, container, false);
+        return inflater.inflate(R.layout.recyclerview, container, false);
     }
 
     @Override
@@ -33,6 +32,7 @@ public class TioHentaiFragment extends AnikumiiMainFragment {
 
         if (menuVisible && isFirstTime) {
             reactiveRecyclerView(getString(R.string.latest_episodes), "https://tiohentai.com/", "article.episode", (byte) 20);
+            anikumiiRecyclerView.setDynamicListener();
 
             isFirstTime = false;
         }

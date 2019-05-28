@@ -20,69 +20,52 @@ import com.zeerooo.anikumii2.activities.VPlayerActivity;
 import com.zeerooo.anikumii2.anikumiiparts.glide.GlideApp;
 import com.zeerooo.anikumii2.misc.ItemsModel;
 
-import java.util.ArrayList;
-
 /**
  * Created by ZeeRooo on 05/01/18
  */
 
-public class AdapterAnimes extends RecyclerView.Adapter<AdapterAnimes.MyViewHolder> {
+public class AdapterAnimes extends AdapterMain {
     private Context context;
-    private ArrayList<ItemsModel> animeList = new ArrayList<>();
 
-    public AdapterAnimes(Context context) {
-        this.context = context;
-    }
-
-    public void addAll(ArrayList<ItemsModel> arrayList) {
-        animeList.addAll(arrayList);
-        notifyDataSetChanged();
-    }
-
-    @Override
     @NonNull
-    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView;
-        itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_anime, parent, false);
-        return new MyViewHolder(itemView);
+    @Override
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        context = viewGroup.getContext();
+        return new MyViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.card_anime, viewGroup, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
-        ItemsModel items = animeList.get(position);
-        holder.title.setText(items.getTitle());
-        holder.number.setText(items.getNumber());
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+        ItemsModel itemsModel = animeList.get(i);
+        ((AdapterAnimes.MyViewHolder) viewHolder).titleTextView.setText(itemsModel.getTitle());
+        ((AdapterAnimes.MyViewHolder) viewHolder).numberTextView.setText(itemsModel.getNumber());
 
-        GlideApp.with(context).load(Anikumii.dominium + items.getImg_url()).apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)).into(holder.img);
-    }
-
-    @Override
-    public int getItemCount() {
-        return animeList.size();
+        GlideApp.with(context).load(Anikumii.dominium + itemsModel.getImg_url()).apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)).into(((AdapterAnimes.MyViewHolder) viewHolder).animeImageView);
+        super.onBindViewHolder(viewHolder, i);
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private TextView title, number;
-        private ImageView img;
+        private TextView titleTextView, numberTextView;
+        private ImageView animeImageView;
 
         MyViewHolder(View view) {
             super(view);
-            number = view.findViewById(R.id.chapter_count);
-            title = view.findViewById(R.id.chapter_name);
-            img = view.findViewById(R.id.chapter_img);
+            numberTextView = view.findViewById(R.id.chapter_count);
+            titleTextView = view.findViewById(R.id.chapter_name);
+            animeImageView = view.findViewById(R.id.chapter_img);
             view.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            final ItemsModel items = animeList.get(getAdapterPosition());
-            if (items.getChapterUrl().contains("/ver/")) {
+            final ItemsModel itemsModel = animeList.get(getAdapterPosition());
+            if (itemsModel.getChapterUrl().contains("/ver/")) {
                 Intent videoAct = new Intent(context, VPlayerActivity.class);
-                videoAct.putExtra("chapterUrl", Anikumii.dominium + items.getChapterUrl());
+                videoAct.putExtra("chapterUrl", Anikumii.dominium + itemsModel.getChapterUrl());
                 context.startActivity(videoAct);
             } else {
                 Intent episodesAct = new Intent(context, EpisodesActivity.class);
-                episodesAct.putExtra("animeUrl", Anikumii.dominium + items.getChapterUrl());
+                episodesAct.putExtra("animeUrl", Anikumii.dominium + itemsModel.getChapterUrl());
                 context.startActivity(episodesAct);
             }
         }

@@ -1,5 +1,6 @@
 package com.zeerooo.anikumii2.fragments;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,20 +10,18 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.zeerooo.anikumii2.R;
 import com.zeerooo.anikumii2.adapters.AdapterAnimes;
 import com.zeerooo.anikumii2.anikumiiparts.AnikumiiRecyclerView;
+import com.zeerooo.anikumii2.anikumiiparts.AnikumiiSharedPreferences;
 
 public class AnimesRecyclerViewFragment extends Fragment {
     private String toLoad;
-    private AnikumiiRecyclerView recyclerView;
-
-    public AnimesRecyclerViewFragment() {
-        // Required empty public constructor
-    }
+    private AnikumiiRecyclerView anikumiiRecyclerView;
+    private GridLayoutManager gridLayoutManager;
+    private AnikumiiSharedPreferences mPreferences;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -30,11 +29,11 @@ public class AnimesRecyclerViewFragment extends Fragment {
             toLoad = getArguments().getString("toLoad");
             // if (toLoad.contains(".com/directorio")) {
             getActivity().findViewById(R.id.collapsing_appbarlayout).setVisibility(View.GONE);
-            getActivity().findViewById(R.id.episodesActRecyclerView).setVisibility(View.GONE);
+            getActivity().findViewById(R.id.recyclerView).setVisibility(View.GONE);
             //  }
         }
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.main_app_bar, container, false);
+        return inflater.inflate(R.layout.fragment_animes, container, false);
     }
 
     @Override
@@ -45,20 +44,31 @@ public class AnimesRecyclerViewFragment extends Fragment {
             ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
             ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-            recyclerView = getView().findViewById(R.id.new_animes_recycler_view);
-            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-            recyclerView.setItemAnimator(new DefaultItemAnimator());
-            recyclerView.setHasFixedSize(true);
+            mPreferences = new AnikumiiSharedPreferences(getActivity());
+            gridLayoutManager = new GridLayoutManager(getActivity(), mPreferences.getInt("gridColumnsPortrait", Math.round((float) getResources().getDisplayMetrics().widthPixels / 300)));
 
             if (getArguments() != null) {
                 mToolbar.setTitle(getArguments().getString("genre"));
 
-                recyclerView.setAdapter(new AdapterAnimes(getActivity()));
-                recyclerView.setElementClass(getArguments().getString("element"));
-                recyclerView.setToLoad(toLoad);
-                recyclerView.setDynamicListener((byte) 19);
+                anikumiiRecyclerView = getView().findViewById(R.id.recyclerView);
+                anikumiiRecyclerView.setAdapter(new AdapterAnimes());
+                anikumiiRecyclerView.setLayoutManager(gridLayoutManager);
+                anikumiiRecyclerView.setElementClass(getArguments().getString("element"));
+                anikumiiRecyclerView.setToLoad(toLoad);
+                anikumiiRecyclerView.setDynamicListener();
+                anikumiiRecyclerView.setMaxDisplayedItems((byte) 12);
             }
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)
+            gridLayoutManager.setSpanCount(mPreferences.getInt("gridColumnsLandscape", Math.round((float) getResources().getDisplayMetrics().heightPixels / 300)));
+        else
+            gridLayoutManager.setSpanCount(mPreferences.getInt("gridColumnsPortrait", Math.round((float) getResources().getDisplayMetrics().widthPixels / 300)));
     }
 
     @Override
@@ -66,9 +76,9 @@ public class AnimesRecyclerViewFragment extends Fragment {
         super.onDetach();
         if (getActivity() != null && getArguments() != null) {
             //  if (toLoad.contains(".com/directorio")) {
-            recyclerView.exit();
+            anikumiiRecyclerView.exit();
             getActivity().findViewById(R.id.collapsing_appbarlayout).setVisibility(View.VISIBLE);
-            getActivity().findViewById(R.id.episodesActRecyclerView).setVisibility(View.VISIBLE);
+            getActivity().findViewById(R.id.recyclerView).setVisibility(View.VISIBLE);
         }
     }
 }

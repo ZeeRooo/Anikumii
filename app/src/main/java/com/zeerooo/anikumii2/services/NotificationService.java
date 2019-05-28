@@ -70,7 +70,7 @@ public class NotificationService extends Worker {
 
             if (mPreferences.getBoolean("enableNotif", false)) {
 
-                for (byte episodesCount = 0; episodesCount < 1; episodesCount++) {
+                for (byte episodesCount = 0; episodesCount < 5; episodesCount++) {
                     title = episodes.get(episodesCount).getElementsByClass("title").text();
                     number = Utils.matcher(title, "(\\d+)\\D*$");
                     title = title.replace(number, "");

@@ -26,13 +26,12 @@ public class SearchCursorAdapter extends SimpleCursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        TextView title = view.findViewById(R.id.suggerencesTitle);
-        title.setText(cursor.getString(1));
+        TextView titleTextView = view.findViewById(R.id.suggerencesTitle);
+        titleTextView.setText(cursor.getString(1));
 
-        TextView type = view.findViewById(R.id.suggerenceType);
-        type.setText(cursor.getString(2));
+        TextView typeTextView = view.findViewById(R.id.suggerenceType);
+        typeTextView.setText(cursor.getString(2));
 
-        ImageView icon = view.findViewById(R.id.suggerenceIcon);
-        GlideApp.with(context).load(Anikumii.dominium + "/uploads/portadas/" + cursor.getString(3) + ".jpg").apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).circleCrop()).into(icon);
+        GlideApp.with(context).load(Anikumii.dominium + "/uploads/portadas/" + cursor.getString(3) + ".jpg").apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).circleCrop()).into((ImageView) view.findViewById(R.id.suggerenceIcon));
     }
 }

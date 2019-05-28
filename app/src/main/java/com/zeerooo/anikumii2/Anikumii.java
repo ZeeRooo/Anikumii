@@ -21,7 +21,7 @@ public class Anikumii extends Application {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
 
-        ACRA.init(this);
+      //TODO  ACRA.init(this);
     }
 
 }

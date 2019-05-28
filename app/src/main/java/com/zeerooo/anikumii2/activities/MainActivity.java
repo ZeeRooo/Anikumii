@@ -183,6 +183,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        viewPagerAdapter.getCurrentFragment().anikumiiRecyclerView.exit();
+    }
+
+    @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START))
             drawer.closeDrawer(GravityCompat.START);
@@ -309,6 +315,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 searchItem.collapseActionView();
 
                 viewPagerAdapter.getCurrentFragment().reactiveRecyclerView(query, Anikumii.dominium + "directorio?q=" + query, "article.anime", (byte) 19);
+
+                canGoBack = true;
                 return true;
             }
 
