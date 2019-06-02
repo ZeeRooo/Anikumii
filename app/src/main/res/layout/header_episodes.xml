@@ -16,7 +16,7 @@
         android:layout_margin="5dp"
         app:chipSpacing="4dp" />
 
-    <com.zeerooo.anikumii2.anikumiiparts.AnimeRatingView
+    <com.zeerooo.anikumii.anikumiiparts.AnimeRatingView
         android:id="@+id/AnimeRatingView"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="53dp"
@@ -57,7 +57,7 @@
         android:layout_margin="5dp"
         android:ellipsize="end"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-        android:textColor="@android:color/secondary_text_dark"
+        android:textColor="@color/disabled"
         android:textSize="14sp" />
 
     <TextView

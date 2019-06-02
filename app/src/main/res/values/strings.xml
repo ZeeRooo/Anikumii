@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Anikumii!! - Tio</string>
+    <string name="app_name">Anikumii!!</string>
     <string name="latest_episodes">Últimos episodios</string>
     <string name="searchAnime">Buscar anime&#8230;</string>
     <string name="search_failed">No se encontraron resultados</string>
@@ -18,17 +18,7 @@
     <string name="bottom_sheet_stream_summary">Ingrese la dirección ip que aparece arriba en un navegador conctado a la misma red que este dispositivo y disfrute del video.</string>
     <string name="bottom_sheet_stream_disconnect">Desconectar</string>
 
-    <string name="navigation_drawer_open">Abrir el drawer</string>
-    <string name="navigation_drawer_close">Cerrar el drawer</string>
-
     <!-- Strings related to login -->
-    <string name="lost_password">¿Olvidaste tu contraseña?</string>
-    <string name="login_error">Correo o contraseña inválidos</string>
-    <string name="new_account">¿No tienes cuenta? REGISTRATE</string>
-    <string name="prompt_password">Contraseña</string>
-    <string name="error_invalid_email">Este correo es incorrecto</string>
-    <string name="error_invalid_password">Esta contraseña es muy corta</string>
-    <string name="error_field_required">Este campo es requerido</string>
 
     <string name="readMore">Leer más</string>
     <string name="readLess">Leer menos</string>
@@ -45,8 +35,8 @@
     <string name="statics">Estadísticas</string>
     <string name="contactMe">Enviar mail al programador</string>
     <string name="basicParams">Parámetros básicos</string>
-    <string name="stateChooser">Selecciona un estado</string>
-    <string name="mal_seenEpisodesNumber">Número de episodios vistos %d</string>
+    <string name="stateChooser">Estado</string>
+    <string name="mal_seenEpisodesNumber">Episodios vistos</string>
     <string name="rate">Valorar</string>
     <string name="advancedParams">Parámetros avanzados</string>
     <string name="mal_startDate">¿Cuándo comenzó a verlo?</string>
@@ -56,16 +46,15 @@
     <string name="mal_priorityChooser">Seleccione una prioridad</string>
     <string name="source">Fuente</string>
     <string name="mal_sourceChooser">Seleccione una fuente</string>
-    <string name="mal_rewatchTimes">Cantidad de veces que lo volviste a ver %d</string>
+    <string name="mal_rewatchTimes">Veces que lo volviste a ver</string>
     <string name="mal_rewatchProbability">Probabilidad de reverlo</string>
     <string name="mal_rewatchProbabilityChooser">¿Cuanta probabilidad hay de que revea el anime?</string>
     <string name="newComment">Agrega un comentario</string>
     <string name="mal_deletefromList">Eliminar anime de la lista</string>
     <string name="myanimelist">MyAnimeList</string>
-    <string name="mal_startDateText">Comenzó a verlo: %d / %d / %d</string>
-    <string name="mal_endDateText">Lo finalizó: %d / %d / %d</string>
-    <string name="warning_not_logged">No iniciaste sesión en %s</string>
-    <string name="bothSites">En MyAnimeList</string>
+    <string name="mal_startDateText">Comenzó a verlo: %s</string>
+    <string name="mal_endDateText">Lo finalizó: %s</string>
+    <string name="warning_not_logged">No iniciaste sesión</string>
     <string name="updateAccountsInfo">Actualizar información de la cuenta</string>
 
 
@@ -106,6 +95,10 @@
     <string name="rapidvideo">Rapidvideo</string>
 
     <string name="search_by_number">Buscar por número</string>
+    <string name="string_action_filter">Filtrar</string>
+    <string name="overflow_shortcut_description">Ir al perfil</string>
+    <string name="log_in_facebook">Facebook</string>
+    <string name="log_in_twitter">Twitter</string>
 
     <string-array name="intervalPrefTitles">
         <item>1 hora</item>

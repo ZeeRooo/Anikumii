@@ -1,18 +1,12 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
+    <style name="AppTheme" parent="BaseTheme" />
+
+    <style name="SettingsTheme" parent="BaseTheme" />
+
+    <style name="BaseTheme" parent="Theme.MaterialComponents.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowActionModeOverlay">true</item>
-    </style>
-
-    <style name="Login" parent="Theme.MaterialComponents">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorAccent">@android:color/black</item>
-        <item name="android:textColorHint">@android:color/white</item>
-        <item name="colorControlNormal">@android:color/white</item>
-        <item name="colorControlActivated">@android:color/white</item>
     </style>
 
     <style name="ToolbarEpisodes" parent="ThemeOverlay.MaterialComponents.ActionBar">
@@ -22,13 +16,14 @@
     </style>
 
     <style name="TabLayout" parent="Widget.MaterialComponents.TabLayout">
-        <item name="tabTextColor">@android:color/secondary_text_dark_nodisable</item>
+        <item name="tabTextColor">@color/disabled</item>
         <item name="tabSelectedTextColor">@android:color/primary_text_dark_nodisable</item>
     </style>
 
     <style name="LoginTextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="boxStrokeColor">@color/celestito</item>
         <item name="boxStrokeWidth">1dp</item>
+        <item name="hintTextColor">@color/celestito</item>
         <item name="boxBackgroundColor">@android:color/transparent</item>
     </style>
 
@@ -40,10 +35,6 @@
 
     <style name="dialog" parent="Theme.AppCompat.Light.Dialog">
         <item name="colorAccent">@color/colorPrimary</item>
-    </style>
-
-    <style name="navigationView" parent="ThemeOverlay.MaterialComponents.Dark">
-        <item name="colorControlHighlight">@color/celestito</item>
     </style>
 
 </resources>

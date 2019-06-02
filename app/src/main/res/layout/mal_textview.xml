@@ -7,4 +7,4 @@
     android:paddingEnd="10dp"
     android:paddingBottom="5dp"
     android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-    android:textColor="@android:color/secondary_text_dark" />
+    android:textColor="@color/disabled" />

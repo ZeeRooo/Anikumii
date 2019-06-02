@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.zeerooo.anikumii2.activities.EpisodesActivity">
+    tools:context="com.zeerooo.anikumii.activities.EpisodesActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/collapsing_appbarlayout"
@@ -35,7 +35,7 @@
                 app:layout_collapseMode="parallax"
                 app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed" />
 
-            <androidx.appcompat.widget.Toolbar
+            <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/episodesToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"

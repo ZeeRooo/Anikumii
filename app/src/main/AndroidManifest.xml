@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.zeerooo.anikumii2"
+    package="com.zeerooo.anikumii"
     android:installLocation="auto">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -10,22 +10,21 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
-        android:name=".Anikumii"
+        android:name="com.zeerooo.anikumii.Anikumii"
         android:allowBackup="false"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".activities.MainActivity"
+            android:name="com.zeerooo.anikumii.activities.MainActivity"
             android:configChanges="orientation|screenSize|screenLayout"
             android:launchMode="singleTop"
             android:resizeableActivity="true"
             android:theme="@style/AppTheme">
-             <intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -38,18 +37,17 @@
 
                 <data
                     android:host="tioanime.com"
-                    android:pathPattern="/"
                     android:scheme="https" />
                 <data
                     android:host="tiohentai.com"
-                    android:pathPattern="/"
                     android:scheme="https" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.EpisodesActivity"
+            android:name="com.zeerooo.anikumii.activities.EpisodesActivity"
             android:configChanges="orientation|screenSize|screenLayout"
-            android:resizeableActivity="true">
+            android:resizeableActivity="true"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -67,24 +65,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.LoginActivity"
-            android:configChanges="orientation|screenSize|screenLayout"
-            android:label="@string/log_in"
-            android:launchMode="singleTop"
-            android:resizeableActivity="true"
-            android:theme="@style/Login" />
-        <activity
-            android:name=".activities.SettingsActivity"
+            android:name="com.zeerooo.anikumii.activities.SettingsActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/nav_settings"
-            android:launchMode="singleTop" />
+            android:launchMode="singleTop"
+            android:theme="@style/SettingsTheme" />
         <activity
-            android:name=".activities.VPlayerActivity"
+            android:name="com.zeerooo.anikumii.activities.VideoPlayerActivity"
             android:configChanges="orientation|screenSize|screenLayout|screenSize|smallestScreenSize"
             android:launchMode="singleTop"
             android:resizeableActivity="true"
             android:screenOrientation="sensorLandscape"
-            android:supportsPictureInPicture="true">
+            android:supportsPictureInPicture="true"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -102,15 +95,18 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.CommentsActivity"
+            android:name="com.zeerooo.anikumii.activities.CommentsActivity"
             android:configChanges="orientation|screenSize|screenLayout"
             android:launchMode="singleTop"
-            android:resizeableActivity="true" /> <!-- Let's use IntentServices instead of AsyncTask -->
+            android:resizeableActivity="true"
+            android:theme="@style/AppTheme" />
+
+        <!-- Let's use IntentServices instead of AsyncTask -->
         <service
-            android:name=".services.AccountsService"
+            android:name="com.zeerooo.anikumii.services.AccountsService"
             android:enabled="true" />
         <service
-            android:name=".services.MALApiService"
+            android:name="com.zeerooo.anikumii.services.MALApiService"
             android:enabled="true" />
     </application>
 

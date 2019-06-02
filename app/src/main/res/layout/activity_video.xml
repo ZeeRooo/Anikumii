@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.zeerooo.anikumii2.anikumiiparts.AnikumiiVideoView
+    <com.zeerooo.anikumii.anikumiiparts.AnikumiiVideoView
         android:id="@+id/video_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -66,7 +66,7 @@
             android:background="@drawable/gradient"
             android:rotation="180" />
 
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/videoToolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize" />

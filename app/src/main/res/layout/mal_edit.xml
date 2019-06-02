@@ -32,58 +32,63 @@
 
                 <TextView
                     android:id="@+id/chooseAState"
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:layout_below="@id/basicTextHeader"
-                    android:layout_alignBaseline="@+id/malSetStatus"
-                    android:layout_alignParentStart="true"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="5dp"
-                    android:paddingEnd="20dp"
-                    android:text="@string/stateChooser"
-                    android:textAlignment="center" />
-
-                <Spinner
-                    android:id="@+id/malSetStatus"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/basicTextHeader"
+                    android:layout_alignTop="@id/malSetStatus"
+                    android:layout_alignBottom="@id/malSetStatus"
+                    android:layout_alignParentStart="true"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_toEndOf="@+id/chooseAState"
+                    android:layout_toStartOf="@id/malSetStatus"
+                    android:gravity="center_vertical"
+                    android:text="@string/stateChooser" />
+
+                <Spinner
+                    android:id="@+id/malSetStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/basicTextHeader"
+                    android:layout_alignParentEnd="true"
+                    android:layout_margin="10dp"
                     android:contentDescription="@string/stateChooser"
                     android:drawSelectorOnTop="true"
                     android:entries="@array/mal_status"
-                    android:paddingBottom="15dp" />
+                    android:paddingBottom="10dp" />
 
                 <TextView
                     android:id="@+id/malSetEpisodes"
-                    android:layout_width="match_parent"
-                    android:layout_height="30dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_below="@id/malSetStatus"
+                    android:layout_alignTop="@id/episodes_numberpicker"
+                    android:layout_alignBottom="@id/episodes_numberpicker"
                     android:layout_alignParentStart="true"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="20dp"
-                    android:paddingEnd="20dp"
+                    android:layout_toEndOf="@id/episodes_numberpicker"
+                    android:gravity="center_vertical"
                     android:text="@string/mal_seenEpisodesNumber" />
+
+                <com.zeerooo.anikumii.anikumiiparts.AnikumiiNumberPicker
+                    android:id="@+id/episodes_numberpicker"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/malSetStatus"
+                    android:layout_alignStart="@id/malSetStatus"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp" />
 
                 <TextView
                     android:id="@+id/malSetStarsText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:layout_below="@id/malSetEpisodes"
-                    android:layout_alignBaseline="@+id/malSetStars"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/malSetStars"
+                    android:layout_alignBottom="@+id/malSetStars"
                     android:layout_alignParentStart="true"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="5dp"
+                    android:layout_toStartOf="@+id/malSetStars"
+                    android:gravity="center_vertical"
                     android:paddingEnd="20dp"
                     android:text="@string/rate" />
 
@@ -95,12 +100,11 @@
                     android:layout_alignStart="@id/malSetStatus"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_toEndOf="@+id/malSetStarsText"
+                    android:layout_marginBottom="10dp"
                     android:contentDescription="@string/rate"
                     android:drawSelectorOnTop="true"
                     android:entries="@array/mal_score"
-                    android:paddingBottom="15dp" />
+                    android:paddingBottom="10dp" />
 
             </RelativeLayout>
 
@@ -129,24 +133,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/advancedTextHeader"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="5dp"
+                    android:layout_margin="10dp"
                     android:paddingTop="15dp"
                     android:paddingBottom="15dp"
                     android:text="@string/mal_startDate" />
 
                 <TextView
                     android:id="@+id/malSetEnd"
-
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/malSetStart"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginBottom="10dp"
                     android:paddingTop="15dp"
                     android:paddingBottom="15dp"
                     android:text="@string/mal_endDate" />
@@ -157,22 +157,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/malSetEnd"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="5dp" />
+                    android:layout_margin="10dp" />
 
                 <TextView
                     android:id="@+id/malSetPriorityText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:layout_below="@id/malSetTags"
-                    android:layout_alignBaseline="@id/malSetPriority"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/malSetPriority"
+                    android:layout_alignBottom="@+id/malSetPriority"
                     android:layout_alignParentStart="true"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="20dp"
+                    android:layout_toStartOf="@+id/malSetPriority"
+                    android:gravity="center_vertical"
                     android:paddingEnd="20dp"
                     android:text="@string/mal_priority" />
 
@@ -181,70 +177,75 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/malSetTags"
-                    android:layout_marginStart="10dp"
+                    android:layout_alignStart="@id/malSetSource"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_toEndOf="@id/malSetPriorityText"
-                    android:contentDescription="@string/mal_priorityChooser"
+                    android:layout_marginBottom="10dp"
+                    android:contentDescription="@string/mal_priority"
                     android:drawSelectorOnTop="true"
                     android:entries="@array/mal_priority"
-                    android:paddingTop="15dp"
-                    android:paddingBottom="15dp" />
+                    android:paddingBottom="10dp" />
 
                 <TextView
                     android:id="@+id/malSetSourceText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:layout_below="@id/malSetPriority"
-                    android:layout_alignBaseline="@+id/malSetSource"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/malSetSource"
+                    android:layout_alignBottom="@+id/malSetSource"
                     android:layout_alignParentStart="true"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="20dp"
+                    android:layout_toStartOf="@+id/malSetSource"
+                    android:gravity="center_vertical"
                     android:paddingEnd="20dp"
                     android:text="@string/source" />
 
                 <Spinner
                     android:id="@+id/malSetSource"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/malSetPriority"
-                    android:layout_alignStart="@id/malSetPriority"
+                    android:layout_alignParentEnd="true"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_toEndOf="@id/malSetSourceText"
+                    android:layout_marginBottom="10dp"
                     android:contentDescription="@string/mal_sourceChooser"
                     android:drawSelectorOnTop="true"
                     android:entries="@array/mal_source"
-                    android:paddingTop="15dp"
-                    android:paddingBottom="15dp" />
+                    android:paddingBottom="10dp" />
 
                 <TextView
                     android:id="@+id/malSetRewatchTimes"
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
-                    android:layout_below="@id/malSetSource"
+                    android:layout_alignTop="@+id/rewatch_numberpicker"
+                    android:layout_alignBottom="@+id/rewatch_numberpicker"
                     android:layout_alignParentStart="true"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="20dp"
+                    android:layout_toStartOf="@+id/rewatch_numberpicker"
+                    android:gravity="center_vertical"
                     android:text="@string/mal_rewatchTimes" />
+
+                <com.zeerooo.anikumii.anikumiiparts.AnikumiiNumberPicker
+                    android:id="@+id/rewatch_numberpicker"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/malSetSource"
+                    android:layout_alignStart="@id/malSetSource"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp" />
 
                 <TextView
                     android:id="@+id/malSetRewatchProbabilityText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:layout_below="@id/malSetRewatchTimes"
-                    android:layout_alignBaseline="@+id/malSetRewatchProbability"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignTop="@+id/malSetRewatchProbability"
+                    android:layout_alignBottom="@+id/malSetRewatchProbability"
                     android:layout_alignParentStart="true"
                     android:layout_marginStart="10dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="20dp"
+                    android:layout_toStartOf="@+id/malSetRewatchProbability"
+                    android:gravity="center_vertical"
                     android:paddingEnd="20dp"
                     android:text="@string/mal_rewatchProbability" />
 
@@ -252,17 +253,15 @@
                     android:id="@+id/malSetRewatchProbability"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/malSetRewatchTimes"
-                    android:layout_marginStart="10dp"
+                    android:layout_below="@id/rewatch_numberpicker"
+                    android:layout_alignStart="@id/malSetSource"
                     android:layout_marginTop="10dp"
                     android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="5dp"
-                    android:layout_toEndOf="@id/malSetRewatchProbabilityText"
+                    android:layout_marginBottom="10dp"
                     android:contentDescription="@string/mal_rewatchProbabilityChooser"
                     android:drawSelectorOnTop="true"
                     android:entries="@array/mal_rewatch"
-                    android:paddingTop="15dp"
-                    android:paddingBottom="15dp" />
+                    android:paddingBottom="10dp" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/LoginTextInputLayoutStyle"
@@ -271,18 +270,15 @@
                     android:layout_below="@id/malSetRewatchProbability"
                     android:layout_margin="10dp"
                     android:hint="@string/newComment"
-                    app:hintTextColor="@color/celestito">
+                    android:labelFor="@id/malSetComment">
 
-                    <AutoCompleteTextView
+                    <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/malSetComment"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@android:color/transparent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/newComment"
                         android:imeOptions="actionDone"
-                        android:minHeight="?attr/actionBarSize"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="10dp" />
-
+                        android:minHeight="?attr/actionBarSize" />
                 </com.google.android.material.textfield.TextInputLayout>
             </RelativeLayout>
 

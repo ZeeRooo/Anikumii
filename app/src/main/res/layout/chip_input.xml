@@ -8,17 +8,17 @@
     <com.google.android.material.textfield.TextInputLayout
         style="@style/LoginTextInputLayoutStyle"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="wrap_content"
         android:hint="@string/addtags"
-        app:hintTextColor="@color/celestito">
+        android:labelFor="@id/preloadedTags">
 
-        <AutoCompleteTextView
+        <androidx.appcompat.widget.AppCompatAutoCompleteTextView
             android:id="@+id/preloadedTags"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
+            android:layout_height="wrap_content"
             android:imeOptions="actionDone"
             android:inputType="text"
+            android:minHeight="?attr/actionBarSize"
             android:paddingStart="10dp"
             android:paddingEnd="10dp" />
 
@@ -33,7 +33,7 @@
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/tagsChipGroup"
             style="@style/Widget.MaterialComponents.ChipGroup"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             app:chipSpacing="4dp" />
 

@@ -1,10 +1,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory android:title="Sobre el proyecto">
-      <!--  <PreferenceScreen
-            android:enabled="true"
-            android:layout="@layout/about"
-            android:selectable="false" />-->
         <PreferenceScreen android:title="Conoce mis otros proyectos">
             <intent
                 android:action="android.intent.action.VIEW"
@@ -15,7 +11,7 @@
         <PreferenceScreen android:title="TioAnime">
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="https://tioanime.com/" />
+                android:data="https://tioanime.com" />
         </PreferenceScreen>
         <PreferenceScreen android:title="MyAnimeList">
             <intent
