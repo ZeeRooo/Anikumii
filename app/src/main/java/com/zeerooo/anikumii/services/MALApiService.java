@@ -3,7 +3,6 @@ package com.zeerooo.anikumii.services;
 import android.app.IntentService;
 import android.content.Intent;
 
-import com.zeerooo.anikumii.Anikumii;
 import com.zeerooo.anikumii.anikumiiparts.AnikumiiSharedPreferences;
 
 import java.io.DataOutputStream;
@@ -58,7 +57,7 @@ public class MALApiService extends IntentService {
         times++;
         conn = (HttpsURLConnection) new URL(url).openConnection();
         conn.setRequestProperty("Host", "myanimelist.net");
-        conn.setRequestProperty("User-Agent", Anikumii.userAgent);
+        conn.setRequestProperty("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0");
         conn.setRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         conn.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
         conn.setRequestProperty("Accept-Encoding", "gzip, deflate, br");
@@ -76,7 +75,6 @@ public class MALApiService extends IntentService {
         wr.writeBytes(params);
         conn.connect();
 
-        System.out.println(conn.getResponseCode());
         if (conn.getResponseCode() == 500 && times < 2) // El anime no esta en la lista, hay que agregarlo
             stuff("https://myanimelist.net/ownlist/anime/add.json", params);
 

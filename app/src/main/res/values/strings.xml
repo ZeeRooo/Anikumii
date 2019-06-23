@@ -11,8 +11,6 @@
     <string name="nav_settings">Ajustes</string>
     <string name="rating">de 10 estrellas</string>
 
-    <string name="bottom_sheet_newFav">Agregar a favoritos</string>
-    <string name="bottom_sheet_removeFav">Remover de favoritos</string>
     <string name="bottom_sheet_stream">Stream</string>
 
     <string name="bottom_sheet_stream_summary">Ingrese la dirección ip que aparece arriba en un navegador conctado a la misma red que este dispositivo y disfrute del video.</string>
@@ -29,7 +27,6 @@
     <string name="pauseplay">Pausa / Play</string>
     <string name="episodesList">Lista de episodios</string>
     <string name="nextEpisode">Próximo episodio</string>
-    <string name="unseen">Quitar de vistos</string>
     <string name="information">Información</string>
     <string name="argument">Argumento</string>
     <string name="statics">Estadísticas</string>
@@ -43,7 +40,6 @@
     <string name="mal_endDate">¿Cuándo lo finalizó?</string>
     <string name="addtags">Ingrese tags</string>
     <string name="mal_priority">Prioridad</string>
-    <string name="mal_priorityChooser">Seleccione una prioridad</string>
     <string name="source">Fuente</string>
     <string name="mal_sourceChooser">Seleccione una fuente</string>
     <string name="mal_rewatchTimes">Veces que lo volviste a ver</string>
@@ -63,7 +59,7 @@
     <string name="changeServer">Cambiar de server</string>
     <string name="more">Más</string>
 
-    <string name="rxerror">Se ha producido un error</string>
+    <string name="rxerror_no_connection">No hay conexión a internet</string>
     <string name="comments">Comentarios</string>
     <string name="enablePip">Picture-in-Picture</string>
     <string name="enablePipSummary">Continuar reproduciendo en miniatura tras tocar el botón de home</string>
@@ -89,7 +85,6 @@
     <string name="zippyshare">Zippyshare</string>
     <string name="streamango">Streamango</string>
     <string name="unload_video">Espere a que el video sea procesado</string>
-    <string name="downloadMessage">Seleccione un gestor de descarga. Se recomienda utilizar la opción Anikumii!!</string>
     <string name="mediafire">MediaFire</string>
     <string name="okru">ok.ru</string>
     <string name="rapidvideo">Rapidvideo</string>
@@ -99,6 +94,21 @@
     <string name="overflow_shortcut_description">Ir al perfil</string>
     <string name="log_in_facebook">Facebook</string>
     <string name="log_in_twitter">Twitter</string>
+    <string name="visit_mal_page">Visitar página en MyAnimeList</string>
+    <string name="edit_mal_stats">Editar entrada en MyAnimeList</string>
+
+    <string name="anime">Anime</string>
+    <string name="tioanime_notifications_summary">Recibe notificaciones de nuevos animes</string>
+    <string name="hentai">Hentai</string>
+    <string name="tiohentai_notifications_summary">Recibe notificaciones de nuevos hentais</string>
+    <string name="sqlite_exception">Ha ocurrido un error en la base de datos</string>
+    <string name="error_episodes_overflow">Valor comprendido entre 0 a %d capítulios</string>
+    <string name="jikan_exception">No se encontraron datos en MyAnimeList</string>
+    <string name="snackback_download_confirmation">Archivo disponible en Anikumii!!/%s</string>
+    <string name="updater_title">Buscar actualizaciones automáticamente</string>
+    <string name="updater_summary">Se buscarán actualizaciones semanalmente</string>
+    <string name="updater_now">Buscar actualizaciones ahora</string>
+    <string name="rxerror">Ha ocurrido un error</string>
 
     <string-array name="intervalPrefTitles">
         <item>1 hora</item>

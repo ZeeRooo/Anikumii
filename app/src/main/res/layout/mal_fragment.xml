@@ -22,8 +22,9 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
+                android:contentDescription="@string/visit_mal_page"
                 android:visibility="visible"
-                app:srcCompat="@drawable/ic_public" />
+                app:srcCompat="@drawable/ic_shortcut" />
 
             <ImageButton
                 android:id="@+id/editStats"
@@ -34,6 +35,7 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
+                android:contentDescription="@string/edit_mal_stats"
                 android:visibility="visible"
                 app:srcCompat="@drawable/ic_edit" />
 
@@ -118,5 +120,4 @@
             </com.google.android.material.card.MaterialCardView>
         </RelativeLayout>
     </FrameLayout>
-
 </androidx.core.widget.NestedScrollView>

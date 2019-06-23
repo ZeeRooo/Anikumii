@@ -6,8 +6,6 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
@@ -19,17 +17,27 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.TooltipCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.zeerooo.anikumii.R;
+import com.zeerooo.anikumii.anikumiiparts.AnikumiiConnection;
 import com.zeerooo.anikumii.anikumiiparts.AnikumiiUiHelper;
+import com.zeerooo.anikumii.misc.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.IOException;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -39,11 +47,11 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class MALInfoFragment extends Fragment {
 
+    public static JSONObject MAL;
     private short episodes;
     private int malID;
-    private StringBuilder genre = new StringBuilder(), stringBuilder = new StringBuilder();
+    private StringBuilder genre, stringBuilder;
     private String title_english, title_japanese, synonyms, score, type, premiered, airedStatus, synopsis, source, duration, classification, background, rank, popularity, members, favorites, producers, licensor, studio, title;
-    public static JSONObject MAL;
     private boolean isFirstTime = true;
     private ImageButton goToSite, editStats;
 
@@ -64,36 +72,36 @@ public class MALInfoFragment extends Fragment {
         if (menuVisible && isFirstTime) {
             if (getArguments() != null && getActivity() != null) {
                 malID = getArguments().getInt("malID");
+                genre = new StringBuilder();
+                stringBuilder = new StringBuilder();
 
-                goToSite.setVisibility(View.VISIBLE);
-                goToSite.setOnClickListener(view -> startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("https://myanimelist.net/anime/" + malID))));
+                Observable
+                        .just(true)
+                        .observeOn(Schedulers.io())
+                        .doOnNext(aBoolean -> networkRequest())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new DisposableObserver<Boolean>() {
+                            @Override
+                            public void onNext(Boolean aBoolean) {
 
-                editStats.setVisibility(View.VISIBLE);
-                editStats.setOnClickListener(view -> {
-                    if (getActivity().getSharedPreferences("ZeeRooo@Anikumii!!", MODE_PRIVATE).getString("malUserAvatar", null) == null) {
-                        AnikumiiUiHelper.Snackbar(getActivity().findViewById(R.id.act_episodes_rootView), getActivity().getString(R.string.warning_not_logged), Snackbar.LENGTH_LONG).show();
-                    } else {
-                        Bundle bundle = new Bundle();
-                        bundle.putString("malName", title);
-                        bundle.putShort("episodes", episodes);
-                        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        MALEditFragment fragment = new MALEditFragment();
-                        fragment.setArguments(bundle);
-                        fragmentTransaction.addToBackStack(null);
-                        fragmentTransaction.replace(R.id.MALAbout, fragment);
-                        fragmentTransaction.commit();
-                    }
-                });
+                            }
 
-                try {
-                    networkRequest();
-                } catch (JSONException e) {
-                    AnikumiiUiHelper.Snackbar(getView(), getString(R.string.rxerror), Snackbar.LENGTH_LONG).show();
-                } finally {
-                    onCompleted();
-                    isFirstTime = false;
-                }
+                            @Override
+                            public void onError(Throwable e) {
+                                if (getView() != null)
+                                    AnikumiiUiHelper.Snackbar(getView(), Snackbar.LENGTH_LONG, e.toString(), null).show();
+                            }
+
+                            @Override
+                            public void onComplete() {
+                                onCompleted();
+
+                                if (!isDisposed())
+                                    dispose();
+
+                                isFirstTime = false;
+                            }
+                        });
             }
         }
     }
@@ -102,14 +110,18 @@ public class MALInfoFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         goToSite = getActivity().findViewById(R.id.goToMAL);
+        TooltipCompat.setTooltipText(goToSite, getActivity().getString(R.string.visit_mal_page));
         AnikumiiUiHelper.transparentBackground(goToSite);
+
         editStats = getActivity().findViewById(R.id.editStats);
+        TooltipCompat.setTooltipText(editStats, getActivity().getString(R.string.edit_mal_stats));
         AnikumiiUiHelper.transparentBackground(editStats);
     }
 
-    private void networkRequest() throws JSONException {
+    private void networkRequest() throws JSONException, IOException {
+        MALInfoFragment.MAL = new JSONObject(new AnikumiiConnection().getStringResponse("GET", "https://api.jikan.moe/v3/anime/" + malID, null));
         // -- statics
-        score = "Valoracion: " + MAL.getString("score") + " (por " + MAL.getString("rank") + " usuarios)";
+        score = "Valoración: " + MAL.getString("score") + " (por " + MAL.getString("rank") + " usuarios)";
         rank = "Rango: #" + MAL.getString("scored_by");
         popularity = "Popularidad: " + MAL.getString("popularity");
         members = "Miembros: " + MAL.getString("members");
@@ -125,7 +137,7 @@ public class MALInfoFragment extends Fragment {
             if (i != MAL.getJSONArray("title_synonyms").length() - 1)
                 stringBuilder.append(", ");
         }
-        synonyms = "Sinonimo: " + stringBuilder;
+        synonyms = "Sinónimo: " + stringBuilder;
         stringBuilder.delete(0, stringBuilder.length());
 
         type = "Tipo: " + MAL.getString("type");
@@ -176,16 +188,30 @@ public class MALInfoFragment extends Fragment {
         return stringBuilder.toString();
     }
 
-    private SpannableStringBuilder getBold(String s) {
-        if (s == null)
-            s = "";
-        SpannableStringBuilder sb = new SpannableStringBuilder(s);
-        sb.setSpan(new ForegroundColorSpan(Color.rgb(66, 104, 179)), 0, s.indexOf(":") + 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-        sb.setSpan(new StyleSpan(Typeface.BOLD), 0, s.indexOf(":") + 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-        return sb;
-    }
-
     private void onCompleted() {
+        goToSite.setVisibility(View.VISIBLE);
+        goToSite.setOnClickListener(view -> startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("https://myanimelist.net/anime/" + malID))));
+
+        editStats.setVisibility(View.VISIBLE);
+        editStats.setOnClickListener(view -> {
+            if (getActivity().getSharedPreferences("ZeeRooo@Anikumii!!", MODE_PRIVATE).getString("malUserAvatar", null) == null) {
+                Snackbar.make(getActivity().findViewById(R.id.act_episodes_rootView), getActivity().getString(R.string.warning_not_logged), Snackbar.LENGTH_LONG).show();
+            } else {
+                Bundle bundle = new Bundle();
+                bundle.putString("malName", title);
+                bundle.putShort("episodes", episodes);
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                MALEditFragment fragment = new MALEditFragment();
+                fragment.setArguments(bundle);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.replace(R.id.MALAbout, fragment);
+                fragmentTransaction.commit();
+            }
+        });
+
+        ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.rgb(66, 104, 179));
+        StyleSpan styleSpan = new StyleSpan(Typeface.BOLD);
         for (byte count = 1; count < 22; count++) {
             String text = "";
 
@@ -257,8 +283,8 @@ public class MALInfoFragment extends Fragment {
 
             TextView info = (TextView) getLayoutInflater().inflate(R.layout.mal_textview, null);
             info.setId(count);
-            info.setText(getBold(text));
-            info.setContentDescription(text);
+            info.setText(Utils.getBold(text, foregroundColorSpan, styleSpan));
+            // info.setContentDescription(text);
 
             if (count <= 14)
                 ((LinearLayout) getActivity().findViewById(R.id.malInformation)).addView(info);

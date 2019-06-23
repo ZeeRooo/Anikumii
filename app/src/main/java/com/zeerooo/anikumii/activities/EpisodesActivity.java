@@ -1,9 +1,11 @@
 package com.zeerooo.anikumii.activities;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 import com.zeerooo.anikumii.Anikumii;
@@ -28,7 +31,6 @@ import com.zeerooo.anikumii.misc.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -40,7 +42,6 @@ import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
 public class EpisodesActivity extends AppCompatActivity {
-    //   private boolean isFav;
     private String animeID, url, animeName;
     private int malID;
     private byte malPosition;
@@ -54,16 +55,22 @@ public class EpisodesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_episodios);
 
-        setReactive();
+        MaterialToolbar materialToolbar = findViewById(R.id.episodesToolbar);
+
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+
+            materialToolbar.setPadding(0, 24, 0, 0);
+        }
 
         viewPager = findViewById(R.id.episodes_viewPager);
-        TabLayout tabLayout = findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
+        ((TabLayout) findViewById(R.id.tabs)).setupWithViewPager(viewPager);
 
-        setSupportActionBar(findViewById(R.id.episodesToolbar));
+        setSupportActionBar(materialToolbar);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        setReactive();
     }
 
     private void setReactive() {
@@ -95,14 +102,13 @@ public class EpisodesActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(Throwable e) {
+                        e.printStackTrace();
                         if (!isDestroyed()) {
-                            final Snackbar snackbar = AnikumiiUiHelper.Snackbar(findViewById(R.id.act_episodes_rootView), getResources().getString(R.string.rxerror), Snackbar.LENGTH_INDEFINITE);
-                            snackbar.setAction("Reintentar", view -> {
+                            AnikumiiUiHelper.Snackbar(findViewById(R.id.act_episodes_rootView), Snackbar.LENGTH_INDEFINITE, e.toString(), view -> {
                                 dispose();
                                 setReactive();
-                                snackbar.dismiss();
-                            });
-                            snackbar.show();
+                                AnikumiiUiHelper.snackbar.dismiss();
+                            }).show();
                         }
                     }
 
@@ -133,28 +139,39 @@ public class EpisodesActivity extends AppCompatActivity {
             genreList.add(genresElements.get(genresCount).text());
         }
 
-        MALInfoFragment.MAL = (JSONObject) new JSONTokener(new AnikumiiConnection().getStringResponse("GET", "https://api.jikan.moe/v3/search/anime/?q=" + Utils.encodeString(animeName), null)).nextValue();
-        JSONArray jsonArray = MALInfoFragment.MAL.getJSONArray("results");
+        try {
+            MALInfoFragment.MAL = new JSONObject(new AnikumiiConnection().getStringResponse("GET", "https://api.jikan.moe/v3/search/anime/?q=" + Utils.encodeString(animeName), null));
+            JSONArray jsonArray = MALInfoFragment.MAL.getJSONArray("results");
 
-        for (byte i = 0; i < jsonArray.length(); ++i) {
-            if (jsonArray.getJSONObject(i).getString("title").toLowerCase().replace(" ", "").equals(animeName.toLowerCase().replace(" ", ""))) {
-                malID = jsonArray.getJSONObject(i).getInt("mal_id");
-                malPosition = i;
-                break;
+            for (byte i = 0; i < jsonArray.length(); i++) {
+                if (jsonArray.getJSONObject(i).getString("title").toLowerCase().replace(" ", "").equals(animeName.toLowerCase().replace(" ", ""))) {
+                    malID = jsonArray.getJSONObject(i).getInt("mal_id");
+                    malPosition = i;
+                    break;
+                }
             }
+
+            if (malID == 0) {
+                malID = jsonArray.getJSONObject(0).getInt("mal_id");
+                malPosition = 0;
+            }
+
+            tioAnimeBundle.putString("animeType", jsonArray.getJSONObject(malPosition).getString("type"));
+            tioAnimeBundle.putString("malUrl", jsonArray.getJSONObject(malPosition).getString("url"));
+
+            String episodes = jsonArray.getJSONObject(malPosition).getString("score");
+            if (!episodes.equals("0"))
+                episodes = episodes.substring(0, 3);
+            tioAnimeBundle.putString("ratingStr", episodes);
+        } catch (Exception e) {
+            tioAnimeBundle.putString("ratingStr", "0.0");
+            tioAnimeBundle.putString("animeType", "-");
+            tioAnimeBundle.putString("malUrl", "");
+            Snackbar.make(findViewById(R.id.act_episodes_rootView), getResources().getString(R.string.jikan_exception), Snackbar.LENGTH_LONG).show();
         }
 
-        if (malID == 0) {
-            malID = jsonArray.getJSONObject(0).getInt("mal_id");
-            malPosition = 0;
-        }
-
-        MALInfoFragment.MAL = (JSONObject) new JSONTokener(new AnikumiiConnection().getStringResponse("GET", "https://api.jikan.moe/v3/anime/" + malID, null)).nextValue();
-
-        tioAnimeBundle.putString("ratingStr", jsonArray.getJSONObject(malPosition).getString("score").substring(0, 3));
         tioAnimeBundle.putString("nextEpisodeDate", status);
         tioAnimeBundle.putString("animeAbout", about);
-        tioAnimeBundle.putString("animeType", jsonArray.getJSONObject(malPosition).getString("type"));
         tioAnimeBundle.putStringArrayList("genreList", genreList);
         tioAnimeBundle.putStringArrayList("listRel", listRel);
     }

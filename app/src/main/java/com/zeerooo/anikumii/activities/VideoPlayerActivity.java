@@ -8,7 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.media.MediaPlayer;
@@ -47,11 +47,12 @@ import com.google.android.material.snackbar.Snackbar;
 import com.htetznaing.xgetter.XGetter;
 import com.zeerooo.anikumii.Anikumii;
 import com.zeerooo.anikumii.R;
-import com.zeerooo.anikumii.anikumiiparts.AnikumiiDialog;
+import com.zeerooo.anikumii.anikumiiparts.AnikumiiBottomSheetDialog;
 import com.zeerooo.anikumii.anikumiiparts.AnikumiiSharedPreferences;
 import com.zeerooo.anikumii.anikumiiparts.AnikumiiUiHelper;
 import com.zeerooo.anikumii.anikumiiparts.AnikumiiVideoView;
 import com.zeerooo.anikumii.anikumiiparts.AnikumiiWebHelper;
+import com.zeerooo.anikumii.misc.DataBaseHelper;
 import com.zeerooo.anikumii.misc.MyAnimeListModel;
 import com.zeerooo.anikumii.misc.ServerHelper;
 import com.zeerooo.anikumii.misc.Utils;
@@ -60,6 +61,7 @@ import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -103,10 +105,11 @@ public class VideoPlayerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setReactive(getIntent());
+
         setContentView(R.layout.activity_video);
 
         xGetter = new XGetter();
-        setReactive(getIntent());
         setSupportActionBar(findViewById(R.id.videoToolbar));
 
         sharedPreferences = new AnikumiiSharedPreferences(this);
@@ -143,7 +146,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
             if (!isConnected()) {
                 countDown();
-                AnikumiiUiHelper.Snackbar(anikumiiVideoView, "Conexión a internet perdida", Snackbar.LENGTH_LONG).show();
+                AnikumiiUiHelper.Snackbar(anikumiiVideoView, Snackbar.LENGTH_LONG, "UnknownHostException", null).show();
                 pause.setImageResource(android.R.drawable.ic_media_play);
 
                 primaryProgress = mp.getCurrentPosition();
@@ -225,8 +228,6 @@ public class VideoPlayerActivity extends AppCompatActivity {
             setAnimation(mButtonsHeader, android.R.anim.fade_out);
             mButtonsHeader.setVisibility(View.GONE);
             countDown();
-        /*    if (!cookie.equals("f;f;f") && !seen)
-                seenHelper((byte) 1);*/
 
             mp.setOnBufferingUpdateListener((MediaPlayer mediaPlayer, int percent) -> mSeekbar.setSecondaryProgress(percent * secondaryProgressMax));
         });
@@ -251,15 +252,19 @@ public class VideoPlayerActivity extends AppCompatActivity {
                 request.setVisibleInDownloadsUi(true);
                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
                 mDownloadManager.enqueue(request);
+
+                final Snackbar snackbar = Snackbar.make(findViewById(R.id.videoPlayerRootView), getString(R.string.snackback_download_confirmation, animeName), Snackbar.LENGTH_INDEFINITE);
+                snackbar.setAction(getString(android.R.string.ok), view -> snackbar.dismiss());
+                snackbar.show();
             } else
-                AnikumiiUiHelper.Snackbar(findViewById(R.id.videoPlayerRootView), getString(R.string.permission_denied), Snackbar.LENGTH_LONG).show();
+                AnikumiiUiHelper.Snackbar(findViewById(R.id.videoPlayerRootView), Snackbar.LENGTH_LONG, "permission_denied", null).show();
     }
 
     private boolean isPlaying() {
         if (anikumiiVideoView.getCurrentPosition() > 0)
             return true;
         else {
-            AnikumiiUiHelper.Snackbar(findViewById(R.id.videoPlayerRootView), getString(R.string.unload_video), Snackbar.LENGTH_LONG).show();
+            Snackbar.make(findViewById(R.id.videoPlayerRootView), getString(R.string.unload_video), Snackbar.LENGTH_LONG).show();
             return false;
         }
     }
@@ -361,12 +366,10 @@ public class VideoPlayerActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.episodesList:
-                Intent episodesAct = new Intent(this, EpisodesActivity.class);
-                episodesAct.putExtra("animeUrl", Anikumii.dominium + episodes).putExtra("animeName", animeName);
-                startActivity(episodesAct);
+                startActivity(new Intent(this, EpisodesActivity.class).putExtra("animeUrl", Anikumii.dominium + episodes).putExtra("animeName", animeName));
                 break;
             case R.id.episodesComments:
                 startActivity(new Intent(this, CommentsActivity.class).putExtra("rawUrl", rawUrl));
@@ -405,8 +408,54 @@ public class VideoPlayerActivity extends AppCompatActivity {
                 })
                 .observeOn(Schedulers.io())
                 .doOnNext(a -> {
-                    if (isLogedIn)
-                        myAnimeListModel = new MyAnimeListModel(Utils.encodeString(Utils.removeLastNumberAndSpace(animeName).split("\\(")[0]), sharedPreferences.getString("malUserName", null), false);
+                    myAnimeListModel = new MyAnimeListModel(Utils.encodeString(Utils.removeLastNumberAndSpace(animeName).split("\\(")[0]), sharedPreferences.getString("malUserName", null), false);
+
+                    String type;
+                    if (Anikumii.dominium.startsWith("https://tioanime.com"))
+                        type = "https://tioanime.com/anime/";
+                    else
+                        type = "https://tiohentai.com/hentai/";
+
+                    DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
+
+                    Cursor cursor = null;
+
+                    int position = 0, databaseRows = dataBaseHelper.getDatabaseRows(cursor);
+
+/*
+
+                    Cursor cursor = dataBaseHelper.getReadableDatabase().rawQuery("SELECT POSITION FROM AnimesDB WHERE TITLE LIKE ?", new String[]{animeName});
+
+                    if (cursor.moveToLast())
+                        position = (short) cursor.getInt(0);
+                    else {
+                        cursor = dataBaseHelper.getReadableDatabase().rawQuery("SELECT POSITION FROM AnimesDB", null);
+                        cursor.moveToLast();
+
+                        if (cursor.getCount() == 0)
+                            position = 0;
+                        else
+                            position = (short) (cursor.getCount() + 1);
+                    }*/
+
+                    if (databaseRows != 0) {
+                        cursor = dataBaseHelper.getReadableDatabase().rawQuery("SELECT POSITION FROM AnimesDB WHERE TITLE LIKE ?", new String[]{animeName});
+
+                        if (cursor.moveToLast())
+                            position = cursor.getInt(0);
+                        else
+                            position = databaseRows + 1;
+
+                        cursor.close();
+                    }
+
+                    try {
+                        dataBaseHelper.addData(animeName, myAnimeListModel.getType(), type + Utils.matcher(rawUrl, "/ver/(.*)-"), myAnimeListModel.getImage(), Calendar.getInstance().getTime().toString(), episode, position);
+                    } catch (NullPointerException npe) {
+                        Snackbar.make(anikumiiVideoView, getResources().getString(R.string.jikan_exception) + ". No se agregó al historial.", Snackbar.LENGTH_LONG).show();
+                    } finally {
+                        dataBaseHelper.close();
+                    }
                 })
                 .subscribe(new DisposableObserver<Boolean>() {
                     @Override
@@ -416,14 +465,10 @@ public class VideoPlayerActivity extends AppCompatActivity {
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
-                        if (!isDestroyed()) {
-                            final Snackbar snackbar = AnikumiiUiHelper.Snackbar(anikumiiVideoView, getString(R.string.rxerror), Snackbar.LENGTH_INDEFINITE);
-                            snackbar.setAction("Cambiar server", view -> {
-                                serverSwitcherDialog();
-                                snackbar.dismiss();
-                            });
-                            snackbar.show();
-                        }
+                        AnikumiiUiHelper.Snackbar(anikumiiVideoView, Snackbar.LENGTH_INDEFINITE, e.toString(), view -> {
+                            serverSwitcherDialog();
+                            AnikumiiUiHelper.snackbar.dismiss();
+                        }).show();
                     }
 
                     @Override
@@ -491,31 +536,18 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
         if (!prevUrl.equals("#")) {
             previous.setVisibility(View.VISIBLE);
-            previous.setOnClickListener(v -> videoHelper(Anikumii.dominium + prevUrl));
+            previous.setOnClickListener(v -> setReactive(new Intent(this, VideoPlayerActivity.class).putExtra("chapterUrl", Anikumii.dominium + prevUrl).putExtra("serverOption", serverOptionDefault)));
         } else
             previous.setVisibility(View.INVISIBLE);
 
         if (!nextUrl.equals("#")) {
             next.setVisibility(View.VISIBLE);
-            next.setOnClickListener(v -> videoHelper(Anikumii.dominium + nextUrl));
+            next.setOnClickListener(v -> setReactive(new Intent(this, VideoPlayerActivity.class).putExtra("chapterUrl", Anikumii.dominium + nextUrl).putExtra("serverOption", serverOptionDefault)));
         } else
             next.setVisibility(View.INVISIBLE);
     }
 
     private void bottomSheetSetup() {
-        ImageButton unseen = findViewById(R.id.unseen);
-        AnikumiiUiHelper.transparentBackground(unseen);
-        TooltipCompat.setTooltipText(unseen, getString(R.string.unseen));
-        // if (!cookie.equals("f;f;f"))//"f;f;f;f;f;f"
-        unseen.setVisibility(View.GONE);
-        // else
-        //      unseen.setVisibility(View.VISIBLE);
-        unseen.setOnClickListener(view -> {
-            if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED)
-                mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-            //   seenHelper((byte) 0);
-        });
-
         ImageButton changeServer = findViewById(R.id.changeServer);
         AnikumiiUiHelper.transparentBackground(changeServer);
         TooltipCompat.setTooltipText(changeServer, getString(R.string.changeServer));
@@ -530,7 +562,8 @@ public class VideoPlayerActivity extends AppCompatActivity {
         TooltipCompat.setTooltipText(download, getString(R.string.download));
         download.setOnClickListener(view -> {
             if (isPlaying())
-                downloadDialog();
+                ActivityCompat.requestPermissions(VideoPlayerActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            //downloadDialog();
 
             if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED)
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -541,6 +574,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
         TooltipCompat.setTooltipText(stream, getString(R.string.bottom_sheet_stream));
         stream.setOnClickListener(view -> {
             if (isPlaying()) {
+                serverHelper.stop();
                 serverHelper.setUrl(url);
                 serverHelper.setTitle(animeName + " Episodio " + episode + " - Anikumii!!");
                 try {
@@ -566,10 +600,17 @@ public class VideoPlayerActivity extends AppCompatActivity {
         });
     }
 
-    private void downloadDialog() {
-        AnikumiiDialog downloadDialog = new AnikumiiDialog(this);
+  /*  private void downloadDialog() {
+        AnikumiiBottomSheetDialog downloadDialog = new AnikumiiBottomSheetDialog(this);
 
-        downloadDialog.setMessage(getString(R.string.downloadMessage));
+       // downloadDialog.setMessage(getString(R.string.downloadMessage));
+        LinearLayout linearLayout = new LinearLayout(this);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        linearLayout.setPadding(10, 10, 10, 10);
+
+        TextView messageTextView = new TextView(this);
+        messageTextView.setText(getString(R.string.downloadMessage));
+        linearLayout.addView(messageTextView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         ChipGroup chipGroup = new ChipGroup(this);
         chipGroup.setPadding(30, 30, 30, 30);
@@ -600,11 +641,13 @@ public class VideoPlayerActivity extends AppCompatActivity {
             }
         });
 
-        downloadDialog.initialize(getString(R.string.download), chipGroup);
-    }
+        linearLayout.addView(chipGroup, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        downloadDialog.initialize(getString(R.string.download), linearLayout);
+    }*/
 
     private void serverSwitcherDialog() {
-        AnikumiiDialog changeServer = new AnikumiiDialog(this);
+        AnikumiiBottomSheetDialog changeServer = new AnikumiiBottomSheetDialog(this);
         changeServer.serverDialog(serverOptionDefault).setOnCheckedChangeListener((ChipGroup group, int checkedId) -> {
             if (checkedId != -1) {
                 serverOptionDefault = (String) ((Chip) group.findViewById(checkedId)).getText();
@@ -613,12 +656,6 @@ public class VideoPlayerActivity extends AppCompatActivity {
             }
         });
     }
-
-   /* private void seenHelper(byte action) {
-        Intent service = new Intent(this, AnimeFlvApiService.class);
-        service.putExtra("toLoad", "https://animeflv.net/api/animes/markEpisode").putExtra("params", "seen=" + action + "&anime_id=" + animeID + "&number=" + episode);
-        startService(service);
-    }*/
 
     private void countDown() {
         final int duration = anikumiiVideoView.getDuration();
@@ -639,12 +676,6 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
     private void setAnimation(View v, int animation) {
         v.startAnimation(AnimationUtils.loadAnimation(this, animation));
-    }
-
-    private void videoHelper(String url) {
-        Intent videoAct = new Intent(this, VideoPlayerActivity.class);
-        videoAct.putExtra("chapterUrl", url).putExtra("serverOption", serverOptionDefault);
-        setReactive(videoAct);
     }
 
     private String dateFormatter(long ms) {

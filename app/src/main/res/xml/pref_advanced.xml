@@ -1,21 +1,33 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="acra.disable"
         android:summary="@string/disableAcraSummary"
         android:title="@string/disableAcraTitle" />
-    <CheckBoxPreference
+    <SwitchPreferenceCompat
         android:defaultValue="true"
         android:key="enablePip"
         android:summary="@string/enablePipSummary"
         android:title="@string/enablePip" />
-    <PreferenceScreen
+    <androidx.preference.PreferenceScreen
         android:key="defaultServer"
         android:summary="@string/defaultServerSummary"
         android:title="@string/defaultServer" />
-    <PreferenceScreen
+    <androidx.preference.PreferenceScreen
         android:key="gridColumns"
         android:title="@string/columnsTitle" />
 
-</PreferenceScreen>
+    <androidx.preference.PreferenceCategory android:title="Actualizaciones">
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="updater_enable"
+            android:summary="@string/updater_summary"
+            android:title="@string/updater_title" />
+
+        <androidx.preference.PreferenceScreen
+            android:key="updater_now"
+            android:title="@string/updater_now" />
+    </androidx.preference.PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

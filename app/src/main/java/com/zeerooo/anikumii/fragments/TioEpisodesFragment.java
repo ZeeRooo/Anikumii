@@ -13,13 +13,12 @@ import com.zeerooo.anikumii.R;
 import com.zeerooo.anikumii.adapters.AdapterEpisodes;
 import com.zeerooo.anikumii.anikumiiparts.AnikumiiRecyclerView;
 
-import java.util.ArrayList;
-
 /**
  * Created by ZeeRooo on 24/02/18
  */
 
 public class TioEpisodesFragment extends Fragment {
+    private AnikumiiRecyclerView anikumiiRecyclerView;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -31,23 +30,23 @@ public class TioEpisodesFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getView() != null && getActivity() != null) {
-            final AnikumiiRecyclerView anikumiiRecyclerView = getView().findViewById(R.id.recyclerView);
+            anikumiiRecyclerView = getView().findViewById(R.id.recyclerView);
             final LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
             anikumiiRecyclerView.setLayoutManager(mLayoutManager);
 
             if (getArguments() != null) {
-                ArrayList<String> genreList = getArguments().getStringArrayList("genreList");
-                ArrayList<String> listRel = getArguments().getStringArrayList("listRel");
-
-                final AdapterEpisodes adapterEpisodes = new AdapterEpisodes(getArguments().getString("ratingStr"), getArguments().getString("nextEpisodeDate"), getArguments().getString("animeAbout"), getArguments().getString("animeType"), genreList, listRel, getArguments().getBoolean("isFav"));
-
-                anikumiiRecyclerView.setAdapter(adapterEpisodes);
+                anikumiiRecyclerView.setAdapter(new AdapterEpisodes(getArguments().getString("animeId"), getArguments().getString("malUrl"), getArguments().getString("ratingStr"), getArguments().getString("nextEpisodeDate"), getArguments().getString("animeAbout"), getArguments().getString("animeType"), getArguments().getStringArrayList("genreList"), getArguments().getStringArrayList("listRel")));
                 anikumiiRecyclerView.setRootView(getView());
-                anikumiiRecyclerView.setElementClass("ul.episodes-list list-unstyled > li > a" + "---" + getArguments().getString("animeId"));
+                anikumiiRecyclerView.setElementClass("ul.episodes-list list-unstyled > li > a");
                 anikumiiRecyclerView.setToLoad(getArguments().getString("animeUrl"));
-                anikumiiRecyclerView.setDynamicListener();
                 anikumiiRecyclerView.setMaxDisplayedItems((byte) 12);
             }
         }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        anikumiiRecyclerView.exit();
     }
 }

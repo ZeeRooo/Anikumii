@@ -1,21 +1,21 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="General">
+    <androidx.preference.PreferenceCategory android:title="General">
         <Preference
             android:key="pref_accounts"
             android:title="Cuentas" />
         <Preference
             android:key="pref_notifications"
             android:title="Notificaciones" />
-        <PreferenceScreen
+        <androidx.preference.PreferenceScreen
             android:key="pref_advanced"
             android:title="Avanzado" />
-    </PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
 
-    <PreferenceCategory android:title="Extra">
+    <androidx.preference.PreferenceCategory android:title="Extra">
         <Preference
             android:key="pref_more"
             android:title="Conoce más" />
-    </PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
 
-</PreferenceScreen>
+</androidx.preference.PreferenceScreen>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <string-array name="intervalPrefValues"> <!-- In m.seconds -->
-        <item>3600000</item>
-        <item>10800000</item>
-        <item>21600000</item>
-        <item>43200000</item>
+        <item>1</item>
+        <item>3</item>
+        <item>6</item>
+        <item>12</item>
     </string-array>
 
     <string-array name="mal_status">

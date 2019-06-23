@@ -15,7 +15,7 @@ import org.acra.annotation.AcraMailSender;
 @AcraMailSender(mailTo = "chavesjuan400@gmail.com")
 public class Anikumii extends Application {
 
-    public static String userAgent = "Mozilla/5.0 (X11; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0", dominium;
+    public static String dominium;
 
     @Override
     protected void attachBaseContext(Context base) {

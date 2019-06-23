@@ -42,9 +42,8 @@ public class NotificationService extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        AnikumiiSharedPreferences mPreferences = new AnikumiiSharedPreferences(getApplicationContext());
+        AnikumiiSharedPreferences anikumiiSharedPreferences = new AnikumiiSharedPreferences(getApplicationContext());
 
-        boolean headsUp = mPreferences.getBoolean("headsUp", false);
         byte headsUpValue;
         mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         mBuilder = new NotificationCompat.Builder(getApplicationContext(), "com.zeerooo.anikumii.notif");
@@ -55,7 +54,7 @@ public class NotificationService extends Worker {
             notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
             mNotificationManager.createNotificationChannel(notificationChannel);
         } else {
-            if (headsUp)
+            if (anikumiiSharedPreferences.getBoolean("headsUp", false))
                 headsUpValue = NotificationCompat.PRIORITY_HIGH;
             else
                 headsUpValue = NotificationCompat.PRIORITY_DEFAULT;
@@ -63,36 +62,43 @@ public class NotificationService extends Worker {
         }
 
         try {
-            String knownAnimesStr = mPreferences.getString("last_anime", ""), title, number, url, image, tio = "https://tioanime.com";
+            if (anikumiiSharedPreferences.getBoolean("enable_tioanime_notifications", false))
+                syncAnimes("https://tioanime.com", anikumiiSharedPreferences, "tioanime");
 
-            Elements episodes = AnikumiiWebHelper.go(tio, getApplicationContext()).get().select("article.episode");
-            StringBuilder knownAnimes = new StringBuilder();
-
-            if (mPreferences.getBoolean("enableNotif", false)) {
-
-                for (byte episodesCount = 0; episodesCount < 5; episodesCount++) {
-                    title = episodes.get(episodesCount).getElementsByClass("title").text();
-                    number = Utils.matcher(title, "(\\d+)\\D*$");
-                    title = title.replace(number, "");
-
-                    if (!knownAnimesStr.contains(title + number)) {
-                        url = tio + episodes.get(episodesCount).select("a").attr("href");
-                        image = tio + episodes.get(episodesCount).selectFirst("a > div > figure > img").attr("src");
-
-                        displayNotification(url, "Episodio " + number, GlideApp.with(getApplicationContext()).asBitmap().load(image).apply(RequestOptions.circleCropTransform()).into(128, 128).get(), title, episodesCount);
-                    }
-
-                    knownAnimes.append(title).append(number);
-                }
-
-                mPreferences.edit().putString("last_anime", knownAnimes.toString()).apply();
-            }
-
+            if (anikumiiSharedPreferences.getBoolean("enable_tiohentai_notifications", false))
+                syncAnimes("https://tiohentai.com", anikumiiSharedPreferences, "tiohentai");
         } catch (ExecutionException | InterruptedException | IOException e) {
             e.printStackTrace();
             return Result.failure();
         }
         return Result.success();
+    }
+
+    private void syncAnimes(String url, AnikumiiSharedPreferences anikumiiSharedPreferences, String knownKey) throws ExecutionException, InterruptedException, IOException {
+        String knownAnimesStr = anikumiiSharedPreferences.getString(knownKey, ""), title, number, image, animeUrl;
+
+        Elements episodes = AnikumiiWebHelper.go(url, getApplicationContext()).get().select("article.episode");
+        StringBuilder knownAnimes = new StringBuilder();
+
+        if (anikumiiSharedPreferences.getBoolean("enableNotif", false)) {
+
+            for (byte episodesCount = 0; episodesCount < 5; episodesCount++) {
+                title = episodes.get(episodesCount).getElementsByClass("title").text();
+                number = Utils.matcher(title, "(\\d+)\\D*$");
+                title = title.replace(number, "");
+
+                if (!knownAnimesStr.contains(title + number)) {
+                    animeUrl = url + episodes.get(episodesCount).select("a").attr("href");
+                    image = url + episodes.get(episodesCount).selectFirst("a > div > figure > img").attr("src");
+
+                    displayNotification(animeUrl, "Episodio " + number, GlideApp.with(getApplicationContext()).asBitmap().load(image).apply(RequestOptions.circleCropTransform()).into(128, 128).get(), title, (byte) System.currentTimeMillis());
+                }
+
+                knownAnimes.append(title).append(number);
+            }
+
+            anikumiiSharedPreferences.edit().putString(knownKey, knownAnimes.toString()).apply();
+        }
     }
 
     private void displayNotification(String url, String number, Bitmap bitmap, String title, byte notificationId) {

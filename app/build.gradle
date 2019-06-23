@@ -1,24 +1,31 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion '28.0.3'
+    compileSdkVersion 29
+    buildToolsVersion '29.0.0'
     defaultConfig {
         applicationId 'com.zeerooo.anikumii'
         minSdkVersion 18
-        targetSdkVersion 28
-        versionCode 3
-        versionName 'alpha-1.1'
+        targetSdkVersion 29
+        versionCode 6
+        versionName 'beta-1.1'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         vectorDrawables.useSupportLibrary = true
     }
 
     buildTypes {
-        release {
+        github {
             minifyEnabled false
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            versionNameSuffix "-github"
+        }
+        aptoide {
+            minifyEnabled false
+            zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            versionNameSuffix "-aptoide"
         }
     }
 
@@ -29,12 +36,12 @@ android {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    //implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'android.arch.work:work-runtime:1.0.1'
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
-    implementation 'androidx.preference:preference:1.1.0-alpha05'
+    implementation 'androidx.preference:preference:1.1.0-beta01'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.android.material:material:1.1.0-alpha07'
     implementation 'com.github.bumptech.glide:glide:4.9.0'
@@ -42,13 +49,13 @@ dependencies {
     implementation 'org.nanohttpd:nanohttpd:2.3.1'
     implementation 'org.nanohttpd:nanohttpd-websocket:2.3.1'
     implementation 'org.jsoup:jsoup:1.12.1'
-    implementation 'ch.acra:acra-mail:5.2.1'
+    implementation 'ch.acra:acra-mail:5.3.0'
 
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13-beta-3'
 
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
-    annotationProcessor 'androidx.annotation:annotation:1.0.2'
+    annotationProcessor 'androidx.annotation:annotation:1.1.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 }

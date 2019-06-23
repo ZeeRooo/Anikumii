@@ -3,12 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?colorPrimary"
     android:orientation="vertical"
     android:padding="16dp">
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/dialog_log_in_mal_btn"
+        android:id="@+id/bottom_sheet_log_in_mal_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
@@ -23,7 +22,7 @@
         android:orientation="horizontal">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/dialog_log_in_facebook_btn"
+            android:id="@+id/bottom_sheet_log_in_facebook_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
@@ -33,7 +32,7 @@
             app:srcCompat="@drawable/ic_facebook" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/dialog_log_in_twitter_btn"
+            android:id="@+id/bottom_sheet_log_in_twitter_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
@@ -43,7 +42,7 @@
             app:srcCompat="@drawable/ic_twitter" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/dialog_log_in_google_btn"
+            android:id="@+id/bottom_sheet_log_in_google_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"

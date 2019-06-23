@@ -8,18 +8,19 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
         android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="?attr/actionBarSize" />
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/searchtoolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="?attr/actionBarSize"
             android:background="@android:color/white"
             android:theme="@style/ThemeOverlay.MaterialComponents.Light"
             android:visibility="invisible" />
@@ -36,9 +37,9 @@
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabs"
-                style="@style/TabLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:theme="@style/TabLayout"
                 app:layout_scrollFlags="scroll|enterAlways" />
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -52,7 +53,7 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="10dp"
+            android:layout_height="8dp"
             android:background="@drawable/gradient"
             app:layout_anchor="@id/bottom_navigation"
             app:layout_anchorGravity="top"

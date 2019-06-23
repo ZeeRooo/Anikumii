@@ -1,63 +1,63 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="Sobre el proyecto">
-        <PreferenceScreen android:title="Conoce mis otros proyectos">
+    <androidx.preference.PreferenceCategory android:title="Sobre el proyecto">
+        <androidx.preference.PreferenceScreen android:title="Conoce mis otros proyectos">
             <intent
                 android:action="android.intent.action.VIEW"
                 android:data="https://github.com/ZeeRooo" />
-        </PreferenceScreen>
-    </PreferenceCategory>
-    <PreferenceCategory android:title="Sin ellos la aplicación no sería posible. ¡Gracias!">
-        <PreferenceScreen android:title="TioAnime">
+        </androidx.preference.PreferenceScreen>
+    </androidx.preference.PreferenceCategory>
+    <androidx.preference.PreferenceCategory android:title="Sin ellos la aplicación no sería posible. ¡Gracias!">
+        <androidx.preference.PreferenceScreen android:title="TioAnime">
             <intent
                 android:action="android.intent.action.VIEW"
                 android:data="https://tioanime.com" />
-        </PreferenceScreen>
-        <PreferenceScreen android:title="MyAnimeList">
+        </androidx.preference.PreferenceScreen>
+        <androidx.preference.PreferenceScreen android:title="MyAnimeList">
             <intent
                 android:action="android.intent.action.VIEW"
                 android:data="https://myanimelist.net/" />
-        </PreferenceScreen>
-        <PreferenceScreen android:title="Jikan API">
+        </androidx.preference.PreferenceScreen>
+        <androidx.preference.PreferenceScreen android:title="Jikan API">
             <intent
                 android:action="android.intent.action.VIEW"
                 android:data="https://jikan.moe/" />
-        </PreferenceScreen>
-        <PreferenceScreen
+        </androidx.preference.PreferenceScreen>
+        <androidx.preference.PreferenceScreen
             android:summary="por bumptech"
             android:title="glide">
             <intent
                 android:action="android.intent.action.VIEW"
                 android:data="https://github.com/bumptech/glide" />
-        </PreferenceScreen>
-        <PreferenceScreen
+        </androidx.preference.PreferenceScreen>
+        <androidx.preference.PreferenceScreen
             android:summary="por jhy"
             android:title="jsoup">
             <intent
                 android:action="android.intent.action.VIEW"
                 android:data="https://github.com/jhy/jsoup" />
-        </PreferenceScreen>
-        <PreferenceScreen
+        </androidx.preference.PreferenceScreen>
+        <androidx.preference.PreferenceScreen
             android:summary="por ReactiveX"
             android:title="RxAndroid">
             <intent
                 android:action="android.intent.action.VIEW"
                 android:data="https://github.com/ReactiveX/RxAndroid" />
-        </PreferenceScreen>
-        <PreferenceScreen
+        </androidx.preference.PreferenceScreen>
+        <androidx.preference.PreferenceScreen
             android:summary="por ACRA"
             android:title="acra">
             <intent
                 android:action="android.intent.action.VIEW"
                 android:data="https://github.com/ACRA/acra" />
-        </PreferenceScreen>
-        <PreferenceScreen
+        </androidx.preference.PreferenceScreen>
+        <androidx.preference.PreferenceScreen
             android:summary="por KhunHtetzNaing"
             android:title="xGetter">
             <intent
                 android:action="android.intent.action.VIEW"
                 android:data="https://github.com/KhunHtetzNaing/xGetter" />
-        </PreferenceScreen>
-    </PreferenceCategory>
+        </androidx.preference.PreferenceScreen>
+    </androidx.preference.PreferenceCategory>
 
-</PreferenceScreen>
+</androidx.preference.PreferenceScreen>

@@ -9,11 +9,12 @@ import android.security.keystore.KeyProperties;
 import android.util.Base64;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
@@ -35,8 +36,6 @@ import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.security.auth.x500.X500Principal;
-
-import androidx.annotation.Nullable;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -71,7 +70,7 @@ public class AnikumiiSharedPreferences implements SharedPreferences {
 
                 final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                 final CipherOutputStream cipherOutputStream = new CipherOutputStream(outputStream, input);
-                cipherOutputStream.write(toEncrypt.getBytes(StandardCharsets.UTF_8));
+                cipherOutputStream.write(toEncrypt.getBytes("UTF-8"));
                 outputStream.close();
                 cipherOutputStream.close();
 
@@ -107,7 +106,7 @@ public class AnikumiiSharedPreferences implements SharedPreferences {
                         bytes[i] = values.get(i);
                     }
 
-                    return new String(bytes, 0, bytes.length, StandardCharsets.UTF_8);
+                    return new String(bytes, 0, bytes.length, "UTF-8");
                 }
 
             } catch (Exception e) {

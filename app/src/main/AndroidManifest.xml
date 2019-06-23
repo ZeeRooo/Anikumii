@@ -20,7 +20,7 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name="com.zeerooo.anikumii.activities.MainActivity"
-            android:configChanges="orientation|screenSize|screenLayout"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:launchMode="singleTop"
             android:resizeableActivity="true"
             android:theme="@style/AppTheme">
@@ -37,15 +37,31 @@
 
                 <data
                     android:host="tioanime.com"
+                    android:path=""
+                    android:scheme="https" />
+                <data
+                    android:host="tioanime.com"
+                    android:path="/"
+                    android:scheme="https" />
+
+                <data
+                    android:host="tiohentai.com"
+                    android:path=""
                     android:scheme="https" />
                 <data
                     android:host="tiohentai.com"
+                    android:path="/"
                     android:scheme="https" />
+
             </intent-filter>
+
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
         </activity>
         <activity
             android:name="com.zeerooo.anikumii.activities.EpisodesActivity"
-            android:configChanges="orientation|screenSize|screenLayout"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:resizeableActivity="true"
             android:theme="@style/AppTheme">
             <intent-filter>
@@ -56,17 +72,17 @@
 
                 <data
                     android:host="tioanime.com"
-                    android:pathPrefix="/anime"
+                    android:pathPrefix="/anime/"
                     android:scheme="https" />
                 <data
                     android:host="tiohentai.com"
-                    android:pathPrefix="/hentai"
+                    android:pathPrefix="/hentai/"
                     android:scheme="https" />
             </intent-filter>
         </activity>
         <activity
             android:name="com.zeerooo.anikumii.activities.SettingsActivity"
-            android:configChanges="orientation|screenSize"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:label="@string/nav_settings"
             android:launchMode="singleTop"
             android:theme="@style/SettingsTheme" />
@@ -86,20 +102,31 @@
 
                 <data
                     android:host="tioanime.com"
-                    android:pathPrefix="/ver"
+                    android:pathPrefix="/ver/"
                     android:scheme="https" />
                 <data
                     android:host="tiohentai.com"
-                    android:pathPrefix="/ver"
+                    android:pathPrefix="/ver/"
                     android:scheme="https" />
             </intent-filter>
         </activity>
         <activity
             android:name="com.zeerooo.anikumii.activities.CommentsActivity"
-            android:configChanges="orientation|screenSize|screenLayout"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:launchMode="singleTop"
             android:resizeableActivity="true"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/SettingsTheme" />
+        <activity
+            android:name="com.zeerooo.anikumii.activities.AnimeActivity"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
+            android:launchMode="singleTop"
+            android:resizeableActivity="true"
+            android:theme="@style/SettingsTheme" />
+        <activity
+            android:name="com.zeerooo.anikumii.activities.UpdateActivity"
+            android:configChanges="orientation|screenSize|screenLayout"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.MaterialComponents.Dialog" />
 
         <!-- Let's use IntentServices instead of AsyncTask -->
         <service
@@ -108,6 +135,7 @@
         <service
             android:name="com.zeerooo.anikumii.services.MALApiService"
             android:enabled="true" />
+
     </application>
 
 </manifest>

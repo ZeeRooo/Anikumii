@@ -1,7 +1,7 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <SwitchPreference
-        android:defaultValue="false"
+    <SwitchPreferenceCompat
+        android:defaultValue="true"
         android:key="enableNotif"
         android:summary="@string/notificationsSummary"
         android:title="@string/notifications" />
@@ -12,7 +12,7 @@
         android:summary="@string/headsUpSummary"
         android:title="@string/headsUp" />
     <ListPreference
-        android:defaultValue="3600000"
+        android:defaultValue="3"
         android:dependency="enableNotif"
         android:entries="@array/intervalPrefTitles"
         android:entryValues="@array/intervalPrefValues"
@@ -20,4 +20,19 @@
         android:summary="@string/notifIntervalSummary"
         android:title="@string/notifInterval" />
 
-</PreferenceScreen>
+    <androidx.preference.PreferenceCategory android:title="Fuente">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:dependency="enableNotif"
+            android:key="enable_tioanime_notifications"
+            android:summary="@string/tioanime_notifications_summary"
+            android:title="@string/anime" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:dependency="enableNotif"
+            android:key="enable_tiohentai_notifications"
+            android:summary="@string/tiohentai_notifications_summary"
+            android:title="@string/hentai" />
+    </androidx.preference.PreferenceCategory>
+
+</androidx.preference.PreferenceScreen>

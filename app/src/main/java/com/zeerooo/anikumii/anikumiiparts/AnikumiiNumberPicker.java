@@ -1,10 +1,6 @@
 package com.zeerooo.anikumii.anikumiiparts;
 
-
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.util.AttributeSet;
@@ -16,11 +12,14 @@ import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatEditText;
 
+import com.google.android.material.snackbar.Snackbar;
+import com.zeerooo.anikumii.R;
+
 import static android.text.InputType.TYPE_CLASS_NUMBER;
 
 public class AnikumiiNumberPicker extends LinearLayout {
     private short maxEpisodes;
-    private Paint paint = new Paint();
+    //  private Paint paint;
 
     private AppCompatEditText appCompatEditText;
 
@@ -40,10 +39,13 @@ public class AnikumiiNumberPicker extends LinearLayout {
     }
 
     private void init() {
+      /*   paint = new Paint();
         paint.setStyle(Paint.Style.STROKE);
-        paint.setColor(Color.BLACK);
+        paint.setStrokeWidth(2);
+        paint.setColor(getResources().getColor(R.color.celestito));*/
 
         setOrientation(HORIZONTAL);
+
         Button decreaseBtn = new Button(getContext());
         AnikumiiUiHelper.transparentBackground(decreaseBtn);
         decreaseBtn.setText("-");
@@ -68,41 +70,44 @@ public class AnikumiiNumberPicker extends LinearLayout {
         this.maxEpisodes = maxEpisodes;
     }
 
-    public void setValue(String actualValue) {
-        appCompatEditText.setText(actualValue);
-    }
-
     public short getValue() {
         return Short.parseShort(appCompatEditText.getText().toString());
     }
 
-    @Override
+    public void setValue(String actualValue) {
+        appCompatEditText.setText(actualValue);
+    }
+
+   /* @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         canvas.drawRect(0, 0, getWidth(), getHeight(), paint);
-    }
+    }*/
 
     class InputFilterMinMax implements InputFilter {
         String newVal;
 
         @Override
         public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+
             try {
                 // Remove the string out of destination that is to be replaced
                 newVal = dest.toString().substring(0, dstart) + dest.toString().substring(dend, dest.length());
                 // Add the new string in
-                newVal = newVal.substring(0, dstart) + source.toString() + newVal.substring(dstart, newVal.length());
+                newVal = newVal.substring(0, dstart) + source.toString() + newVal.substring(dstart);
 
-                if (isInRange(maxEpisodes, Integer.parseInt(newVal)))
+                if (isInRange(Integer.parseInt(newVal)))
                     return null;
+                else
+                    Snackbar.make(AnikumiiNumberPicker.this, getResources().getString(R.string.error_episodes_overflow, maxEpisodes), Snackbar.LENGTH_LONG).show();
             } catch (NumberFormatException nfe) {
                 nfe.printStackTrace();
             }
-            return "0";
+            return "";
         }
 
-        private boolean isInRange(int b, int c) {
-            return b > 0 ? c >= 0 && c <= b : c >= b && c <= 0;
+        private boolean isInRange(int c) {
+            return maxEpisodes > 0 ? c >= 0 && c <= maxEpisodes : c >= maxEpisodes && c <= 0;
         }
     }
 }

@@ -9,10 +9,8 @@
     tools:context="com.zeerooo.anikumii.activities.EpisodesActivity">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/collapsing_appbarlayout"
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:clipChildren="false"
         android:fitsSystemWindows="true"
         android:theme="@style/ToolbarEpisodes">
 
@@ -20,11 +18,10 @@
             android:id="@+id/collapsing_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clipChildren="false"
-            app:contentScrim="#59000000"
+            app:contentScrim="#66000000"
             app:expandedTitleMarginBottom="40dp"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:statusBarScrim="#4D000000">
+            app:statusBarScrim="#66000000">
 
             <ImageView
                 android:id="@+id/anime_cover"
@@ -49,7 +46,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_gravity="bottom"
-                android:background="@android:color/transparent"
                 app:tabMode="fixed" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>

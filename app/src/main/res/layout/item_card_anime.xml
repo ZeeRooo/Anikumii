@@ -12,25 +12,25 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/chapter_count"
+            android:id="@+id/item_chapter_count"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/chapter_name"
+            android:layout_below="@id/item_chapter_name"
             android:padding="3dp"
             android:textAppearance="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle"
             android:textSize="12sp" />
 
         <ImageView
-            android:id="@+id/chapter_img"
+            android:id="@+id/item_chapter_img"
             android:layout_width="match_parent"
             android:layout_height="160dp"
             android:scaleType="fitXY" />
 
         <TextView
-            android:id="@+id/chapter_name"
+            android:id="@+id/item_chapter_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/chapter_img"
+            android:layout_alignBottom="@id/item_chapter_img"
             android:background="@drawable/gradient"
             android:ellipsize="end"
             android:maxLines="2"

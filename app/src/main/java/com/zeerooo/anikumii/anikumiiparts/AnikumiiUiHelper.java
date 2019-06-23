@@ -7,8 +7,10 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.zeerooo.anikumii.R;
 
 public class AnikumiiUiHelper {
+    public static Snackbar snackbar;
 
     public static void transparentBackground(View view) {
         TypedValue typedValue = new TypedValue();
@@ -22,13 +24,23 @@ public class AnikumiiUiHelper {
         view.setBackgroundResource(typedValue.resourceId);
     }
 
-    public static Snackbar Snackbar(View view, String content, int length) {
-        Snackbar snackbar = Snackbar.make(view, content, length);
+    public static Snackbar Snackbar(View view, int length, String cause, View.OnClickListener onClickListener) {
+        snackbar = Snackbar.make(view, null, length);
+
+        if (cause.contains("UnknownHostException")) {
+            snackbar.setText(view.getContext().getString(R.string.rxerror_no_connection));
+            if (onClickListener != null)
+                snackbar.setAction("Reintentar", onClickListener);
+        } else if (cause.contains("SQL"))
+            snackbar.setText(view.getContext().getString(R.string.sqlite_exception));
+        else if (cause.contains("permission_denied"))
+            snackbar.setText(view.getContext().getString(R.string.permission_denied));
+        else
+            snackbar.setText(view.getContext().getString(R.string.rxerror));
 
         snackbar.getView().setBackgroundColor(Color.parseColor("#B00020"));
         ((TextView) snackbar.getView().findViewById(com.google.android.material.R.id.snackbar_text)).setTextColor(Color.WHITE);
 
         return snackbar;
     }
-
 }

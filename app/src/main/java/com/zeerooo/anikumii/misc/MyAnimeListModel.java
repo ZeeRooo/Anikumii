@@ -8,7 +8,6 @@ import com.zeerooo.anikumii.services.MALApiService;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -19,15 +18,18 @@ public class MyAnimeListModel {
     private int id, seenEpisodes, totalEpisodes;
     private byte score, priority, rewatched, rewatchValue, storageType, status;
     private boolean isInList;
-    private String comment, endYear, startYear, strings[] = new String[0];
+    private String comment;
+    private String endYear;
+    private String startYear;
+    private String[] strings = new String[0];
     private StringBuilder params = new StringBuilder();
     private List<String> tagsList = new ArrayList<>();
     private JSONObject jsonObject;
 
     public MyAnimeListModel(String name, String username, boolean fetchFullUserData) throws IOException {
-        System.out.println("https://api.jikan.moe/v3/user/" + username + "/animelist?q=" + name);
+
         try {
-            jsonObject = ((JSONObject) new JSONTokener(new AnikumiiConnection().getStringResponse("GET", "https://api.jikan.moe/v3/user/" + username + "/animelist?q=" + name, null)).nextValue()).getJSONArray("anime").getJSONObject(0);
+            jsonObject = new JSONObject(new AnikumiiConnection().getStringResponse("GET", "https://api.jikan.moe/v3/user/" + username + "/animelist?q=" + name, null)).getJSONArray("anime").getJSONObject(0);
             id = jsonObject.getInt("mal_id");
             score = (byte) jsonObject.getInt("score");
             status = (byte) jsonObject.getInt("watching_status");
@@ -36,13 +38,13 @@ public class MyAnimeListModel {
             if (fetchFullUserData)
                 fetchUserData();
         } catch (JSONException | FileNotFoundException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             try {
-                jsonObject = ((JSONObject) new JSONTokener(new AnikumiiConnection().getStringResponse("GET", "https://api.jikan.moe/v3/search/anime/?q=" + name, null)).nextValue()).getJSONArray("results").getJSONObject(0);
+                jsonObject = new JSONObject(new AnikumiiConnection().getStringResponse("GET", "https://api.jikan.moe/v3/search/anime/?q=" + name, null)).getJSONArray("results").getJSONObject(0);
                 id = jsonObject.getInt("mal_id");
                 totalEpisodes = jsonObject.getInt("episodes");
             } catch (Exception c) {
-                c.printStackTrace();
+                //c.printStackTrace();
             }
 
             isInList = false;
@@ -65,6 +67,14 @@ public class MyAnimeListModel {
 
         startYear = jsonObject.getString("watch_start_date").split("T")[0];
         endYear = jsonObject.getString("watch_end_date").split("T")[0];
+    }
+
+    public String getType() throws JSONException {
+        return jsonObject.getString("type");
+    }
+
+    public String getImage() throws JSONException {
+        return jsonObject.getString("image_url");
     }
 
     public String[] getStrings() {
@@ -115,44 +125,8 @@ public class MyAnimeListModel {
             return this.priority;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public void setSeenEpisodes(int seenEpisodes) {
-        this.seenEpisodes = seenEpisodes;
-        if (totalEpisodes == seenEpisodes)
-            status = 2;
-    }
-
-    public void setStatus(byte status) {
-        this.status = status;
-    }
-
-    public void setScore(byte score) {
-        if (this.score != score)
-            this.score = score;
-    }
-
-    public void setPriority(byte priority) {
-        this.priority = priority;
-    }
-
     public void setRewatched(byte rewatched) {
         this.rewatched = rewatched;
-    }
-
-    public void setTags(List<String> tags) {
-        for (short a = 0; a < tags.size(); a++) {
-            if (!tagsList.contains(tags.get(a))) {
-                tagsList.add(tags.get(a));
-            }
-        }
-    }
-
-    public void setStorageType(byte storageType) {
-        if (this.storageType != storageType)
-            this.storageType = storageType;
     }
 
     public void setComment(String comment) {
@@ -167,28 +141,64 @@ public class MyAnimeListModel {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public int getSeenEpisodes() {
         return seenEpisodes;
+    }
+
+    public void setSeenEpisodes(int seenEpisodes) {
+        this.seenEpisodes = seenEpisodes;
+        if (totalEpisodes == seenEpisodes)
+            status = 2;
     }
 
     public byte getScore() {
         return score;
     }
 
+    public void setScore(byte score) {
+        if (this.score != score)
+            this.score = score;
+    }
+
     public byte getPriority() {
         return priority;
+    }
+
+    public void setPriority(byte priority) {
+        this.priority = priority;
     }
 
     public byte getStorageType() {
         return storageType;
     }
 
+    public void setStorageType(byte storageType) {
+        if (this.storageType != storageType)
+            this.storageType = storageType;
+    }
+
     public byte getStatus() {
         return status;
     }
 
+    public void setStatus(byte status) {
+        this.status = status;
+    }
+
     public List<String> getTags() {
         return tagsList;
+    }
+
+    public void setTags(List<String> tags) {
+        for (short a = 0; a < tags.size(); a++) {
+            if (!tagsList.contains(tags.get(a))) {
+                tagsList.add(tags.get(a));
+            }
+        }
     }
 
     public String getEndYear() {

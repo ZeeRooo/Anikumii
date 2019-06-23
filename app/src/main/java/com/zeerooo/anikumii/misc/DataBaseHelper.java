@@ -12,14 +12,15 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
     private final String TABLE_NAME = "AnimesDB";
+    private ContentValues contentValues = new ContentValues();
 
     public DataBaseHelper(Context context) {
-        super(context, "AnimeFLV.db", null, 1);
+        super(context, "Anikumii.db", null, 1);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE " + TABLE_NAME + "  (ID TEXT PRIMARY KEY, TITLE TEXT, TYPE TEXT, URL TEXT, GENRES TEXT, ANIMEID TEXT)");
+        db.execSQL("CREATE TABLE " + TABLE_NAME + "  (ID TEXT PRIMARY KEY, TITLE TEXT, TYPE TEXT, IMAGE TEXT, DATE TEXT, LASTEPISODE INT, POSITION INT)");
     }
 
     @Override
@@ -28,20 +29,27 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean addData(String title, String type, String url, String genres, String animeId) {
-        ContentValues contentValues = new ContentValues();
+    public boolean addData(String title, String type, String url, String imageUrl, String date, int lastEpisode, int position) {
+        contentValues.clear();
+
         contentValues.put("TITLE", title);
         contentValues.put("TYPE", type);
-        contentValues.put("URL", url);
-        contentValues.put("GENRES", genres);
-        contentValues.put("ANIMEID", animeId);
+        contentValues.put("IMAGE", imageUrl);
+        contentValues.put("DATE", date);
+        contentValues.put("LASTEPISODE", lastEpisode);
         contentValues.put("ID", url);
-        long result = getWritableDatabase().insertWithOnConflict(TABLE_NAME, null, contentValues, SQLiteDatabase.CONFLICT_IGNORE);
+        contentValues.put("POSITION", position);
 
-        return result != -1;
+        return (getWritableDatabase().insertWithOnConflict(TABLE_NAME, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE)) != -1;
     }
 
-    public Cursor getListContents() {
-        return getReadableDatabase().rawQuery("SELECT * FROM " + TABLE_NAME, null);
+    public int getDatabaseRows(Cursor cursor) {
+        try {
+            cursor = getReadableDatabase().rawQuery("SELECT TITLE FROM AnimesDB", null);
+            cursor.moveToLast();
+            return cursor.getCount();
+        } finally {
+            cursor.close();
+        }
     }
 }

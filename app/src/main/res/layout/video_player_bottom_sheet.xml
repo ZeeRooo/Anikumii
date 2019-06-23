@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/bottom_sheet_videoPlayer"
@@ -20,21 +21,11 @@
         app:srcCompat="@drawable/ic_public" />
 
     <ImageButton
-        android:id="@+id/unseen"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_margin="15dp"
-        android:layout_toEndOf="@id/changeServer"
-        android:contentDescription="@string/unseen"
-        android:scaleType="fitXY"
-        app:srcCompat="@drawable/ic_unseen" />
-
-    <ImageButton
         android:id="@+id/downloadEpisode"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_margin="15dp"
-        android:layout_toEndOf="@id/unseen"
+        android:layout_toEndOf="@id/changeServer"
         android:contentDescription="@string/download"
         android:scaleType="fitXY"
         app:srcCompat="@android:drawable/stat_sys_download" />
@@ -47,6 +38,6 @@
         android:layout_toEndOf="@id/downloadEpisode"
         android:contentDescription="@string/bottom_sheet_stream"
         android:scaleType="fitXY"
-        app:srcCompat="@drawable/cast" />
+        app:srcCompat="@drawable/ic_cast" />
 
 </RelativeLayout>

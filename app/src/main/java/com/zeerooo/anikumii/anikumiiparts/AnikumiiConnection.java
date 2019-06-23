@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-
 
 public class AnikumiiConnection {
 
@@ -29,14 +27,17 @@ public class AnikumiiConnection {
             dataOutputStream.close();
         }
 
+        InputStreamReader inputStreamReader = new InputStreamReader(httpURLConnection.getInputStream(), "UTF-8");
         StringBuilder response = new StringBuilder();
 
-        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream(), StandardCharsets.UTF_8))) {
+        try (BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
             String responseLine;
+
             while ((responseLine = bufferedReader.readLine()) != null) {
-                response.append(responseLine.trim());
+                response.append(responseLine/*.trim()*/);
             }
 
+            inputStreamReader.close();
             bufferedReader.close();
             return response.toString();
         }

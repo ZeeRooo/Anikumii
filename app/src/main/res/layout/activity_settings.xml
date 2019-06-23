@@ -5,11 +5,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.google.android.material.appbar.MaterialToolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?colorPrimaryDark" />
+        android:layout_height="wrap_content"
+        android:background="?colorPrimaryDark"
+        android:fitsSystemWindows="true" />
 
     <RelativeLayout
         android:id="@+id/pref_accLayout"

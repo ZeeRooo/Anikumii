@@ -31,7 +31,6 @@
                     android:textAppearance="@style/titleStyle" />
 
                 <TextView
-                    android:id="@+id/chooseAState"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/basicTextHeader"
@@ -80,7 +79,6 @@
                     android:layout_marginBottom="10dp" />
 
                 <TextView
-                    android:id="@+id/malSetStarsText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignTop="@+id/malSetStars"
@@ -160,7 +158,6 @@
                     android:layout_margin="10dp" />
 
                 <TextView
-                    android:id="@+id/malSetPriorityText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignTop="@+id/malSetPriority"
@@ -187,7 +184,6 @@
                     android:paddingBottom="10dp" />
 
                 <TextView
-                    android:id="@+id/malSetSourceText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignTop="@+id/malSetSource"
@@ -214,7 +210,6 @@
                     android:paddingBottom="10dp" />
 
                 <TextView
-                    android:id="@+id/malSetRewatchTimes"
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
                     android:layout_alignTop="@+id/rewatch_numberpicker"
@@ -237,7 +232,6 @@
                     android:layout_marginBottom="10dp" />
 
                 <TextView
-                    android:id="@+id/malSetRewatchProbabilityText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignTop="@+id/malSetRewatchProbability"

@@ -1,58 +1,35 @@
 package com.zeerooo.anikumii.misc;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 /**
  * Created by ZeeRooo on 05/01/18
  */
 
-public class ItemsModel implements Parcelable {
+public class ItemsModel {
 
-    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
-        public ItemsModel createFromParcel(Parcel in) {
-            return new ItemsModel(in);
-        }
-
-        public ItemsModel[] newArray(int size) {
-            return new ItemsModel[size];
-        }
-    };
-
-    private String title, number, img_url, chapterUrl;
-    // private boolean seen;
+    private String title, number, imgUrl, chapterUrl, date;
     private int textColor;
 
-    public ItemsModel(String title, String number, String img_url, String chapterUrl, int textColor) {
+    public ItemsModel(String title, String number, String imgUrl, String chapterUrl) {
         this.title = title;
         this.number = number;
-        this.img_url = img_url;
+        this.imgUrl = imgUrl;
+        this.chapterUrl = chapterUrl;
+    }
+
+    public ItemsModel(String title, String number, String imgUrl, String chapterUrl, int textColor) {
+        this.title = title;
+        this.number = number;
+        this.imgUrl = imgUrl;
         this.chapterUrl = chapterUrl;
         this.textColor = textColor;
     }
 
-    public ItemsModel(String title, String number, String img_url, String chapterUrl) {
+    public ItemsModel(String title, String number, String imgUrl, String chapterUrl, String date) {
         this.title = title;
         this.number = number;
-        this.img_url = img_url;
+        this.imgUrl = imgUrl;
         this.chapterUrl = chapterUrl;
-    }
-
-    private ItemsModel(Parcel in) {
-        String[] stringData = new String[4];
-        //boolean[] booleanData = new boolean[1];
-        int[] intData = new int[1];
-
-        in.readStringArray(stringData);
-        //in.readBooleanArray(color);
-        in.readIntArray(intData);
-        // the order needs to be the same as in writeToParcel() method
-        title = stringData[0];
-        number = stringData[1];
-        img_url = stringData[2];
-        chapterUrl = stringData[3];
-        // this.seen = booleanData[0];
-        textColor = intData[0];
+        this.date = date;
     }
 
     public String getTitle() {
@@ -63,27 +40,19 @@ public class ItemsModel implements Parcelable {
         return number;
     }
 
-    public String getImg_url() {
-        return img_url;
+    public String getImgUrl() {
+        return imgUrl;
     }
 
     public String getChapterUrl() {
         return chapterUrl;
     }
 
+    public String getDate() {
+        return date;
+    }
+
     public int getTextColor() {
         return textColor;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeStringArray(new String[]{this.title, this.number, this.img_url, this.chapterUrl});
-        // dest.writeBooleanArray(new boolean[]{this.seen});
-        dest.writeIntArray(new int[]{this.textColor});
     }
 }

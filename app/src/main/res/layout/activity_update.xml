@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/update_root_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/update_new_version"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            android:textColor="@android:color/secondary_text_light_nodisable" />
+
+        <TextView
+            android:id="@+id/update_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+            android:textColor="@android:color/secondary_text_light_nodisable" />
+
+        <TextView
+            android:id="@+id/update_changelog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/update_all"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="?selectableItemBackgroundBorderless"
+                android:text="@string/more"
+                android:textAllCaps="false"
+                android:textColor="@color/disabled" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/update_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:background="?selectableItemBackgroundBorderless"
+                android:text="@android:string/cancel"
+                android:textColor="@color/disabled" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/update_ok"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="5dp"
+                android:text="@android:string/ok"
+                android:textColor="@color/celestito"
+                app:backgroundTint="@android:color/transparent"
+                app:strokeColor="@color/celestito"
+                app:strokeWidth="1dp" />
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

@@ -5,8 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.os.Bundle;
+import android.graphics.Typeface;
 import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,23 +21,31 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.TooltipCompat;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.zeerooo.anikumii.Anikumii;
 import com.zeerooo.anikumii.R;
+import com.zeerooo.anikumii.activities.AnimeActivity;
 import com.zeerooo.anikumii.activities.EpisodesActivity;
 import com.zeerooo.anikumii.activities.VideoPlayerActivity;
+import com.zeerooo.anikumii.anikumiiparts.AnikumiiBottomSheetDialog;
 import com.zeerooo.anikumii.anikumiiparts.AnikumiiUiHelper;
 import com.zeerooo.anikumii.anikumiiparts.AnimeRatingView;
 import com.zeerooo.anikumii.anikumiiparts.glide.GlideApp;
-import com.zeerooo.anikumii.fragments.AnimesRecyclerViewFragment;
 import com.zeerooo.anikumii.misc.ItemsModel;
+import com.zeerooo.anikumii.misc.Utils;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
 
 import java.util.ArrayList;
+
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by ZeeRooo on 07/01/18
@@ -43,27 +53,27 @@ import java.util.ArrayList;
 
 public class AdapterEpisodes extends AdapterMain {
     private byte parentID = 0;
-    private boolean isFav, loadHeader = true;
+    private boolean loadHeader = true;
     private Context context;
-    private String ratingStr, nextEpisodeDate, aboutStr, typeStr;
+    private String ratingStr, nextEpisodeDate, aboutStr, typeStr, malUrl, tioId;
     private View rootViewHeader;
     private TextView numberTextView, statusTextView, aboutTextView, readMore, typeTextView;
-    private ImageView animeImageView;
+    // private ImageView animeImageView;
     private AnimeRatingView ratingView;
-    private ImageButton favBtn;
     private SearchView episodesSearchView;
     private ArrayList<ItemsModel> prevAnimeList;
     private ArrayList<String> genreList, listRel;
     private EpisodesFilter episodesFilter;
 
-    public AdapterEpisodes(String ratingStr, String nextEpisodeDate, String aboutStr, String type, ArrayList<String> genreList, ArrayList<String> listRel, boolean isFav) {
+    public AdapterEpisodes(String tioId, String malUrl, String ratingStr, String nextEpisodeDate, String aboutStr, String type, ArrayList<String> genreList, ArrayList<String> listRel) {
         this.ratingStr = ratingStr;
         this.nextEpisodeDate = nextEpisodeDate;
         this.genreList = genreList;
         this.listRel = listRel;
-        this.isFav = isFav;
         this.aboutStr = aboutStr;
         this.typeStr = type;
+        this.malUrl = malUrl;
+        this.tioId = tioId;
     }
 
     @NonNull
@@ -84,12 +94,10 @@ public class AdapterEpisodes extends AdapterMain {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof MyViewHolder) {
             ItemsModel items = animeList.get(position);
-            if (items != null) {
-                numberTextView.setText(items.getNumber());
-                numberTextView.setTextColor(items.getTextColor());
+            numberTextView.setText(items.getNumber());
+            numberTextView.setTextColor(items.getTextColor());
 
-                GlideApp.with(context).load(items.getImg_url()).into(animeImageView);
-            }
+            //GlideApp.with(context).load(items.getImgUrl()).into(animeImageView);
         } else if (holder instanceof Header && loadHeader) {
             ratingView.init(ratingStr);
             ratingView.setAnimatesProgress();
@@ -105,48 +113,16 @@ public class AdapterEpisodes extends AdapterMain {
                 genreChip.setText(genre);
                 genreChip.setTextSize(14);
                 genreChip.setOnClickListener(view -> {
-                    Bundle bundle = new Bundle();
-                    bundle.putString("toLoad", Anikumii.dominium + "/directorio?genero=" + genre.replace(" ", "-"));
-                    bundle.putString("genre", genre);
-                    bundle.putString("element", "article.anime");
-                    FragmentManager fragmentManager = ((EpisodesActivity) context).getSupportFragmentManager();
-                    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                    AnimesRecyclerViewFragment fragment = new AnimesRecyclerViewFragment();
-                    fragment.setArguments(bundle);
-                    fragmentTransaction.addToBackStack(null);
-                    fragmentTransaction.replace(R.id.act_episodes_rootView, fragment);
-                    fragmentTransaction.commit();
+                    context.startActivity(new Intent(context, AnimeActivity.class)
+                            .putExtra("toLoad", Anikumii.dominium + "/directorio?genero=" + genre.replace(" ", "-"))
+                            .putExtra("title", genre)
+                            .putExtra("element", "article.anime"));
                 });
 
                 ((ChipGroup) rootViewHeader.findViewById(R.id.chipGroups)).addView(genreChip);
             }
 
-            if (isFav) {
-                favBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_favorite));
-                TooltipCompat.setTooltipText(favBtn, context.getString(R.string.bottom_sheet_removeFav));
-                favBtn.setContentDescription(context.getString(R.string.bottom_sheet_removeFav));
-            } else {
-                favBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_favorite_border));
-                TooltipCompat.setTooltipText(favBtn, context.getString(R.string.bottom_sheet_newFav));
-                favBtn.setContentDescription(context.getString(R.string.bottom_sheet_newFav));
-            }
-
-            AnikumiiUiHelper.transparentBackground(favBtn);
-            favBtn.setOnClickListener(view -> {
-               /* if (isFav) {
-                    //buttonHelper("favorite", "1");
-                    favBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_favorite_border));
-                    TooltipCompat.setTooltipText(favBtn, context.getString(R.string.bottom_sheet_removeFav));
-                    favBtn.setContentDescription(context.getString(R.string.bottom_sheet_removeFav));
-                } else {
-                    // buttonHelper("favorite", "0");
-                    favBtn.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_favorite));
-                    TooltipCompat.setTooltipText(favBtn, context.getString(R.string.bottom_sheet_removeFav));
-                    favBtn.setContentDescription(context.getString(R.string.bottom_sheet_removeFav));
-                }*/
-                isFav = !isFav;
-            });
-
+            ((ImageView) episodesSearchView.findViewById(R.id.search_button)).setColorFilter(-4276546);//secondary_text_light_nodisable
             episodesSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
@@ -223,8 +199,8 @@ public class AdapterEpisodes extends AdapterMain {
                 RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 
                 if (parentID == 1) {
-                    if (favBtn.getVisibility() == View.VISIBLE)
-                        param.addRule(RelativeLayout.BELOW, R.id.add_anime_fav);
+                    if (episodesSearchView.getVisibility() == View.VISIBLE)
+                        param.addRule(RelativeLayout.BELOW, R.id.searchEpisodes);
                     else if (readMore.getVisibility() == View.VISIBLE)
                         param.addRule(RelativeLayout.BELOW, R.id.readMore);
                     else
@@ -254,10 +230,76 @@ public class AdapterEpisodes extends AdapterMain {
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private Element element;
+        private String synopsis, title, imageUrl, aired, duration;
+
         MyViewHolder(View view) {
             super(view);
-            numberTextView = view.findViewById(R.id.episodes_number);
-            animeImageView = view.findViewById(R.id.episodes_img);
+
+            numberTextView = view.findViewById(R.id.item_episodes_number);
+
+            ImageButton aboutEpisode = view.findViewById(R.id.item_episode_about);
+            AnikumiiUiHelper.transparentBackground(aboutEpisode);
+            TooltipCompat.setTooltipText(aboutEpisode, "Información");
+            aboutEpisode.setOnClickListener(v ->
+                    Observable
+                            .just(true)
+                            .observeOn(Schedulers.io())
+                            .doOnNext(aBoolean -> {
+                                element = Jsoup.connect(malUrl + animeList.get(getAdapterPosition()).getNumber().replace("Episodio ", "/episode/")).get().selectFirst("div.js-scrollfix-bottom-rel");
+
+                                try {
+                                    imageUrl = element.selectFirst("div.contents-video-embed > div > a > img").attr("src");
+                                } catch (NullPointerException npe) {
+                                    imageUrl = Anikumii.dominium + "/uploads/portadas/" + tioId + ".jpg";
+                                }
+
+                                synopsis = element.selectFirst("div.pt8.pb8").text();
+                                title = element.selectFirst("h2.fs18.lh11").text();
+                                aired = Utils.matcher(element.selectFirst("div.di-tc.pt4.pb4.pl8.pr8.ar.fn-grey2").text(), "Aired: (.*)");
+                                duration = Utils.matcher(element.selectFirst("div.di-tc.pt4.pb4.pl8.pr8.ar.fn-grey2").text(), "Duration: (.*) Aired");
+                            })
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new DisposableObserver<Boolean>() {
+                                @Override
+                                public void onNext(Boolean aBoolean) {
+
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                    if (e instanceof NullPointerException) {
+                                        synopsis = "Sinopsis: No hay sinopsis disponible para este capítulo.";
+                                        title = animeList.get(getAdapterPosition()).getTitle();
+                                        aired = "Desconocido.";
+                                        duration = "Desconocido.";
+                                        onComplete();
+                                    } else e.printStackTrace();
+                                }
+
+                                @Override
+                                public void onComplete() {
+                                    AnikumiiBottomSheetDialog anikumiiBottomSheetDialog = new AnikumiiBottomSheetDialog(context);
+                                    View specificView = LayoutInflater.from(context).inflate(R.layout.bottom_sheet_episodes_about, null);
+
+                                    ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.rgb(66, 104, 179));
+                                    StyleSpan styleSpan = new StyleSpan(Typeface.BOLD);
+
+                                    ((TextView) specificView.findViewById(R.id.episodes_bottom_sheet_about_aired)).setText(Utils.getBold("Emitido: " + aired, foregroundColorSpan, styleSpan));
+
+                                    ((TextView) specificView.findViewById(R.id.episodes_bottom_sheet_about_duration)).setText(Utils.getBold("Duración: " + duration, foregroundColorSpan, styleSpan));
+
+                                    GlideApp.with(context).load(imageUrl).into((ImageView) specificView.findViewById(R.id.episodes_bottom_sheet_about_header));
+
+                                    ((TextView) specificView.findViewById(R.id.episodes_bottom_sheet_about_synopsis)).setText(Utils.getBold(synopsis.replace("Synopsis", "Sinopsis:"), foregroundColorSpan, styleSpan));
+
+                                    anikumiiBottomSheetDialog.initialize(title, specificView);
+
+                                    if (!isDisposed())
+                                        dispose();
+                                }
+                            }));
+            // animeImageView = view.findViewById(R.id.episodes_img);
             view.setOnClickListener(this);
         }
 
@@ -265,7 +307,7 @@ public class AdapterEpisodes extends AdapterMain {
         public void onClick(View view) {
             ItemsModel items = animeList.get(getAdapterPosition());
             Intent videoAct = new Intent(context, VideoPlayerActivity.class);
-            videoAct.putExtra("chapterUrl", Anikumii.dominium + "/ver/" + items.getChapterUrl());
+            videoAct.putExtra("chapterUrl", items.getChapterUrl());
             context.startActivity(videoAct);
         }
     }
@@ -276,7 +318,6 @@ public class AdapterEpisodes extends AdapterMain {
             ratingView = view.findViewById(R.id.AnimeRatingView);
             rootViewHeader = view;
             statusTextView = view.findViewById(R.id.nextEpisode_date);
-            favBtn = view.findViewById(R.id.add_anime_fav);
             episodesFilter = new EpisodesFilter();
             aboutTextView = view.findViewById(R.id.anime_about);
             readMore = view.findViewById(R.id.readMore);

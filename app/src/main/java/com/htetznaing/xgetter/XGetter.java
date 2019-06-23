@@ -13,8 +13,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -202,11 +202,11 @@ public class XGetter {
     }
 
 
-    private String base64Encode(String text) {
-        return Base64.encodeToString(text.getBytes(StandardCharsets.UTF_8), Base64.DEFAULT);
+    private String base64Encode(String text) throws UnsupportedEncodingException {
+        return Base64.encodeToString(text.getBytes("UTF-8"), Base64.DEFAULT);
     }
 
-    private String base64Decode(String text) {
-        return new String(Base64.decode(text, Base64.DEFAULT), StandardCharsets.UTF_8);
+    private String base64Decode(String text) throws UnsupportedEncodingException {
+        return new String(Base64.decode(text, Base64.DEFAULT), "UTF-8");
     }
 }

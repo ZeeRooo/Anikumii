@@ -1,5 +1,10 @@
 package com.zeerooo.anikumii.misc;
 
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,5 +42,14 @@ public class Utils {
 
     public static String removeLastNumberAndSpace(String string) {
         return string.replaceAll("( \\d+)\\D*$", "");
+    }
+
+    public static SpannableStringBuilder getBold(String string, ForegroundColorSpan foregroundColorSpan, StyleSpan styleSpan) {
+        if (string == null)
+            string = "";
+        SpannableStringBuilder sb = new SpannableStringBuilder(string.replace("null", "-"));
+        sb.setSpan(foregroundColorSpan, 0, string.indexOf(":") + 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        sb.setSpan(styleSpan, 0, string.indexOf(":") + 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        return sb;
     }
 }

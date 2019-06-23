@@ -26,7 +26,6 @@
         android:layout_alignParentEnd="true"
         android:background="?attr/selectableItemBackground"
         android:contentDescription="@string/overflow_shortcut_description"
-        android:tint="?android:attr/textColorSecondary"
         app:srcCompat="@drawable/ic_shortcut" />
 
     <View
@@ -43,9 +42,9 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/overflow_divider"
         android:background="?attr/selectableItemBackground"
-        android:drawableStart="@drawable/ic_account"
         android:text="@string/log_in"
-        android:textAllCaps="false" />
+        android:textAllCaps="false"
+        app:drawableStartCompat="@drawable/ic_account" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/overflow_btn_settings"
@@ -53,8 +52,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/overflow_btn_login"
         android:background="?attr/selectableItemBackground"
-        android:drawableStart="@drawable/ic_settings"
         android:text="@string/nav_settings"
-        android:textAllCaps="false" />
+        android:textAllCaps="false"
+        app:drawableStartCompat="@drawable/ic_settings" />
 
 </RelativeLayout>

@@ -9,4 +9,8 @@
         <item name="android:statusBarColor">@color/colorPrimaryDark</item>
     </style>
 
+    <style name="BottomSheetDialogTheme" parent="BaseBottomSheetDialog">
+        <item name="android:navigationBarColor">@color/colorPrimary</item>
+    </style>
+
 </resources>
