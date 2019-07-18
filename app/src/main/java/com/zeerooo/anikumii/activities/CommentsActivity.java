@@ -20,6 +20,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -143,11 +144,11 @@ public class CommentsActivity extends AppCompatActivity {
         });
 
         if (Anikumii.dominium.equals("https://tioanime.com"))
-            data = "<div id=\"fb-root\"></div><script>(function(d, s, id) {var js, fjs = d.getElementsByTagName(s)[0];if (d.getElementById(id)) return;js = d.createElement(s); js.id = id;js.src = 'https://connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v3.1';fjs.parentNode.insertBefore(js, fjs);}(document, 'script', 'facebook-jssdk'));</script><div class=\"fb-comments\" data-href='" + rawUrl + "' data-numposts=\"5\"></div>";
+            data = "<div id=\"disqus_thread\"></div><script>var disqus_config = function () {this.page.url = '" + rawUrl + "'};(function() {var d = document, s = d.createElement('script');s.src = 'https://https-tioanime-com.disqus.com/embed.js';s.setAttribute('data-timestamp', +new Date());(d.head || d.body).appendChild(s);})();</script>";
         else
             data = "<div id=\"disqus_thread\"></div><script>var disqus_config = function () {this.page.url = '" + rawUrl + "'};(function() {var d = document, s = d.createElement('script');s.src = 'https://tiohentai.disqus.com/embed.js';s.setAttribute('data-timestamp', +new Date());(d.head || d.body).appendChild(s);})();</script>";
 
-        webView.loadDataWithBaseURL("https://facebook.com", data, "text/html", "UTF-8", null);
+        webView.loadDataWithBaseURL("https://disqus.com", data, "text/html", "UTF-8", null);
     }
 
     @Override
@@ -159,11 +160,11 @@ public class CommentsActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            finish();
-            return true;
-        }
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        //   if (item.getItemId() == android.R.id.home) {
+        finish();
+        //      return true;
+        //  }
 
         return super.onOptionsItemSelected(item);
     }

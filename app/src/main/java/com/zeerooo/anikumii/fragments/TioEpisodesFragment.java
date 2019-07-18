@@ -37,6 +37,7 @@ public class TioEpisodesFragment extends Fragment {
             if (getArguments() != null) {
                 anikumiiRecyclerView.setAdapter(new AdapterEpisodes(getArguments().getString("animeId"), getArguments().getString("malUrl"), getArguments().getString("ratingStr"), getArguments().getString("nextEpisodeDate"), getArguments().getString("animeAbout"), getArguments().getString("animeType"), getArguments().getStringArrayList("genreList"), getArguments().getStringArrayList("listRel")));
                 anikumiiRecyclerView.setRootView(getView());
+                anikumiiRecyclerView.setHasFixedSize(true);
                 anikumiiRecyclerView.setElementClass("ul.episodes-list list-unstyled > li > a");
                 anikumiiRecyclerView.setToLoad(getArguments().getString("animeUrl"));
                 anikumiiRecyclerView.setMaxDisplayedItems((byte) 12);

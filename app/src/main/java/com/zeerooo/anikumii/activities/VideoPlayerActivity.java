@@ -13,7 +13,9 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
+import android.net.Network;
 import android.net.NetworkInfo;
+import android.net.NetworkRequest;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -92,27 +94,29 @@ public class VideoPlayerActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private SimpleDateFormat simpleDateFormat;
     private Date date;
-    private BroadcastReceiver networkReceiver;
+    private BroadcastReceiver networkReceiver = null;
     private XGetter xGetter;
     private MyAnimeListModel myAnimeListModel;
+    private ConnectivityManager connectivityManager;
 
+    @SuppressWarnings("deprecation")
     private boolean isConnected() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnected();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setReactive(getIntent());
-
         setContentView(R.layout.activity_video);
 
         xGetter = new XGetter();
-        setSupportActionBar(findViewById(R.id.videoToolbar));
 
         sharedPreferences = new AnikumiiSharedPreferences(this);
+
+        setReactive(getIntent());
+
+        setSupportActionBar(findViewById(R.id.videoToolbar));
 
         anikumiiVideoView = findViewById(R.id.video_view);
 
@@ -140,34 +144,6 @@ public class VideoPlayerActivity extends AppCompatActivity {
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-
-        anikumiiVideoView.setOnErrorListener((MediaPlayer mp, int what, int extra) -> {
-            progressBar.setVisibility(View.VISIBLE);
-
-            if (!isConnected()) {
-                countDown();
-                AnikumiiUiHelper.Snackbar(anikumiiVideoView, Snackbar.LENGTH_LONG, "UnknownHostException", null).show();
-                pause.setImageResource(android.R.drawable.ic_media_play);
-
-                primaryProgress = mp.getCurrentPosition();
-
-                anikumiiVideoView.pause();
-
-                networkReceiver = new BroadcastReceiver() {
-                    @Override
-                    public void onReceive(Context context, Intent intent) {
-                        if (isConnected()) {
-                            anikumiiVideoView.resume();
-                            resumeVideo();
-                        }
-                    }
-                };
-                IntentFilter filter = new IntentFilter();
-                filter.addAction(android.net.ConnectivityManager.CONNECTIVITY_ACTION);
-                registerReceiver(networkReceiver, filter);
-            }
-            return true;
-        });
 
         anikumiiVideoView.setOnTouchListener((View v, MotionEvent event) -> {
             if (!mButtonsHeader.isShown()) {
@@ -239,6 +215,66 @@ public class VideoPlayerActivity extends AppCompatActivity {
         serverHelper = new ServerHelper();
 
         isLogedIn = !sharedPreferences.getString("malUserName", "").equals("");
+
+        anikumiiVideoView.setOnErrorListener((MediaPlayer mp, int what, int extra) -> {
+            progressBar.setVisibility(View.VISIBLE);
+            primaryProgress = mp.getCurrentPosition();
+
+            if (networkReceiver == null) {
+                connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+                networkReceiver = new BroadcastReceiver() {
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        if (!intent.getBooleanExtra("isConnected", true) || (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT && !isConnected())) {
+
+                            countDown();
+                            AnikumiiUiHelper.errorSnackbar(anikumiiVideoView, Snackbar.LENGTH_LONG, "UnknownHostException", null).show();
+                            pause.setImageResource(android.R.drawable.ic_media_play);
+
+                            anikumiiVideoView.pause();
+                        } else {
+                            anikumiiVideoView.resume();
+
+                            resumeVideo();
+                        }
+                    }
+                };
+
+                IntentFilter filter = new IntentFilter("com.zeerooo.anikumii.Broadcast");
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    Intent intent = new Intent();
+                    intent.setAction("com.zeerooo.anikumii.Broadcast");
+
+                    countDown();
+                    AnikumiiUiHelper.errorSnackbar(anikumiiVideoView, Snackbar.LENGTH_LONG, "UnknownHostException", null).show();
+                    pause.setImageResource(android.R.drawable.ic_media_play);
+                    anikumiiVideoView.pause();
+
+                    NetworkRequest.Builder builder = new NetworkRequest.Builder();
+                    connectivityManager.registerNetworkCallback(builder.build(), new ConnectivityManager.NetworkCallback() {
+                        @Override
+                        public void onAvailable(@NonNull Network network) {
+                            intent.putExtra("isConnected", true);
+                            sendBroadcast(intent);
+                        }
+
+                        @Override
+                        public void onLost(@NonNull Network network) {
+                            intent.putExtra("isConnected", false);
+                            sendBroadcast(intent);
+                        }
+                    });
+                } else {
+                    filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+                }
+
+                registerReceiver(networkReceiver, filter);
+            }
+
+            return true;
+        });
     }
 
     @Override
@@ -257,7 +293,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
                 snackbar.setAction(getString(android.R.string.ok), view -> snackbar.dismiss());
                 snackbar.show();
             } else
-                AnikumiiUiHelper.Snackbar(findViewById(R.id.videoPlayerRootView), Snackbar.LENGTH_LONG, "permission_denied", null).show();
+                AnikumiiUiHelper.errorSnackbar(findViewById(R.id.videoPlayerRootView), Snackbar.LENGTH_LONG, "permission_denied", null).show();
     }
 
     private boolean isPlaying() {
@@ -465,7 +501,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
-                        AnikumiiUiHelper.Snackbar(anikumiiVideoView, Snackbar.LENGTH_INDEFINITE, e.toString(), view -> {
+                        AnikumiiUiHelper.errorSnackbar(anikumiiVideoView, Snackbar.LENGTH_INDEFINITE, "videoPlayer", view -> {
                             serverSwitcherDialog();
                             AnikumiiUiHelper.snackbar.dismiss();
                         }).show();
@@ -512,12 +548,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
                 connect = controls.selectFirst("script:containsData(var videos)").toString();
                 url = xGetter.okru(Utils.matcher(connect, "\"Okru\",\"(.*?)\"").replace("\\", ""));
                 break;
-            case "Rapidvideo":
-                connect = controls.selectFirst("script:containsData(var videos)").toString();
-                url = xGetter.rapidVideo(Utils.matcher(connect, "\"Rapidvideo\",\"(.*?)\"").replace("\\", ""));
-                break;
         }
-
 
         episodes = controls.select("span.btn:nth-child(2) > a:nth-child(1)").attr("href");
         prevUrl = controls.select("span.btn:nth-child(1) > a:nth-child(1)").attr("href");
@@ -650,7 +681,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
         AnikumiiBottomSheetDialog changeServer = new AnikumiiBottomSheetDialog(this);
         changeServer.serverDialog(serverOptionDefault).setOnCheckedChangeListener((ChipGroup group, int checkedId) -> {
             if (checkedId != -1) {
-                serverOptionDefault = (String) ((Chip) group.findViewById(checkedId)).getText();
+                serverOptionDefault = ((Chip) group.findViewById(checkedId)).getText().toString();
                 setReactive(getIntent());
                 changeServer.dismiss();
             }
@@ -658,11 +689,10 @@ public class VideoPlayerActivity extends AppCompatActivity {
     }
 
     private void countDown() {
-        final int duration = anikumiiVideoView.getDuration();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                remainingTime.setText(dateFormatter(duration - anikumiiVideoView.getCurrentPosition()));
+                remainingTime.setText(dateFormatter(anikumiiVideoView.getDuration() - anikumiiVideoView.getCurrentPosition()));
                 mSeekbar.setProgress(anikumiiVideoView.getCurrentPosition());
 
                 if (anikumiiVideoView.isPlaying()) {

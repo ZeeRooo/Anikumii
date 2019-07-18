@@ -47,6 +47,9 @@ public class MALApiService extends IntentService {
 
                     stuff(url, intent.getStringExtra("params") + "&" + cookie.split(";")[2]);
                     break;
+                case 3: //refresh
+                    stuff("https://myanimelist.net/", null);
+                    break;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -69,18 +72,27 @@ public class MALApiService extends IntentService {
         conn.setRequestProperty("Pragma", "no-cache");
         conn.setRequestProperty("Cache-Control", "no-cache");
         conn.setRequestProperty("TE", "Trailers");
-        conn.setRequestMethod("POST");
+        DataOutputStream wr = null;
 
-        DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
-        wr.writeBytes(params);
+        if (params != null) {
+            conn.setRequestMethod("POST");
+
+            wr = new DataOutputStream(conn.getOutputStream());
+            wr.writeBytes(params);
+        }
+
         conn.connect();
 
         if (conn.getResponseCode() == 500 && times < 2) // El anime no esta en la lista, hay que agregarlo
             stuff("https://myanimelist.net/ownlist/anime/add.json", params);
 
         times = 0;
-        wr.flush();
-        wr.close();
+        if (wr != null) {
+            wr.flush();
+            wr.close();
+        }
+        System.out.println(conn.getResponseCode());
+
         conn.disconnect();
     }
 

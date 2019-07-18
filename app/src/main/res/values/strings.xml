@@ -57,6 +57,7 @@
     <string name="permission_denied">Permiso denegado, no se pudo descargar</string>
     <string name="download">Descargar</string>
     <string name="changeServer">Cambiar de server</string>
+    <string name="server_not_found">El server no está disponible</string>
     <string name="more">Más</string>
 
     <string name="rxerror_no_connection">No hay conexión a internet</string>
@@ -87,7 +88,6 @@
     <string name="unload_video">Espere a que el video sea procesado</string>
     <string name="mediafire">MediaFire</string>
     <string name="okru">ok.ru</string>
-    <string name="rapidvideo">Rapidvideo</string>
 
     <string name="search_by_number">Buscar por número</string>
     <string name="string_action_filter">Filtrar</string>

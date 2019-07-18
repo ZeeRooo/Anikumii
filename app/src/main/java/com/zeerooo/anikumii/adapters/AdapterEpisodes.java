@@ -64,6 +64,7 @@ public class AdapterEpisodes extends AdapterMain {
     private ArrayList<ItemsModel> prevAnimeList;
     private ArrayList<String> genreList, listRel;
     private EpisodesFilter episodesFilter;
+    private ItemsModel items;
 
     public AdapterEpisodes(String tioId, String malUrl, String ratingStr, String nextEpisodeDate, String aboutStr, String type, ArrayList<String> genreList, ArrayList<String> listRel) {
         this.ratingStr = ratingStr;
@@ -93,7 +94,7 @@ public class AdapterEpisodes extends AdapterMain {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof MyViewHolder) {
-            ItemsModel items = animeList.get(position);
+            items = animeList.get(position);
             numberTextView.setText(items.getNumber());
             numberTextView.setTextColor(items.getTextColor());
 

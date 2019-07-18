@@ -292,14 +292,17 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     public static class AdvancedFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
+        private Preference serverPreference;
+
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             getPreferenceManager().setSharedPreferencesName("ZeeRooo@Anikumii!!");
             getPreferenceManager().setSharedPreferencesMode(MODE_PRIVATE);
             setPreferencesFromResource(R.xml.pref_advanced, rootKey);
 
-            findPreference("defaultServer").setOnPreferenceClickListener(this);
-            findPreference("defaultServer").setSummary(getString(R.string.defaultServerSummary, getPreferenceManager().getSharedPreferences().getString("defaultServer", "Zippyshare")));
+            serverPreference = findPreference("defaultServer");
+            serverPreference.setOnPreferenceClickListener(this);
+            serverPreference.setSummary(getString(R.string.defaultServerSummary, getPreferenceManager().getSharedPreferences().getString("defaultServer", "Zippyshare")));
 
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
                 getPreferenceScreen().removePreference(findPreference("enablePip"));
@@ -337,8 +340,8 @@ public class SettingsActivity extends AppCompatActivity {
                     AnikumiiBottomSheetDialog defaultServer = new AnikumiiBottomSheetDialog(getActivity());
                     defaultServer.serverDialog(preference.getSharedPreferences().getString("defaultServer", "Zippyshare")).setOnCheckedChangeListener((ChipGroup group, int checkedId) -> {
                         if (checkedId != -1) {
-                            preference.getSharedPreferences().edit().putString("defaultServer", (String) ((Chip) group.findViewById(checkedId)).getText()).apply();
-                            findPreference("defaultServer").setSummary(getString(R.string.defaultServerSummary, (String) ((Chip) group.findViewById(checkedId)).getText()));
+                            preference.getSharedPreferences().edit().putString("defaultServer", ((Chip) group.findViewById(checkedId)).getText().toString()).apply();
+                            serverPreference.setSummary(getString(R.string.defaultServerSummary, ((Chip) group.findViewById(checkedId)).getText().toString()));
 
                             defaultServer.dismiss();
                         }

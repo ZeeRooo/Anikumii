@@ -36,6 +36,7 @@ public class AnimeActivity extends AppCompatActivity {
 
         anikumiiRecyclerView = findViewById(R.id.recyclerView);
         anikumiiRecyclerView.setRootView(findViewById(R.id.recyclerView));
+        anikumiiRecyclerView.setHasFixedSize(true);
 
         if (isHistory) {
             anikumiiRecyclerView.initDB();

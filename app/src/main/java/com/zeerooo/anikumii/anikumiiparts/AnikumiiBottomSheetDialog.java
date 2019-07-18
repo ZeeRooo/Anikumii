@@ -150,14 +150,6 @@ public class AnikumiiBottomSheetDialog extends BottomSheetDialog {
         okruChip.setChecked(selectedServer.equals("ok.ru"));
         chipGroup.addView(okruChip);
 
-        Chip rapidvideoChip = new Chip(getContext());
-        rapidvideoChip.setText(getContext().getString(R.string.rapidvideo));
-        rapidvideoChip.setCheckable(true);
-        rapidvideoChip.setChipBackgroundColor(ColorStateList.valueOf(Color.parseColor("#4574AE")));
-        rapidvideoChip.setTextColor(Color.WHITE);
-        rapidvideoChip.setChecked(selectedServer.equals("Rapidvideo"));
-        chipGroup.addView(rapidvideoChip);
-
         initialize(getContext().getString(R.string.changeServer), chipGroup);
 
         return chipGroup;

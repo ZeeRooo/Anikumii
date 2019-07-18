@@ -20,8 +20,11 @@ import com.zeerooo.anikumii.anikumiiparts.glide.GlideApp;
 
 public class SearchCursorAdapter extends SimpleCursorAdapter {
 
+    private RequestOptions requestOptions;
+
     public SearchCursorAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
         super(context, layout, c, from, to, flags);
+        requestOptions = new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).circleCrop();
     }
 
     @Override
@@ -32,6 +35,6 @@ public class SearchCursorAdapter extends SimpleCursorAdapter {
         TextView typeTextView = view.findViewById(R.id.suggerenceType);
         typeTextView.setText(cursor.getString(2));
 
-        GlideApp.with(context).load(Anikumii.dominium + "/uploads/portadas/" + cursor.getString(3) + ".jpg").apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).circleCrop()).into((ImageView) view.findViewById(R.id.suggerenceIcon));
+        GlideApp.with(context).load(Anikumii.dominium + "/uploads/portadas/" + cursor.getString(3) + ".jpg").apply(requestOptions).into((ImageView) view.findViewById(R.id.suggerenceIcon));
     }
 }

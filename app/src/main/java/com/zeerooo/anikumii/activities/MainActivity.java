@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.ListPopupWindow;
@@ -66,6 +67,7 @@ import com.zeerooo.anikumii.anikumiiparts.glide.GlideApp;
 import com.zeerooo.anikumii.fragments.TioAnimeFragment;
 import com.zeerooo.anikumii.fragments.TioHentaiFragment;
 import com.zeerooo.anikumii.misc.Utils;
+import com.zeerooo.anikumii.services.MyAnimeListUpdater;
 import com.zeerooo.anikumii.services.NotificationService;
 import com.zeerooo.anikumii.services.UpdateService;
 
@@ -180,6 +182,13 @@ public class MainActivity extends AppCompatActivity {
 
             WorkManager.getInstance().enqueue(new PeriodicWorkRequest.Builder(NotificationService.class, 3, TimeUnit.HOURS)
                     .addTag("notification_work")
+                    .setConstraints(new Constraints.Builder()
+                            .setRequiredNetworkType(NetworkType.CONNECTED)
+                            .build())
+                    .build());
+
+            WorkManager.getInstance().enqueue(new PeriodicWorkRequest.Builder(MyAnimeListUpdater.class, 1, TimeUnit.DAYS)
+                    .addTag("myanimelist_updater_work")
                     .setConstraints(new Constraints.Builder()
                             .setRequiredNetworkType(NetworkType.CONNECTED)
                             .build())
@@ -472,7 +481,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(Throwable e) {
-                        AnikumiiUiHelper.Snackbar(findViewById(R.id.activity_main_root_view), Snackbar.LENGTH_LONG, e.toString(), null).show();
+                        AnikumiiUiHelper.errorSnackbar(findViewById(R.id.activity_main_root_view), Snackbar.LENGTH_LONG, e.toString(), null).show();
                     }
 
                     @Override

@@ -104,7 +104,7 @@ public class EpisodesActivity extends AppCompatActivity {
                     public void onError(Throwable e) {
                         e.printStackTrace();
                         if (!isDestroyed()) {
-                            AnikumiiUiHelper.Snackbar(findViewById(R.id.act_episodes_rootView), Snackbar.LENGTH_INDEFINITE, e.toString(), view -> {
+                            AnikumiiUiHelper.errorSnackbar(findViewById(R.id.act_episodes_rootView), Snackbar.LENGTH_INDEFINITE, e.toString(), view -> {
                                 dispose();
                                 setReactive();
                                 AnikumiiUiHelper.snackbar.dismiss();

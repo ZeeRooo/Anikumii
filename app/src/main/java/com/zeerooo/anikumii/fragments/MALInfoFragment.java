@@ -89,7 +89,7 @@ public class MALInfoFragment extends Fragment {
                             @Override
                             public void onError(Throwable e) {
                                 if (getView() != null)
-                                    AnikumiiUiHelper.Snackbar(getView(), Snackbar.LENGTH_LONG, e.toString(), null).show();
+                                    AnikumiiUiHelper.errorSnackbar(getView(), Snackbar.LENGTH_LONG, e.toString(), null).show();
                             }
 
                             @Override
@@ -142,6 +142,8 @@ public class MALInfoFragment extends Fragment {
 
         type = "Tipo: " + MAL.getString("type");
         episodes = Short.valueOf(MAL.getString("episodes").replace("null", "0"));
+      /*  if (episodes == 0)
+            episodes = 1;*/
         airedStatus = "Período de emisión: " + MAL.getJSONObject("aired").getString("string") + " (" + MAL.getString("broadcast") + ")";
         premiered = "Estrenado: " + MAL.getString("premiered");
 

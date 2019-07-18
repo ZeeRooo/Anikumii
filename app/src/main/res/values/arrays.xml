@@ -47,10 +47,4 @@
         <item>9 (Genial)</item>
         <item>10 (Obra maestra)</item>
     </string-array>
-    <string-array name="typeFilter">
-        <item>Anime</item>
-        <item>Película</item>
-        <item>Especial</item>
-        <item>OVA</item>
-    </string-array>
 </resources>

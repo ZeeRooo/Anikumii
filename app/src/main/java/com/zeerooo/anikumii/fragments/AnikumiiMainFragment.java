@@ -27,6 +27,7 @@ public class AnikumiiMainFragment extends Fragment {
             anikumiiRecyclerView = getView().findViewById(R.id.recyclerView);
             anikumiiRecyclerView.setAdapter(new AdapterAnimes(isHistory));
             anikumiiRecyclerView.setRootView(getActivity().findViewById(R.id.activity_main_root_view));
+            anikumiiRecyclerView.setHasFixedSize(true);
         }
     }
 

@@ -86,7 +86,7 @@ public class UpdateActivity extends AppCompatActivity {
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
             mDownloadManager.enqueue(request);
         } else
-            AnikumiiUiHelper.Snackbar(findViewById(R.id.update_root_view), Snackbar.LENGTH_LONG, "permission_denied", null).show();
+            AnikumiiUiHelper.errorSnackbar(findViewById(R.id.update_root_view), Snackbar.LENGTH_LONG, "permission_denied", null).show();
     }
 
     @Override

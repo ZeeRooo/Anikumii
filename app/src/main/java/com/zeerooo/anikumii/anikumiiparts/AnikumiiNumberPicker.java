@@ -96,6 +96,9 @@ public class AnikumiiNumberPicker extends LinearLayout {
                 // Add the new string in
                 newVal = newVal.substring(0, dstart) + source.toString() + newVal.substring(dstart);
 
+                if (maxEpisodes == 0)
+                    maxEpisodes = 1;
+
                 if (isInRange(Integer.parseInt(newVal)))
                     return null;
                 else
@@ -103,7 +106,7 @@ public class AnikumiiNumberPicker extends LinearLayout {
             } catch (NumberFormatException nfe) {
                 nfe.printStackTrace();
             }
-            return "";
+            return "0";
         }
 
         private boolean isInRange(int c) {

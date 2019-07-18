@@ -24,7 +24,7 @@ public class AnikumiiUiHelper {
         view.setBackgroundResource(typedValue.resourceId);
     }
 
-    public static Snackbar Snackbar(View view, int length, String cause, View.OnClickListener onClickListener) {
+    public static Snackbar errorSnackbar(View view, int length, String cause, View.OnClickListener onClickListener) {
         snackbar = Snackbar.make(view, null, length);
 
         if (cause.contains("UnknownHostException")) {
@@ -35,7 +35,11 @@ public class AnikumiiUiHelper {
             snackbar.setText(view.getContext().getString(R.string.sqlite_exception));
         else if (cause.contains("permission_denied"))
             snackbar.setText(view.getContext().getString(R.string.permission_denied));
-        else
+        else if (cause.equals("videoPlayer")) {
+            snackbar.setText(view.getContext().getString(R.string.server_not_found));
+            if (onClickListener != null)
+                snackbar.setAction(view.getContext().getString(R.string.changeServer), onClickListener);
+        } else
             snackbar.setText(view.getContext().getString(R.string.rxerror));
 
         snackbar.getView().setBackgroundColor(Color.parseColor("#B00020"));

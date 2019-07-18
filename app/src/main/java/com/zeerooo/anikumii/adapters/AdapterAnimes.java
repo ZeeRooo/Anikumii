@@ -33,9 +33,13 @@ import com.zeerooo.anikumii.misc.ItemsModel;
 public class AdapterAnimes extends AdapterMain {
     private Context context;
     private boolean isHistory;
+    private ItemsModel itemsModel;
+    private RequestOptions requestOptions;
 
     public AdapterAnimes(boolean isHistory) {
         this.isHistory = isHistory;
+
+        requestOptions = new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL);
     }
 
     @NonNull
@@ -50,11 +54,11 @@ public class AdapterAnimes extends AdapterMain {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
-        ItemsModel itemsModel = animeList.get(i);
+        itemsModel = animeList.get(i);
         ((AdapterAnimes.MyViewHolder) viewHolder).titleTextView.setText(itemsModel.getTitle());
         ((AdapterAnimes.MyViewHolder) viewHolder).numberTextView.setText(itemsModel.getNumber());
 
-        GlideApp.with(context).load(itemsModel.getImgUrl()).apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)).into(((AdapterAnimes.MyViewHolder) viewHolder).animeImageView);
+        GlideApp.with(context).load(itemsModel.getImgUrl()).apply(requestOptions).into(((AdapterAnimes.MyViewHolder) viewHolder).animeImageView);
         super.onBindViewHolder(viewHolder, i);
     }
 

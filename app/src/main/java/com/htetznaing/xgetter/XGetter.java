@@ -3,6 +3,7 @@ package com.htetznaing.xgetter;
 import android.util.Base64;
 
 import com.htetznaing.xgetter.Core.Fruits;
+import com.zeerooo.anikumii.misc.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -98,10 +99,20 @@ public class XGetter {
 
     public String zippyshare(String url) throws IOException {
         String es = Jsoup.connect(url).get().selectFirst("script:containsData(document.getElementById('dlbutton'))").toString();
-        int a = Integer.parseInt(es.split("var a = ")[1].split(";")[0]);
-        int b = Integer.parseInt(es.split("var b = ")[1].split(";")[0]);
-        int random = (int) Math.ceil(a / 3) + a % b;
-        return url.substring(0, url.indexOf(".")) + ".zippyshare.com" + es.substring(es.indexOf("/d/")).split("\";")[0].replaceAll("\".*?\"", Integer.toString(random));
+        try {
+            String[] parts = es.replace(" ", "")
+                    .split("\\+\\(")[1].split("\\)\\+")[0].split("\\+");
+            int a = Integer.parseInt(parts[0].split("%")[0]);
+            int b = Integer.parseInt(parts[0].split("%")[1]);
+            int c = Integer.parseInt(parts[1].split("%")[0]);
+            int d = Integer.parseInt(parts[1].split("%")[1]);
+            return url.substring(0, url.indexOf(".")) + ".zippyshare.com" + es.substring(es.indexOf("/d/")).split("\";")[0].replaceAll("\".*?\"", Integer.toString((a % b) + (c % d)));
+        } catch (Exception e) {
+            int a = Integer.parseInt(es.split("= ")[1].split(";")[0]);
+            int b = Integer.valueOf(es.split("= ")[2].split(";")[0]);
+            int c = (int) Math.floor(a / 3);
+            return url.substring(0, url.indexOf(".")) + ".zippyshare.com" + es.substring(es.indexOf("/d/")).split("\";")[0].replaceAll("\".*?\"", String.valueOf(c + (a % b)));
+        }
     }
 
     private void openload(final String url) throws IOException {
@@ -152,13 +163,13 @@ public class XGetter {
         is.close();
         br.close();
 
-        final String regex = "<source src=\"(.*?)\"";
+       /* final String regex = "<source src=\"(.*?)\"";
         final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
         final Matcher matcher = pattern.matcher(result.toString());
         if (matcher.find()) {
             return matcher.group(1);
-        }
-        return null;
+        }*/
+        return Utils.matcher(result.toString(), "<source src=\"(.*?)\"");
     }
 
     private String getLongEncrypt(String string) {

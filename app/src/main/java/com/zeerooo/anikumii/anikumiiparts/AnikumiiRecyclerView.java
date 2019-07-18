@@ -137,7 +137,7 @@ public class AnikumiiRecyclerView extends RecyclerView {
                                 },
                                 throwable -> {
                                     // throwable.printStackTrace();
-                                    AnikumiiUiHelper.Snackbar(rootView, Snackbar.LENGTH_INDEFINITE, throwable.toString(), view -> {
+                                    AnikumiiUiHelper.errorSnackbar(rootView, Snackbar.LENGTH_INDEFINITE, throwable.toString(), view -> {
                                         compositeDisposable.clear();
                                         page = 0;
                                         setMaxDisplayedItems(maxDisplayedItems);
@@ -187,12 +187,13 @@ public class AnikumiiRecyclerView extends RecyclerView {
                             int textColor;
 
                             try {
-                                cursor = dataBaseHelper.getReadableDatabase().rawQuery("SELECT LASTEPISODE FROM AnimesDB WHERE TITLE LIKE ?", new String[]{title});
+                                cursor = dataBaseHelper.getReadableDatabase().rawQuery("SELECT LASTEPISODE FROM AnimesDB WHERE TITLE LIKE ?", new String[]{"%" + title + "%"});
                                 cursor.moveToLast();
                                 lastEpisode = (short) cursor.getInt(0);
-                                closeDB();
                             } catch (Exception e) {
+                                e.printStackTrace();
                                 lastEpisode = 0;
+                            } finally {
                                 closeDB();
                             }
 
@@ -228,7 +229,6 @@ public class AnikumiiRecyclerView extends RecyclerView {
                             }
                             page++;
                         }
-
                         return arrayList;
                     }
                 });
