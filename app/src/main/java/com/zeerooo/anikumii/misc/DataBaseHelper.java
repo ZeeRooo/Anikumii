@@ -11,7 +11,6 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 
 public class DataBaseHelper extends SQLiteOpenHelper {
-    private final String TABLE_NAME = "AnimesDB";
     private final ContentValues contentValues = new ContentValues();
 
     public DataBaseHelper(Context context) {
@@ -20,12 +19,12 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE " + TABLE_NAME + "  (ID TEXT PRIMARY KEY, TITLE TEXT, TYPE TEXT, IMAGE TEXT, DATE TEXT, LASTEPISODE INT, POSITION INT)");
+        db.execSQL("CREATE TABLE AnimesDB  (ID TEXT PRIMARY KEY, TITLE TEXT, TYPE TEXT, IMAGE TEXT, DATE TEXT, LASTEPISODE INT, POSITION INT)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS AnimesDB");
         onCreate(db);
     }
 
@@ -40,7 +39,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put("ID", url);
         contentValues.put("POSITION", position);
 
-        //return (getWritableDatabase().insertWithOnConflict(TABLE_NAME, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE)) != -1;
+        getWritableDatabase().insertWithOnConflict("AnimesDB", null, contentValues, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
     public int getDatabaseRows(Cursor cursor) {
