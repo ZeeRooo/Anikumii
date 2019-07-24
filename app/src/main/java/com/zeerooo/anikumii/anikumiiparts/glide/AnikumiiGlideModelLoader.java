@@ -12,7 +12,7 @@ import com.bumptech.glide.load.model.stream.BaseGlideUrlLoader;
 
 import java.io.InputStream;
 
-public class AnikumiiGlideModelLoader extends BaseGlideUrlLoader<String> {
+class AnikumiiGlideModelLoader extends BaseGlideUrlLoader<String> {
     //public Context context;
 
     AnikumiiGlideModelLoader(ModelLoader<GlideUrl, InputStream> urlLoader/*, Context context*/) {

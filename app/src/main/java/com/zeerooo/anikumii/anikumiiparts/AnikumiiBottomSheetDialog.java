@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -46,10 +47,13 @@ public class AnikumiiBottomSheetDialog extends BottomSheetDialog {
         return viewGroup;
     }
 
-    public void initialize(String title, View content) {
+    public void initialize(String title, View content, int navigationBarColor) {
         setContentView(content);
 
         ((TextView) findViewById(R.id.dialogTitleTextView)).setText(title);
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            getWindow().setNavigationBarColor(content.getResources().getColor(navigationBarColor));
 
         show();
     }
@@ -86,7 +90,7 @@ public class AnikumiiBottomSheetDialog extends BottomSheetDialog {
         linearLayout.addView(webView);
         dialog.setContentView(linearLayout);
 
-        initialize(getContext().getString(R.string.log_in) + " en MyAnimeList", loginRootView);
+        initialize(getContext().getString(R.string.log_in) + " en MyAnimeList", loginRootView, R.color.colorPrimary);
     }
 
     private void setLoginButton(View buttonView, String url, WebView webView, Dialog dialog) {
@@ -150,7 +154,7 @@ public class AnikumiiBottomSheetDialog extends BottomSheetDialog {
         okruChip.setChecked(selectedServer.equals("ok.ru"));
         chipGroup.addView(okruChip);
 
-        initialize(getContext().getString(R.string.changeServer), chipGroup);
+        initialize(getContext().getString(R.string.changeServer), chipGroup, R.color.colorPrimary);
 
         return chipGroup;
     }

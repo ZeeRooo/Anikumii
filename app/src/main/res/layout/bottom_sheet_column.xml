@@ -3,42 +3,42 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="10dp">
+    android:padding="15dp">
 
-    <TextView
-        android:id="@+id/textViewColumnsPortrait"
+    <ImageView
+        android:id="@+id/imageViewColumnsPortrait"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginBottom="10dp"
-        android:text="@string/portrait"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Chip" />
+        android:contentDescription="@string/portrait"
+        app:srcCompat="@drawable/ic_portrait" />
 
     <NumberPicker
         android:id="@+id/numberPickerColumnsPortrait"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewColumnsPortrait"
-        android:layout_alignEnd="@id/textViewColumnsPortrait"
+        android:layout_below="@+id/imageViewColumnsPortrait"
+        android:layout_alignEnd="@id/imageViewColumnsPortrait"
         android:layout_alignParentStart="true" />
 
-    <TextView
-        android:id="@+id/textViewColumnsLandscape"
+    <ImageView
+        android:id="@+id/imageViewColumnsLandscape"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="10dp"
-        android:text="@string/landscape"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Chip" />
+        android:contentDescription="@string/landscape"
+        app:srcCompat="@drawable/ic_landscape" />
 
     <NumberPicker
         android:id="@+id/numberPickerColumnsLandscape"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textViewColumnsLandscape"
-        android:layout_alignStart="@id/textViewColumnsLandscape"
+        android:layout_below="@+id/imageViewColumnsLandscape"
+        android:layout_alignStart="@id/imageViewColumnsLandscape"
         android:layout_alignParentEnd="true" />
 
     <com.google.android.material.button.MaterialButton

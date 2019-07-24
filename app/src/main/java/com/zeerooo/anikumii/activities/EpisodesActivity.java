@@ -46,8 +46,9 @@ public class EpisodesActivity extends AppCompatActivity {
     private int malID;
     private byte malPosition;
     private ViewPager viewPager;
-    private Bundle tioAnimeBundle = new Bundle();
-    private ArrayList<String> genreList = new ArrayList<>(), listRel = new ArrayList<>();
+    private final Bundle tioAnimeBundle = new Bundle();
+    private final ArrayList<String> genreList = new ArrayList<>();
+    private final ArrayList<String> listRel = new ArrayList<>();
     private Element element;
 
     @Override

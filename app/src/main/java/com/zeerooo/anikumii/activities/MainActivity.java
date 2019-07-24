@@ -22,12 +22,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.ListPopupWindow;
@@ -116,8 +116,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
 
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), 0);
-        viewPagerAdapter.addFragment(new TioAnimeFragment(), "Anime");
-        viewPagerAdapter.addFragment(new TioHentaiFragment(), "Hentai");
+        viewPagerAdapter.addFragment(new TioAnimeFragment(anikumiiSharedPreferences), "Anime");
+        viewPagerAdapter.addFragment(new TioHentaiFragment(anikumiiSharedPreferences), "Hentai");
 
         ViewPager viewPager = findViewById(R.id.viewPager);
 
@@ -172,6 +172,8 @@ public class MainActivity extends AppCompatActivity {
         isLoggedIn = !malUserName.equals(getString(R.string.app_name));
 
         if (anikumiiSharedPreferences.getBoolean("firstRun", true)) {
+            gridDialog();
+
             if (BuildConfig.VERSION_NAME.endsWith("github"))
                 WorkManager.getInstance().enqueue(new PeriodicWorkRequest.Builder(UpdateService.class, 7, TimeUnit.DAYS)
                         .addTag("weekly_updater_work")
@@ -196,6 +198,47 @@ public class MainActivity extends AppCompatActivity {
 
             anikumiiSharedPreferences.edit().putBoolean("firstRun", false).apply();
         }
+    }
+
+    private void gridDialog() {
+        AnikumiiBottomSheetDialog columnsDialog = new AnikumiiBottomSheetDialog(this);
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.bottom_sheet_column, null);
+
+        dialogView.setBackgroundColor(getResources().getColor(R.color.celestito));
+
+        final NumberPicker portraitNumberPicker = dialogView.findViewById(R.id.numberPickerColumnsPortrait);
+        portraitNumberPicker.setMinValue(1);
+        portraitNumberPicker.setMaxValue(Math.round((float) getResources().getDisplayMetrics().widthPixels / 300));
+
+        final NumberPicker landscapeNumberPicker = dialogView.findViewById(R.id.numberPickerColumnsLandscape);
+        landscapeNumberPicker.setMinValue(1);
+        landscapeNumberPicker.setMaxValue(Math.round((float) getResources().getDisplayMetrics().heightPixels / 300));
+
+        Snackbar snackbar = Snackbar.make(findViewById(R.id.activity_main_root_view), "Recuerda que podrás cambiar la relación más adelante en ajustes > avanzado", Snackbar.LENGTH_INDEFINITE);
+        snackbar.setAction(android.R.string.ok, view -> snackbar.dismiss());
+
+        MaterialButton positiveButton = dialogView.findViewById(R.id.column_positive_button);
+        positiveButton.setOnClickListener(v -> {
+            anikumiiSharedPreferences.edit().putInt("gridColumnsPortrait", portraitNumberPicker.getValue()).apply();
+            anikumiiSharedPreferences.edit().putInt("gridColumnsLandscape", landscapeNumberPicker.getValue()).apply();
+
+            viewPagerAdapter.anikumiiMainFragment.refreshGridLayoutManager(portraitNumberPicker.getValue());
+
+            columnsDialog.dismiss();
+            snackbar.show();
+        });
+
+        AppCompatButton negativeButton = dialogView.findViewById(R.id.column_negative_button);
+        negativeButton.setText(android.R.string.cancel);
+        negativeButton.setOnClickListener(v -> {
+            anikumiiSharedPreferences.edit().remove("gridColumnsPortrait").apply();
+            anikumiiSharedPreferences.edit().remove("gridColumnsLandscape").apply();
+            columnsDialog.dismiss();
+            snackbar.show();
+        });
+
+        columnsDialog.initialize("Configura las columnas según la orientación", dialogView, R.color.celestito);
+        columnsDialog.findViewById(R.id.dialogTitleTextView).setBackgroundColor(getResources().getColor(R.color.celestito));
     }
 
     @Override
@@ -271,13 +314,10 @@ public class MainActivity extends AppCompatActivity {
                 popupWindow = new PopupWindow(rootView, mToolbar.getWidth() / 2, ListPopupWindow.WRAP_CONTENT);
                 popupWindow.showAsDropDown(mToolbar, mToolbar.getWidth(), 0);
                 popupWindow.setOnDismissListener(() -> isPopupVisible = true);
-                viewPagerAdapter.getCurrentFragment().getView().setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        v.setOnTouchListener(null);
-                        popupWindow.dismiss();
-                        return false;
-                    }
+                viewPagerAdapter.getCurrentFragment().getView().setOnTouchListener((v, event) -> {
+                    v.setOnTouchListener(null);
+                    popupWindow.dismiss();
+                    return false;
                 });
 
                 ((TextView) rootView.findViewById(R.id.overflow_tv_user_name)).setText(malUserName);
@@ -457,16 +497,13 @@ public class MainActivity extends AppCompatActivity {
                 .filter(s -> !s.isEmpty())
                 .distinctUntilChanged()
                 .observeOn(Schedulers.io())
-                .doOnNext(new Consumer<String>() {
-                    @Override
-                    public void accept(String query) throws IOException, JSONException {
-                        jsonArray = new JSONArray(anikumiiConnection.getStringResponse("POST", Anikumii.dominium + "/api/search", "value=" + query));
+                .doOnNext(query -> {
+                    jsonArray = new JSONArray(anikumiiConnection.getStringResponse("POST", Anikumii.dominium + "/api/search", "value=" + query));
 
-                        matrixCursor = new MatrixCursor(new String[]{BaseColumns._ID, "animeTitle", "animeType", "animeId", "animeUrl"});
+                    matrixCursor = new MatrixCursor(new String[]{BaseColumns._ID, "animeTitle", "animeType", "animeId", "animeUrl"});
 
-                        for (byte a = 0; a < jsonArray.length(); a++)
-                            matrixCursor.addRow(new Object[]{1, jsonArray.getJSONObject(a).getString("title"), Utils.getTypeFromNumber(jsonArray.getJSONObject(a).getString("type")), jsonArray.getJSONObject(a).getString("id"), jsonArray.getJSONObject(a).getString("slug")});
-                    }
+                    for (byte a = 0; a < jsonArray.length(); a++)
+                        matrixCursor.addRow(new Object[]{1, jsonArray.getJSONObject(a).getString("title"), Utils.getTypeFromNumber(jsonArray.getJSONObject(a).getString("type")), jsonArray.getJSONObject(a).getString("id"), jsonArray.getJSONObject(a).getString("slug")});
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<String>() {
@@ -554,7 +591,7 @@ public class MainActivity extends AppCompatActivity {
 
             genresScroll.addView(linearLayout);
 
-            genresDialog.initialize("Géneros", genresScroll);
+            genresDialog.initialize("Géneros", genresScroll, R.color.colorPrimary);
         });
 
       /*  final Spinner type = dialogView.findViewById(R.id.typeChooser);
@@ -601,7 +638,7 @@ public class MainActivity extends AppCompatActivity {
             filterDialog.dismiss();
         });
 
-        filterDialog.initialize("Filtros", dialogView);
+        filterDialog.initialize("Filtros", dialogView, R.color.colorPrimary);
 
         return true;
     }

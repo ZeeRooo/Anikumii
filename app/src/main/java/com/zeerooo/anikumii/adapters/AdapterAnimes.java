@@ -32,9 +32,9 @@ import com.zeerooo.anikumii.misc.ItemsModel;
 
 public class AdapterAnimes extends AdapterMain {
     private Context context;
-    private boolean isHistory;
+    private final boolean isHistory;
     private ItemsModel itemsModel;
-    private RequestOptions requestOptions;
+    private final RequestOptions requestOptions;
 
     public AdapterAnimes(boolean isHistory) {
         this.isHistory = isHistory;
@@ -69,16 +69,17 @@ public class AdapterAnimes extends AdapterMain {
         materialButton.setText(title);
         materialButton.setStrokeWidth(1);
         materialButton.setStrokeColor(ColorStateList.valueOf(context.getResources().getColor(R.color.celestito)));
-        materialButton.setTextColor(context.getResources().getColor(android.R.color.secondary_text_dark_nodisable));
+        materialButton.setTextColor(-4276546);
         materialButton.setOnClickListener(onClickListener);
 
-        anikumiiBottomSheetDialog.initialize(animeName, materialButton);
+        anikumiiBottomSheetDialog.initialize(animeName, materialButton, R.color.colorPrimary);
         anikumiiBottomSheetDialog.getViewGroup().setPadding(10, 10, 10, 10);
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private TextView titleTextView, numberTextView;
-        private ImageView animeImageView;
+        private final TextView titleTextView;
+        private final TextView numberTextView;
+        private final ImageView animeImageView;
 
         MyViewHolder(View view) {
             super(view);
@@ -100,9 +101,7 @@ public class AdapterAnimes extends AdapterMain {
                         context.startActivity(new Intent(context, EpisodesActivity.class).putExtra("animeUrl", itemsModel.getChapterUrl().replace("/ver/", type).replaceAll("(-\\d+)\\D*$", "")));
                     });
                 } else if (isHistory) {
-                    bottomSheetAction("Ir al último episodio", itemsModel.getTitle(), view1 -> {
-                        context.startActivity(new Intent(context, VideoPlayerActivity.class).putExtra("chapterUrl", itemsModel.getChapterUrl().replace("/anime/", "/ver/").replace("/hentai/", "/ver/") + "-" + itemsModel.getNumber().split("- Episodio ")[1]));
-                    });
+                    bottomSheetAction("Ir al último episodio", itemsModel.getTitle(), view1 -> context.startActivity(new Intent(context, VideoPlayerActivity.class).putExtra("chapterUrl", itemsModel.getChapterUrl().replace("/anime/", "/ver/").replace("/hentai/", "/ver/") + "-" + itemsModel.getNumber().split("- Episodio ")[1])));
                 }
                 return false;
             });
@@ -119,7 +118,7 @@ public class AdapterAnimes extends AdapterMain {
                     dateTextView.setTextAppearance(context, R.style.TextAppearance_Material_Body);
                     dateTextView.setText((animeList.get(getAdapterPosition()).getDate()));
 
-                    anikumiiBottomSheetDialog.initialize("Fecha", dateTextView);
+                    anikumiiBottomSheetDialog.initialize("Fecha", dateTextView, R.color.colorPrimary);
                     anikumiiBottomSheetDialog.getViewGroup().setPadding(15, 15, 15, 15);
                 });
             }

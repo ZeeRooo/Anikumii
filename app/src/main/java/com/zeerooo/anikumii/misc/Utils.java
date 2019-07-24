@@ -1,9 +1,15 @@
 package com.zeerooo.anikumii.misc;
 
+import android.graphics.BlendMode;
+import android.graphics.BlendModeColorFilter;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.widget.ImageView;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,5 +57,19 @@ public class Utils {
         sb.setSpan(foregroundColorSpan, 0, string.indexOf(":") + 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
         sb.setSpan(styleSpan, 0, string.indexOf(":") + 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
         return sb;
+    }
+
+    public static void setColorFilter(Drawable drawable, int color) {
+        if (Build.VERSION.SDK_INT >= 29)
+            drawable.setColorFilter(new BlendModeColorFilter(color, BlendMode.SRC_ATOP));
+        else
+            drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+    }
+
+    public static void setColorFilter(ImageView imageView, int color) {
+        if (Build.VERSION.SDK_INT >= 29)
+            imageView.setColorFilter(new BlendModeColorFilter(color, BlendMode.SRC_ATOP));
+        else
+            imageView.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
     }
 }

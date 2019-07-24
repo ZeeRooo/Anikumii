@@ -1,6 +1,5 @@
 package com.zeerooo.anikumii.fragments;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,17 +7,15 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.zeerooo.anikumii.Anikumii;
 import com.zeerooo.anikumii.R;
+import com.zeerooo.anikumii.anikumiiparts.AnikumiiSharedPreferences;
 
 public class TioAnimeFragment extends AnikumiiMainFragment {
 
-    private GridLayoutManager gridLayoutManager;
-
-    public TioAnimeFragment() {
-        // Required empty public constructor
+    public TioAnimeFragment(AnikumiiSharedPreferences anikumiiSharedPreferences) {
+        super(anikumiiSharedPreferences);
     }
 
     @Override
@@ -36,23 +33,10 @@ public class TioAnimeFragment extends AnikumiiMainFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        isHistory = false;
 
-        gridLayoutManager = new GridLayoutManager(getActivity(), mPreferences.getInt("gridColumnsPortrait", Math.round((float) getResources().getDisplayMetrics().widthPixels / 300)));
         anikumiiRecyclerView.setLayoutManager(gridLayoutManager);
 
         reactiveRecyclerView(getString(R.string.latest_episodes), "https://tioanime.com/", "article.episode", (byte) 20);
         anikumiiRecyclerView.setDynamicListener();
-    }
-
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        if (gridLayoutManager != null)
-            if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)
-                gridLayoutManager.setSpanCount(mPreferences.getInt("gridColumnsLandscape", Math.round((float) getResources().getDisplayMetrics().heightPixels / 300)));
-            else
-                gridLayoutManager.setSpanCount(mPreferences.getInt("gridColumnsPortrait", Math.round((float) getResources().getDisplayMetrics().widthPixels / 300)));
     }
 }

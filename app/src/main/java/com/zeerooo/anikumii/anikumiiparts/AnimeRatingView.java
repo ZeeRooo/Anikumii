@@ -17,8 +17,8 @@ import android.widget.ProgressBar;
 public class AnimeRatingView extends ProgressBar {
     private String number = "0.0";
     private short aShort;
-    private Paint paint;
-    private Rect rect;
+    private final Paint paint;
+    private final Rect rect;
     private byte xPos, yPos;
 
     public AnimeRatingView(Context context, AttributeSet attrs) {

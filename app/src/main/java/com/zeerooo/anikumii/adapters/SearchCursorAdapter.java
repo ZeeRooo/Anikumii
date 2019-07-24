@@ -20,7 +20,7 @@ import com.zeerooo.anikumii.anikumiiparts.glide.GlideApp;
 
 public class SearchCursorAdapter extends SimpleCursorAdapter {
 
-    private RequestOptions requestOptions;
+    private final RequestOptions requestOptions;
 
     public SearchCursorAdapter(Context context, int layout, Cursor c, String[] from, int[] to, int flags) {
         super(context, layout, c, from, to, flags);

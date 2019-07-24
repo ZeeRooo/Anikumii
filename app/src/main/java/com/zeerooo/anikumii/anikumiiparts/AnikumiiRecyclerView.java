@@ -37,10 +37,10 @@ public class AnikumiiRecyclerView extends RecyclerView {
     private boolean loading;
     private byte maxDisplayedItems;
     private String toLoad, elementClass, title, number, img_url, chapterUrl, episodesStr;
-    private ArrayList<ItemsModel> arrayList = new ArrayList<>();
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private final ArrayList<ItemsModel> arrayList = new ArrayList<>();
+    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
     private Document document;
-    private PublishProcessor<Short> publishProcessor = PublishProcessor.create();
+    private final PublishProcessor<Short> publishProcessor = PublishProcessor.create();
     private View rootView;
     private Cursor cursor;
     private DataBaseHelper dataBaseHelper;
@@ -150,87 +150,84 @@ public class AnikumiiRecyclerView extends RecyclerView {
         return Single
                 .just(true)
                 .subscribeOn(Schedulers.io())
-                .map(new Function<Boolean, ArrayList<ItemsModel>>() {
-                    @Override
-                    public ArrayList<ItemsModel> apply(Boolean aBoolean) throws Exception {
-                        arrayList.clear();
-                        loading = true;
+                .map(aBoolean -> {
+                    arrayList.clear();
+                    loading = true;
 
-                        if (toLoad.startsWith("history")) {
-                            if (page == 1)
-                                page = 0;
+                    if (toLoad.startsWith("history")) {
+                        if (page == 1)
+                            page = 0;
 
-                            cursor = dataBaseHelper.getReadableDatabase().rawQuery("SELECT ID, TITLE, TYPE, IMAGE, LASTEPISODE, DATE FROM AnimesDB ORDER BY POSITION DESC LIMIT 24 OFFSET " + 24 * page, null);
+                        cursor = dataBaseHelper.getReadableDatabase().rawQuery("SELECT ID, TITLE, TYPE, IMAGE, LASTEPISODE, DATE FROM AnimesDB ORDER BY POSITION DESC LIMIT 24 OFFSET " + 24 * page, null);
 
-                            if (page == 0)
-                                page = 1;
+                        if (page == 0)
+                            page = 1;
 
-                            while (cursor.moveToNext()) {
-                                arrayList.add(new ItemsModel(cursor.getString(1), cursor.getString(2) + " - Episodio " + cursor.getInt(4), cursor.getString(3), cursor.getString(0), cursor.getString(5)));
-                            }
-
-                            page++;
-                        } else if (toLoad.contains("/anime/") || toLoad.contains("/hentai/")) {
-                            document = AnikumiiWebHelper.go(toLoad + "&p=" + page, getContext()).get();
-
-                            title = document.selectFirst("h1.title").text();
-
-                            episodesStr = document.select("body > script:containsData(anime_info)").toString();
-
-                            arrayList.add(0, null); //Blank space for the header
-
-                            page = Short.parseShort(Utils.matcher(episodesStr, "\\[(\\d+)"));
-
-                            initDB();
-
-                            short lastEpisode;
-                            int textColor;
-
-                            try {
-                                cursor = dataBaseHelper.getReadableDatabase().rawQuery("SELECT LASTEPISODE FROM AnimesDB WHERE TITLE LIKE ?", new String[]{"%" + title + "%"});
-                                cursor.moveToLast();
-                                lastEpisode = (short) cursor.getInt(0);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                lastEpisode = 0;
-                            } finally {
-                                closeDB();
-                            }
-
-                            for (short episodesCount = page; episodesCount > 0; episodesCount--) {
-                                if (episodesCount <= lastEpisode)
-                                    textColor = -16728846;
-                                else
-                                    textColor = -1275068417;
-
-                                arrayList.add(new ItemsModel(title, "Episodio " + episodesCount, null, Anikumii.dominium + "/ver/" + episodesStr.split("\",\"")[1] + "-" + episodesCount, textColor));
-
-                                page--;
-                            }
-                        } else {
-                            document = AnikumiiWebHelper.go(toLoad + "&p=" + page, getContext()).get();
-
-                            Elements episodes = document.select(elementClass);
-
-                            for (short episodesCount = 0; episodesCount < episodes.size(); episodesCount++) {
-                                title = episodes.get(episodesCount).getElementsByClass("title").text();
-
-                                if (elementClass.equals("article.episode")) {
-                                    number = Utils.matcher(title, "( \\d+)\\D*$");
-                                    title = title.replace(number, "");
-                                    number = "Episodio" + number;
-                                } else
-                                    number = "";
-
-                                img_url = Anikumii.dominium + episodes.get(episodesCount).getElementsByTag("img").attr("src");
-                                chapterUrl = episodes.get(episodesCount).select("a").attr("href");
-
-                                arrayList.add(new ItemsModel(title, number, img_url, Anikumii.dominium + chapterUrl));
-                            }
-                            page++;
+                        while (cursor.moveToNext()) {
+                            arrayList.add(new ItemsModel(cursor.getString(1), cursor.getString(2) + " - Episodio " + cursor.getInt(4), cursor.getString(3), cursor.getString(0), cursor.getString(5)));
                         }
-                        return arrayList;
+
+                        page++;
+                    } else if (toLoad.contains("/anime/") || toLoad.contains("/hentai/")) {
+                        document = AnikumiiWebHelper.go(toLoad + "&p=" + page, getContext()).get();
+
+                        title = document.selectFirst("h1.title").text();
+
+                        episodesStr = document.select("body > script:containsData(anime_info)").toString();
+
+                        arrayList.add(0, null); //Blank space for the header
+
+                        page = Short.parseShort(Utils.matcher(episodesStr, "\\[(\\d+)"));
+
+                        initDB();
+
+                        short lastEpisode;
+                        int textColor;
+
+                        try {
+                            cursor = dataBaseHelper.getReadableDatabase().rawQuery("SELECT LASTEPISODE FROM AnimesDB WHERE TITLE LIKE ?", new String[]{"%" + title + "%"});
+                            cursor.moveToLast();
+                            lastEpisode = (short) cursor.getInt(0);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            lastEpisode = 0;
+                        } finally {
+                            closeDB();
+                        }
+
+                        for (short episodesCount = page; episodesCount > 0; episodesCount--) {
+                            if (episodesCount <= lastEpisode)
+                                textColor = -16728846;
+                            else
+                                textColor = -1275068417;
+
+                            arrayList.add(new ItemsModel(title, "Episodio " + episodesCount, null, Anikumii.dominium + "/ver/" + episodesStr.split("\",\"")[1] + "-" + episodesCount, textColor));
+
+                            page--;
+                        }
+                    } else {
+                        document = AnikumiiWebHelper.go(toLoad + "&p=" + page, getContext()).get();
+
+                        Elements episodes = document.select(elementClass);
+
+                        for (short episodesCount = 0; episodesCount < episodes.size(); episodesCount++) {
+                            title = episodes.get(episodesCount).getElementsByClass("title").text();
+
+                            if (elementClass.equals("article.episode")) {
+                                number = Utils.matcher(title, "( \\d+)\\D*$");
+                                title = title.replace(number, "");
+                                number = "Episodio" + number;
+                            } else
+                                number = "";
+
+                            img_url = Anikumii.dominium + episodes.get(episodesCount).getElementsByTag("img").attr("src");
+                            chapterUrl = episodes.get(episodesCount).select("a").attr("href");
+
+                            arrayList.add(new ItemsModel(title, number, img_url, Anikumii.dominium + chapterUrl));
+                        }
+                        page++;
                     }
+                    return arrayList;
                 });
     }
 }

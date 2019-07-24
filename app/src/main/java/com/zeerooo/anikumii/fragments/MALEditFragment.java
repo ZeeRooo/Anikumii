@@ -78,9 +78,9 @@ public class MALEditFragment extends Fragment {
                             AnikumiiNumberPicker anikumiiNumberPicker = getActivity().findViewById(R.id.episodes_numberpicker);
                             anikumiiNumberPicker.setMaxValue(getArguments().getShort("episodes"));
                             anikumiiNumberPicker.setValue(String.valueOf(myAnimeListModel.getSeenEpisodes()));
-                           // final AnikumiiNumberPicker rewatchPicker = getActivity().findViewById(R.id.rewatch_numberpicker);
-                          //  anikumiiNumberPicker.setMaxValue((short) 100);
-                          //  anikumiiNumberPicker.setValue("0");
+                            // final AnikumiiNumberPicker rewatchPicker = getActivity().findViewById(R.id.rewatch_numberpicker);
+                            //  anikumiiNumberPicker.setMaxValue((short) 100);
+                            //  anikumiiNumberPicker.setValue("0");
 
                             final TextView startDate = getActivity().findViewById(R.id.malSetStart);
                             startDate.setOnClickListener(view -> calendarPicker(startDate, true));
@@ -103,20 +103,20 @@ public class MALEditFragment extends Fragment {
                             final Spinner rewatchValueSpinner = getActivity().findViewById(R.id.malSetRewatchProbability);
 
                             final Spinner stars = getActivity().findViewById(R.id.malSetStars);
-                            stars.setSelection(myAnimeListModel.getScore() - 1);
+                            stars.setSelection(myAnimeListModel.getScore());
 
                             final TextInputEditText comment = getActivity().findViewById(R.id.malSetComment);
 
                             MaterialButton btnSend = getActivity().findViewById(R.id.malEditSend);
                             btnSend.setOnClickListener(view -> {
                                 myAnimeListModel.setStatus((byte) (statusSpinner.getSelectedItemPosition() + 1));
-                               // myAnimeListModel.setSeenEpisodes(seenEpisodesPicker.getValue());
+                                // myAnimeListModel.setSeenEpisodes(seenEpisodesPicker.getValue());
                                 myAnimeListModel.setSeenEpisodes(anikumiiNumberPicker.getValue());
-                                myAnimeListModel.setScore((byte) (stars.getSelectedItemPosition() + 1));
+                                myAnimeListModel.setScore((byte) (stars.getSelectedItemPosition()));
                                 myAnimeListModel.setTags(anikumiiInputChip);
                                 myAnimeListModel.setPriority((byte) prioritySpinner.getSelectedItemPosition());
                                 myAnimeListModel.setStorageType((byte) (sourceSpinner.getSelectedItemPosition() + 1));
-                               // myAnimeListModel.setRewatched((byte) rewatchPicker.getValue());
+                                // myAnimeListModel.setRewatched((byte) rewatchPicker.getValue());
                                 myAnimeListModel.setRewatched((byte) anikumiiNumberPicker.getValue());
                                 myAnimeListModel.setRewatchValue((byte) (rewatchValueSpinner.getSelectedItemPosition() + 1));
                                 myAnimeListModel.setComment(comment.getText().toString());

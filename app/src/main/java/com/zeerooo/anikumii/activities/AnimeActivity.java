@@ -20,7 +20,7 @@ public class AnimeActivity extends AppCompatActivity {
     private AnikumiiRecyclerView anikumiiRecyclerView;
     private boolean isHistory;
     private GridLayoutManager gridLayoutManager;
-    private AnikumiiSharedPreferences mPreferences;
+    private AnikumiiSharedPreferences anikumiiSharedPreferences;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,9 +45,9 @@ public class AnimeActivity extends AppCompatActivity {
             anikumiiRecyclerView.setToLoad("history");
             anikumiiRecyclerView.setMaxDisplayedItems((byte) 23);
         } else {
-            mPreferences = new AnikumiiSharedPreferences(this);
+            anikumiiSharedPreferences = new AnikumiiSharedPreferences(this);
 
-            gridLayoutManager = new GridLayoutManager(this, mPreferences.getInt("gridColumnsPortrait", Math.round((float) getResources().getDisplayMetrics().widthPixels / 300)));
+            gridLayoutManager = new GridLayoutManager(this, anikumiiSharedPreferences.getInt("gridColumnsPortrait", Math.round((float) getResources().getDisplayMetrics().widthPixels / 300)));
             anikumiiRecyclerView.setAdapter(new AdapterAnimes(false));
             anikumiiRecyclerView.setLayoutManager(gridLayoutManager);
             anikumiiRecyclerView.setElementClass(getIntent().getStringExtra("element"));
@@ -61,19 +61,19 @@ public class AnimeActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (isHistory && gridLayoutManager != null)
+        if (!isHistory && gridLayoutManager != null)
             if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)
-                gridLayoutManager.setSpanCount(mPreferences.getInt("gridColumnsLandscape", Math.round((float) getResources().getDisplayMetrics().heightPixels / 300)));
+                gridLayoutManager.setSpanCount(anikumiiSharedPreferences.getInt("gridColumnsLandscape", Math.round((float) getResources().getDisplayMetrics().heightPixels / 300)));
             else
-                gridLayoutManager.setSpanCount(mPreferences.getInt("gridColumnsPortrait", Math.round((float) getResources().getDisplayMetrics().widthPixels / 300)));
+                gridLayoutManager.setSpanCount(anikumiiSharedPreferences.getInt("gridColumnsPortrait", Math.round((float) getResources().getDisplayMetrics().widthPixels / 300)));
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        anikumiiRecyclerView.exit();
         if (isHistory)
             anikumiiRecyclerView.closeDB();
+        anikumiiRecyclerView.exit();
     }
 
     @Override

@@ -67,6 +67,7 @@
             app:itemIconTint="@drawable/bottom_navigation_view_selector"
             app:itemRippleColor="@color/celestitoRipple"
             app:itemTextColor="@drawable/bottom_navigation_view_selector"
+            app:labelVisibilityMode="labeled"
             app:layout_anchor="@id/viewPager"
             app:layout_anchorGravity="bottom"
             app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"

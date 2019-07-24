@@ -10,7 +10,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.Network;
@@ -88,7 +87,8 @@ public class VideoPlayerActivity extends AppCompatActivity {
     private String url, animeName, nextUrl, prevUrl, episodes, rawUrl, serverOptionDefault;
     private BottomSheetBehavior mBottomSheetBehavior;
     private ImageButton previous, next, pause;
-    private Handler handler = new Handler(), headerHandler = new Handler();
+    private final Handler handler = new Handler();
+    private final Handler headerHandler = new Handler();
     private ServerHelper serverHelper;
     private AnikumiiSharedPreferences sharedPreferences;
     private ProgressBar progressBar;
@@ -121,12 +121,12 @@ public class VideoPlayerActivity extends AppCompatActivity {
         anikumiiVideoView = findViewById(R.id.video_view);
 
         progressBar = findViewById(R.id.progressBar);
-        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(android.R.color.white), PorterDuff.Mode.SRC_ATOP);
+        Utils.setColorFilter(progressBar.getIndeterminateDrawable(), Color.WHITE);//SRC_ATOP
 
         mButtonsHeader = findViewById(R.id.buttons_header);
 
         mSeekbar = findViewById(R.id.progress);
-        mSeekbar.getThumb().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
+        Utils.setColorFilter(mSeekbar.getThumb(), Color.WHITE);//SRC_IN
 
         remainingTime = findViewById(R.id.remainingTime);
         previous = findViewById(R.id.previous_btn);
@@ -267,7 +267,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
                         }
                     });
                 } else {
-                    filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+                    filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
                 }
 
                 registerReceiver(networkReceiver, filter);

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.text.Html;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
@@ -55,14 +56,20 @@ public class AdapterEpisodes extends AdapterMain {
     private byte parentID = 0;
     private boolean loadHeader = true;
     private Context context;
-    private String ratingStr, nextEpisodeDate, aboutStr, typeStr, malUrl, tioId;
+    private final String ratingStr;
+    private final String nextEpisodeDate;
+    private final String aboutStr;
+    private final String typeStr;
+    private final String malUrl;
+    private final String tioId;
     private View rootViewHeader;
     private TextView numberTextView, statusTextView, aboutTextView, readMore, typeTextView;
     // private ImageView animeImageView;
     private AnimeRatingView ratingView;
     private SearchView episodesSearchView;
     private ArrayList<ItemsModel> prevAnimeList;
-    private ArrayList<String> genreList, listRel;
+    private final ArrayList<String> genreList;
+    private final ArrayList<String> listRel;
     private EpisodesFilter episodesFilter;
     private ItemsModel items;
 
@@ -113,17 +120,15 @@ public class AdapterEpisodes extends AdapterMain {
                 Chip genreChip = new Chip(context);
                 genreChip.setText(genre);
                 genreChip.setTextSize(14);
-                genreChip.setOnClickListener(view -> {
-                    context.startActivity(new Intent(context, AnimeActivity.class)
-                            .putExtra("toLoad", Anikumii.dominium + "/directorio?genero=" + genre.replace(" ", "-"))
-                            .putExtra("title", genre)
-                            .putExtra("element", "article.anime"));
-                });
+                genreChip.setOnClickListener(view -> context.startActivity(new Intent(context, AnimeActivity.class)
+                        .putExtra("toLoad", Anikumii.dominium + "/directorio?genero=" + genre.replace(" ", "-"))
+                        .putExtra("title", genre)
+                        .putExtra("element", "article.anime")));
 
                 ((ChipGroup) rootViewHeader.findViewById(R.id.chipGroups)).addView(genreChip);
             }
 
-            ((ImageView) episodesSearchView.findViewById(R.id.search_button)).setColorFilter(-4276546);//secondary_text_light_nodisable
+            Utils.setColorFilter(episodesSearchView.findViewById(R.id.search_button), -4276546);//secondary_text_light_nodisable
             episodesSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
@@ -139,7 +144,7 @@ public class AdapterEpisodes extends AdapterMain {
             });
             episodesSearchView.setOnCloseListener(() -> false);
 
-            aboutTextView.setText(aboutStr);
+            aboutTextView.setText(Html.fromHtml(aboutStr));
             AnikumiiUiHelper.transparentBackground(readMore);
             aboutTextView.post(() -> {
                 if (aboutTextView.getLineCount() > 3) {
@@ -294,7 +299,7 @@ public class AdapterEpisodes extends AdapterMain {
 
                                     ((TextView) specificView.findViewById(R.id.episodes_bottom_sheet_about_synopsis)).setText(Utils.getBold(synopsis.replace("Synopsis", "Sinopsis:"), foregroundColorSpan, styleSpan));
 
-                                    anikumiiBottomSheetDialog.initialize(title, specificView);
+                                    anikumiiBottomSheetDialog.initialize(title, specificView, R.color.colorPrimary);
 
                                     if (!isDisposed())
                                         dispose();

@@ -22,8 +22,8 @@ public class MyAnimeListModel {
     private String endYear;
     private String startYear;
     private String[] strings = new String[0];
-    private StringBuilder params = new StringBuilder();
-    private List<String> tagsList = new ArrayList<>();
+    private final StringBuilder params = new StringBuilder();
+    private final List<String> tagsList = new ArrayList<>();
     private JSONObject jsonObject;
 
     public MyAnimeListModel(String name, String username, boolean fetchFullUserData) throws IOException {
@@ -229,13 +229,18 @@ public class MyAnimeListModel {
 
     private String getAdvancedParams() {
         try {
+            if (score == 0)
+                params.append("&add_anime%5Bscore%5D=");
+            else
+                params.append("&add_anime%5Bscore%5D=").append(score);
+
             return params
                     .append("&anime_id=").append(id)
                     .append("&aeps=").append(seenEpisodes)
                     .append("&astatus=").append(status)
                     .append("&add_anime%5Bstatus%5D=").append(status)
                     .append("&add_anime%5Bnum_watched_episodes%5D=").append(seenEpisodes)
-                    .append("&add_anime%5Bscore%5D=").append(score)
+                    // .append("&add_anime%5Bscore%5D=").append(score)
                     .append("&add_anime%5Bpriority%5D=").append(priority)
                     .append("&add_anime%5Bstorage_type%5D=").append(storageType)
                     .append("&add_anime%5Bstorage_value%5D=0")

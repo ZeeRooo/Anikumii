@@ -36,6 +36,7 @@
         <item>Muy alta</item>
     </string-array>
     <string-array name="mal_score">
+        <item>Sin calificar</item>
         <item>1 (Pésimo)</item>
         <item>2 (Horrible)</item>
         <item>3 (Muy malo)</item>

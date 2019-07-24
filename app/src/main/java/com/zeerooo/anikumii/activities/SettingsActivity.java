@@ -45,7 +45,7 @@ import com.zeerooo.anikumii.services.UpdateService;
 import java.util.concurrent.TimeUnit;
 
 public class SettingsActivity extends AppCompatActivity {
-    public static boolean reloadMain;
+    private static boolean reloadMain;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +89,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    public static class SettingsFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
+    static class SettingsFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -138,7 +138,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    public static class AccountFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
+    static class AccountFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
         private TextView malName;
         private ImageView malAvatarView;
         private boolean sync = true;
@@ -238,7 +238,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    public static class NotificationFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
+    static class NotificationFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
 
         private WorkManager workManager;
 
@@ -291,7 +291,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    public static class AdvancedFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
+    static class AdvancedFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
         private Preference serverPreference;
 
         @Override
@@ -349,7 +349,6 @@ public class SettingsActivity extends AppCompatActivity {
                     break;
                 case "gridColumns":
                     AnikumiiBottomSheetDialog columnsDialog = new AnikumiiBottomSheetDialog(getActivity());
-
                     View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.bottom_sheet_column, null);
 
                     final NumberPicker portraitNumberPicker = dialogView.findViewById(R.id.numberPickerColumnsPortrait);
@@ -371,7 +370,7 @@ public class SettingsActivity extends AppCompatActivity {
 
                     AppCompatButton negativeButton = dialogView.findViewById(R.id.column_negative_button);
                     negativeButton.setOnClickListener(v -> {
-                        getPreferenceManager().getSharedPreferences().edit().putInt("gridColumnsPortrait", portraitNumberPicker.getValue()).apply();
+                        // getPreferenceManager().getSharedPreferences().edit().putInt("gridColumnsPortrait", portraitNumberPicker.getValue()).apply();
                         getPreferenceManager().getSharedPreferences().edit().remove("gridColumnsPortrait").apply();
                         getPreferenceManager().getSharedPreferences().edit().remove("gridColumnsLandscape").apply();
                         findPreference("gridColumns").setSummary(getString(R.string.columnsSummary, getPreferenceManager().getSharedPreferences().getInt("gridColumnsPortrait", Math.round((float) getResources().getDisplayMetrics().widthPixels / 400)), getPreferenceManager().getSharedPreferences().getInt("gridColumnsLandscape", Math.round((float) getResources().getDisplayMetrics().heightPixels / 400))));
@@ -379,7 +378,7 @@ public class SettingsActivity extends AppCompatActivity {
                         reloadMain = true;
                     });
 
-                    columnsDialog.initialize(getString(R.string.columnsTitle), dialogView);
+                    columnsDialog.initialize(getString(R.string.columnsTitle), dialogView, R.color.colorPrimary);
                     break;
                 case "updater_now":
                     WorkManager.getInstance().enqueue(new OneTimeWorkRequest.Builder(UpdateService.class)
@@ -393,7 +392,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    public static class AboutFragment extends PreferenceFragmentCompat {
+    static class AboutFragment extends PreferenceFragmentCompat {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.pref_about, rootKey);

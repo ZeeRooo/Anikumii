@@ -284,9 +284,8 @@ public class MALInfoFragment extends Fragment {
             }
 
             TextView info = (TextView) getLayoutInflater().inflate(R.layout.mal_textview, null);
-            info.setId(count);
+           // info.setId(count);
             info.setText(Utils.getBold(text, foregroundColorSpan, styleSpan));
-            // info.setContentDescription(text);
 
             if (count <= 14)
                 ((LinearLayout) getActivity().findViewById(R.id.malInformation)).addView(info);

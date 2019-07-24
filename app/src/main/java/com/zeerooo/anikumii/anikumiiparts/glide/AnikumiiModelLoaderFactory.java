@@ -9,7 +9,7 @@ import com.bumptech.glide.load.model.MultiModelLoaderFactory;
 
 import java.io.InputStream;
 
-public class AnikumiiModelLoaderFactory implements ModelLoaderFactory<String, InputStream> {
+class AnikumiiModelLoaderFactory implements ModelLoaderFactory<String, InputStream> {
    /* private Context context;
 
     AnikumiiModelLoaderFactory(Context context) {

@@ -12,7 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
     private final String TABLE_NAME = "AnimesDB";
-    private ContentValues contentValues = new ContentValues();
+    private final ContentValues contentValues = new ContentValues();
 
     public DataBaseHelper(Context context) {
         super(context, "Anikumii.db", null, 1);
@@ -25,11 +25,11 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL("DROP IF TABLE EXISTS " + TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
     }
 
-    public boolean addData(String title, String type, String url, String imageUrl, String date, int lastEpisode, int position) {
+    public void addData(String title, String type, String url, String imageUrl, String date, int lastEpisode, int position) {
         contentValues.clear();
 
         contentValues.put("TITLE", title);
@@ -40,7 +40,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         contentValues.put("ID", url);
         contentValues.put("POSITION", position);
 
-        return (getWritableDatabase().insertWithOnConflict(TABLE_NAME, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE)) != -1;
+        //return (getWritableDatabase().insertWithOnConflict(TABLE_NAME, null, contentValues, SQLiteDatabase.CONFLICT_REPLACE)) != -1;
     }
 
     public int getDatabaseRows(Cursor cursor) {

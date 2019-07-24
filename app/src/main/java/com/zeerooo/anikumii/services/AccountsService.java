@@ -28,8 +28,7 @@ import java.util.HashMap;
  */
 
 public class AccountsService extends IntentService {
-    private String[] fraction;
-    private HashMap<String, String> exceptionsHashMap = new HashMap<>();
+    private final HashMap<String, String> exceptionsHashMap = new HashMap<>();
     private NotificationManager mNotificationManager;
 
     public AccountsService() {
@@ -130,7 +129,7 @@ public class AccountsService extends IntentService {
         if (exceptionsHashMap.containsKey(string))
             string = exceptionsHashMap.get(string);
         else {
-            fraction = Normalizer.normalize(string, Normalizer.Form.NFKD).split("\u2044");
+            String[] fraction = Normalizer.normalize(string, Normalizer.Form.NFKD).split("\u2044");
             if (fraction.length == 2)
                 string = fraction[0] + fraction[1];
 

@@ -6,7 +6,11 @@ package com.zeerooo.anikumii.misc;
 
 public class ItemsModel {
 
-    private String title, number, imgUrl, chapterUrl, date;
+    private final String title;
+    private final String number;
+    private final String imgUrl;
+    private final String chapterUrl;
+    private String date;
     private int textColor;
 
     public ItemsModel(String title, String number, String imgUrl, String chapterUrl) {

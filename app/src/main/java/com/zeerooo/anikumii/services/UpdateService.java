@@ -24,7 +24,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 public class UpdateService extends Worker {
-    private boolean triggered;
+    private final boolean triggered;
     private Intent updaterActivity;
 
     public UpdateService(@NonNull Context context, @NonNull WorkerParameters workerParams) {

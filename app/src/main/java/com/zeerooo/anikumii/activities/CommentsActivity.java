@@ -57,7 +57,7 @@ public class CommentsActivity extends AppCompatActivity {
         webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         webView.getSettings().setJavaScriptEnabled(true);
         CookieManager.getInstance().setAcceptCookie(true);
-        if (Build.VERSION.SDK_INT >= 19) {
+        if (Build.VERSION.SDK_INT >= 18) {
             if (Build.VERSION.SDK_INT >= 21)
                 CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
             webView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
