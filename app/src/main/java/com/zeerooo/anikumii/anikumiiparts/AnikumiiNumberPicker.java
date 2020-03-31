@@ -46,7 +46,7 @@ public class AnikumiiNumberPicker extends LinearLayout {
 
         setOrientation(HORIZONTAL);
 
-        Button decreaseBtn = new Button(getContext());
+        final Button decreaseBtn = new Button(getContext());
         AnikumiiUiHelper.transparentBackground(decreaseBtn);
         decreaseBtn.setText("-");
         decreaseBtn.setOnClickListener(v -> appCompatEditText.setText(String.valueOf(Short.parseShort(appCompatEditText.getText().toString()) - 1)));
@@ -59,7 +59,7 @@ public class AnikumiiNumberPicker extends LinearLayout {
         appCompatEditText.setFilters(new InputFilter[]{new InputFilterMinMax()});
         addView(appCompatEditText, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1));
 
-        Button increaseBtn = new Button(getContext());
+        final Button increaseBtn = new Button(getContext());
         AnikumiiUiHelper.transparentBackground(increaseBtn);
         increaseBtn.setText("+");
         increaseBtn.setOnClickListener(v -> appCompatEditText.setText(String.valueOf(Short.parseShort(appCompatEditText.getText().toString()) + 1)));

@@ -37,7 +37,7 @@ public class AccountsService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        AnikumiiSharedPreferences anikumiiSharedPreferences = new AnikumiiSharedPreferences(this);
+        final AnikumiiSharedPreferences anikumiiSharedPreferences = new AnikumiiSharedPreferences(this);
 
         try {
             String malUserName = anikumiiSharedPreferences.getString("malUserName", null), url, parts[], lines[];
@@ -49,14 +49,15 @@ public class AccountsService extends IntentService {
 
             displayNotification();
 
-            AnikumiiConnection anikumiiConnection = new AnikumiiConnection();
-            DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
+            final AnikumiiConnection anikumiiConnection = new AnikumiiConnection();
+            final DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
 
-            JSONObject jsonObject = new JSONObject(anikumiiConnection.getStringResponse("GET", "https://myanimelist.net/search/prefix.json?type=user&keyword=" + malUserName, null)).getJSONArray("categories").getJSONObject(0).getJSONArray("items").getJSONObject(0);
-            anikumiiSharedPreferences.edit().putString("malUserName", jsonObject.getString("name")).apply();
+            final JSONObject jsonObject = new JSONObject(anikumiiConnection.getStringResponse("GET", "https://api.jikan.moe/v3/user/" + malUserName, null));
+//            JSONObject jsonObject = new JSONObject(anikumiiConnection.getStringResponse("GET", "https://api.jikan.moe/v3/user/" + malUserName, null)).getJSONArray("categories").getJSONObject(0).getJSONArray("items").getJSONObject(0);
+            anikumiiSharedPreferences.edit().putString("malUserName", jsonObject.getString("username")).apply();
             anikumiiSharedPreferences.edit().putString("malUserAvatar", jsonObject.getString("image_url")).apply();
 
-            JSONArray jsonArray = new JSONObject(anikumiiConnection.getStringResponse("GET", "https://api.jikan.moe/v3/user/" + malUserName + "/animelist?order_by=last_updated&sort=asc", null)).getJSONArray("anime");
+            final JSONArray jsonArray = new JSONObject(anikumiiConnection.getStringResponse("GET", "https://api.jikan.moe/v3/user/" + malUserName + "/animelist?order_by=last_updated&sort=asc", null)).getJSONArray("anime");
 
             Cursor cursor = null;
 
@@ -64,7 +65,7 @@ public class AccountsService extends IntentService {
 
             boolean emptyDatabase = dataBaseHelper.getDatabaseRows(cursor) == 0;
 
-            lines = new AnikumiiConnection().getStringResponse("GET", "https://pastebin.com/raw/HHJJb4X6", null).split(" ;,;");
+           lines = new AnikumiiConnection().getStringResponse("GET", "https://pastebin.com/raw/HHJJb4X6", null).split(" ;,;");
 
             for (short a = 0; a < lines.length; a++) {
                 parts = lines[a].split(" > ");
@@ -102,13 +103,15 @@ public class AccountsService extends IntentService {
     }
 
     private void displayNotification() {
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), "com.zeerooo.anikumii.notifications");
+        final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), "com.zeerooo.anikumii.notifications");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = new NotificationChannel("com.zeerooo.anikumii.notifications", "Sincronizar perfil MyAnimeList", NotificationManager.IMPORTANCE_LOW);
-            notificationChannel.setShowBadge(true);
-            notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
-            mNotificationManager.createNotificationChannel(notificationChannel);
+            if (mNotificationManager.getNotificationChannel("com.zeerooo.anikumii.notifications") == null) {
+                final NotificationChannel notificationChannel = new NotificationChannel("com.zeerooo.anikumii.notifications", "Sincronizar perfil MyAnimeList", NotificationManager.IMPORTANCE_LOW);
+                notificationChannel.setShowBadge(true);
+                notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+                mNotificationManager.createNotificationChannel(notificationChannel);
+            }
         } else {
             mBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
         }

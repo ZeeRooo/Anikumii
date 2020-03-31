@@ -17,9 +17,9 @@ import com.zeerooo.anikumii.anikumiiparts.AnikumiiSharedPreferences;
 
 public class AnikumiiMainFragment extends Fragment {
 
-    public AnikumiiRecyclerView anikumiiRecyclerView;
-    GridLayoutManager gridLayoutManager;
     private final AnikumiiSharedPreferences anikumiiSharedPreferences;
+    public AnikumiiRecyclerView anikumiiRecyclerView;
+    protected GridLayoutManager gridLayoutManager;
 
     AnikumiiMainFragment(AnikumiiSharedPreferences anikumiiSharedPreferences) {
         this.anikumiiSharedPreferences = anikumiiSharedPreferences;

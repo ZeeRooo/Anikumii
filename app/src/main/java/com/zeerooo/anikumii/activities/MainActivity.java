@@ -15,7 +15,6 @@ import android.provider.BaseColumns;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
@@ -42,6 +41,7 @@ import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.CustomTarget;
@@ -63,7 +63,6 @@ import com.zeerooo.anikumii.anikumiiparts.AnikumiiConnection;
 import com.zeerooo.anikumii.anikumiiparts.AnikumiiInputChip;
 import com.zeerooo.anikumii.anikumiiparts.AnikumiiSharedPreferences;
 import com.zeerooo.anikumii.anikumiiparts.AnikumiiUiHelper;
-import com.zeerooo.anikumii.anikumiiparts.glide.GlideApp;
 import com.zeerooo.anikumii.fragments.TioAnimeFragment;
 import com.zeerooo.anikumii.fragments.TioHentaiFragment;
 import com.zeerooo.anikumii.misc.Utils;
@@ -72,17 +71,14 @@ import com.zeerooo.anikumii.services.NotificationService;
 import com.zeerooo.anikumii.services.UpdateService;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.PublishSubject;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+import io.reactivex.rxjava3.subjects.PublishSubject;
 
 /**
  * Created by ZeeRooo on 05/01/18
@@ -119,14 +115,14 @@ public class MainActivity extends AppCompatActivity {
         viewPagerAdapter.addFragment(new TioAnimeFragment(anikumiiSharedPreferences), "Anime");
         viewPagerAdapter.addFragment(new TioHentaiFragment(anikumiiSharedPreferences), "Hentai");
 
-        ViewPager viewPager = findViewById(R.id.viewPager);
+        final ViewPager viewPager = findViewById(R.id.viewPager);
 
         tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
         viewPager.setAdapter(viewPagerAdapter);
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        final BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             switchActions(item);
             return true;
@@ -143,7 +139,6 @@ public class MainActivity extends AppCompatActivity {
         super.onPostCreate(savedInstanceState);
 
         publishSubject = PublishSubject.create();
-
         searchToolbar();
 
         if (getIntent().getAction() != null && getIntent().getAction().equals("shortcut_search")) {
@@ -201,8 +196,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void gridDialog() {
-        AnikumiiBottomSheetDialog columnsDialog = new AnikumiiBottomSheetDialog(this);
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.bottom_sheet_column, null);
+        final AnikumiiBottomSheetDialog columnsDialog = new AnikumiiBottomSheetDialog(this);
+        final View dialogView = LayoutInflater.from(this).inflate(R.layout.bottom_sheet_column, null);
 
         dialogView.setBackgroundColor(getResources().getColor(R.color.celestito));
 
@@ -214,10 +209,10 @@ public class MainActivity extends AppCompatActivity {
         landscapeNumberPicker.setMinValue(1);
         landscapeNumberPicker.setMaxValue(Math.round((float) getResources().getDisplayMetrics().heightPixels / 300));
 
-        Snackbar snackbar = Snackbar.make(findViewById(R.id.activity_main_root_view), "Recuerda que podrás cambiar la relación más adelante en ajustes > avanzado", Snackbar.LENGTH_INDEFINITE);
+        final Snackbar snackbar = Snackbar.make(findViewById(R.id.activity_main_root_view), "Recuerda que podrás cambiar la relación más adelante en ajustes > avanzado", Snackbar.LENGTH_INDEFINITE);
         snackbar.setAction(android.R.string.ok, view -> snackbar.dismiss());
 
-        MaterialButton positiveButton = dialogView.findViewById(R.id.column_positive_button);
+        final MaterialButton positiveButton = dialogView.findViewById(R.id.column_positive_button);
         positiveButton.setOnClickListener(v -> {
             anikumiiSharedPreferences.edit().putInt("gridColumnsPortrait", portraitNumberPicker.getValue()).apply();
             anikumiiSharedPreferences.edit().putInt("gridColumnsLandscape", landscapeNumberPicker.getValue()).apply();
@@ -228,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
             snackbar.show();
         });
 
-        AppCompatButton negativeButton = dialogView.findViewById(R.id.column_negative_button);
+        final AppCompatButton negativeButton = dialogView.findViewById(R.id.column_negative_button);
         negativeButton.setText(android.R.string.cancel);
         negativeButton.setOnClickListener(v -> {
             anikumiiSharedPreferences.edit().remove("gridColumnsPortrait").apply();
@@ -309,7 +304,7 @@ public class MainActivity extends AppCompatActivity {
                 } else
                     isPopupVisible = false;
 
-                View rootView = getLayoutInflater().inflate(R.layout.overflow_menu, null);
+                final View rootView = getLayoutInflater().inflate(R.layout.overflow_menu, null);
 
                 popupWindow = new PopupWindow(rootView, mToolbar.getWidth() / 2, ListPopupWindow.WRAP_CONTENT);
                 popupWindow.showAsDropDown(mToolbar, mToolbar.getWidth(), 0);
@@ -322,14 +317,14 @@ public class MainActivity extends AppCompatActivity {
 
                 ((TextView) rootView.findViewById(R.id.overflow_tv_user_name)).setText(malUserName);
 
-                Button settingsButton = rootView.findViewById(R.id.overflow_btn_settings);
+                final Button settingsButton = rootView.findViewById(R.id.overflow_btn_settings);
                 settingsButton.setOnClickListener(v -> {
                     popupWindow.dismiss();
 
                     startActivity(new Intent(this, SettingsActivity.class));
                 });
 
-                Button loginButton = rootView.findViewById(R.id.overflow_btn_login);
+                final Button loginButton = rootView.findViewById(R.id.overflow_btn_login);
                 if (!isLoggedIn) {
                     loginButton.setVisibility(View.VISIBLE);
                     loginButton.setOnClickListener(v -> {
@@ -340,7 +335,7 @@ public class MainActivity extends AppCompatActivity {
                 } else
                     loginButton.setVisibility(View.GONE);
 
-                ImageButton shortcutButton = rootView.findViewById(R.id.overflow_btn_shortcut);
+                final ImageButton shortcutButton = rootView.findViewById(R.id.overflow_btn_shortcut);
                 TooltipCompat.setTooltipText(shortcutButton, getString(R.string.overflow_shortcut_description));
                 shortcutButton.setEnabled(isLoggedIn);
                 AnikumiiUiHelper.transparentBackground(shortcutButton);
@@ -419,7 +414,7 @@ public class MainActivity extends AppCompatActivity {
     private void searchToolbar() {
         searchToolbar = findViewById(R.id.searchtoolbar);
         searchToolbar.inflateMenu(R.menu.menu_search);
-        Menu search_menu = searchToolbar.getMenu();
+        final Menu search_menu = searchToolbar.getMenu();
 
         searchItem = search_menu.findItem(R.id.action_filter_search);
 
@@ -490,7 +485,7 @@ public class MainActivity extends AppCompatActivity {
         if (isDisposed)
             publishSubject = PublishSubject.create();
 
-        AnikumiiConnection anikumiiConnection = new AnikumiiConnection();
+        final AnikumiiConnection anikumiiConnection = new AnikumiiConnection();
 
         publishSubject
                 .debounce(300, TimeUnit.MILLISECONDS)
@@ -531,9 +526,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean filterDialog() {
-        AnikumiiBottomSheetDialog filterDialog = new AnikumiiBottomSheetDialog(this);
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View dialogView = inflater.inflate(R.layout.bottom_sheet_filter, null);
+        final AnikumiiBottomSheetDialog filterDialog = new AnikumiiBottomSheetDialog(this);
+        final LayoutInflater inflater = LayoutInflater.from(this);
+        final View dialogView = inflater.inflate(R.layout.bottom_sheet_filter, null);
 
         String[] preloaded;
         if (Anikumii.dominium.startsWith("https://tioanime.com"))
@@ -543,22 +538,22 @@ public class MainActivity extends AppCompatActivity {
 
         anikumiiInputChip = new AnikumiiInputChip(dialogView, preloaded);
 
-        ImageButton allGenres = dialogView.findViewById(R.id.allGenres);
+        final ImageButton allGenres = dialogView.findViewById(R.id.allGenres);
         TooltipCompat.setTooltipText(allGenres, "Todos los géneros");
         AnikumiiUiHelper.transparentBackground(allGenres);
         allGenres.setOnClickListener(v -> {
-            AnikumiiBottomSheetDialog genresDialog = new AnikumiiBottomSheetDialog(this);
-            NestedScrollView genresScroll = new NestedScrollView(this);
+            final AnikumiiBottomSheetDialog genresDialog = new AnikumiiBottomSheetDialog(this);
+            final NestedScrollView genresScroll = new NestedScrollView(this);
 
-            LinearLayout linearLayout = new LinearLayout(this);
+            final LinearLayout linearLayout = new LinearLayout(this);
             linearLayout.setOrientation(LinearLayout.VERTICAL);
             linearLayout.setPadding(10, 10, 10, 10);
 
-            ChipGroup chipGroup = new ChipGroup(this);
+            final ChipGroup chipGroup = new ChipGroup(this);
             chipGroup.setSingleSelection(true); // por ahora
 
             for (byte checkboxesCount = 0; checkboxesCount < 39; checkboxesCount++) {
-                Chip genre = (Chip) inflater.inflate(R.layout.chip_filter, null);
+                final Chip genre = (Chip) inflater.inflate(R.layout.chip_filter, null);
 
                 genre.setText(preloaded[checkboxesCount]);
                 genre.setTag(preloaded[checkboxesCount]);
@@ -574,7 +569,7 @@ public class MainActivity extends AppCompatActivity {
             }
             linearLayout.addView(chipGroup, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-            MaterialButton materialButton = new MaterialButton(MainActivity.this);
+            final MaterialButton materialButton = new MaterialButton(MainActivity.this);
             materialButton.setText(getText(android.R.string.ok));
             materialButton.setTextColor(getResources().getColor(R.color.celestito));
             materialButton.setStrokeWidth(1);
@@ -619,9 +614,9 @@ public class MainActivity extends AppCompatActivity {
             }
         });*/
 
-        StringBuilder genresBuilder = new StringBuilder();
+        final StringBuilder genresBuilder = new StringBuilder();
 
-        MaterialButton positiveButton = dialogView.findViewById(R.id.filter_positive_button);
+        final MaterialButton positiveButton = dialogView.findViewById(R.id.filter_positive_button);
         positiveButton.setOnClickListener(view -> {
             for (byte count = 0; count < anikumiiInputChip.size(); count++) {
                 genresBuilder.append("?genero=").append(anikumiiInputChip.get(count).replace(" ", "-"));
@@ -632,7 +627,7 @@ public class MainActivity extends AppCompatActivity {
             genresBuilder.delete(0, genresBuilder.length());
         });
 
-        AppCompatButton negativeButton = dialogView.findViewById(R.id.filter_negative_button);
+        final AppCompatButton negativeButton = dialogView.findViewById(R.id.filter_negative_button);
         negativeButton.setOnClickListener(view -> {
             anikumiiInputChip.clear();
             filterDialog.dismiss();
@@ -645,7 +640,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void userStuff() {
         if (isLoggedIn)
-            GlideApp.with(MainActivity.this).asDrawable().load(anikumiiSharedPreferences.getString("malUserAvatar", null)).apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)).circleCrop().into(new CustomTarget<Drawable>() {
+            Glide.with(MainActivity.this).asDrawable().load(anikumiiSharedPreferences.getString("malUserAvatar", null)).apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)).circleCrop().into(new CustomTarget<Drawable>() {
                 @Override
                 public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
                     userMenuItem.setIcon(resource);

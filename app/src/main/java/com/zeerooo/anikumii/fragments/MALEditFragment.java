@@ -25,10 +25,10 @@ import com.zeerooo.anikumii.misc.Utils;
 
 import java.util.Calendar;
 
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableObserver;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.observers.DisposableObserver;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 /**
  * Created by ZeeRooo on 25/02/18
@@ -75,7 +75,7 @@ public class MALEditFragment extends Fragment {
                             final Spinner statusSpinner = getActivity().findViewById(R.id.malSetStatus);
                             statusSpinner.setSelection(myAnimeListModel.getStatus() - 1);
 
-                            AnikumiiNumberPicker anikumiiNumberPicker = getActivity().findViewById(R.id.episodes_numberpicker);
+                            final AnikumiiNumberPicker anikumiiNumberPicker = getActivity().findViewById(R.id.episodes_numberpicker);
                             anikumiiNumberPicker.setMaxValue(getArguments().getShort("episodes"));
                             anikumiiNumberPicker.setValue(String.valueOf(myAnimeListModel.getSeenEpisodes()));
                             // final AnikumiiNumberPicker rewatchPicker = getActivity().findViewById(R.id.rewatch_numberpicker);
@@ -107,7 +107,7 @@ public class MALEditFragment extends Fragment {
 
                             final TextInputEditText comment = getActivity().findViewById(R.id.malSetComment);
 
-                            MaterialButton btnSend = getActivity().findViewById(R.id.malEditSend);
+                            final MaterialButton btnSend = getActivity().findViewById(R.id.malEditSend);
                             btnSend.setOnClickListener(view -> {
                                 myAnimeListModel.setStatus((byte) (statusSpinner.getSelectedItemPosition() + 1));
                                 // myAnimeListModel.setSeenEpisodes(seenEpisodesPicker.getValue());
@@ -125,7 +125,7 @@ public class MALEditFragment extends Fragment {
                                 Snackbar.make(getView(), "Anime añadido y actualizado", Snackbar.LENGTH_LONG).show();
                             });
 
-                            MaterialButton deleteAnime = getActivity().findViewById(R.id.malEditDelete);
+                            final MaterialButton deleteAnime = getActivity().findViewById(R.id.malEditDelete);
                             deleteAnime.setOnClickListener(view -> {
                                 myAnimeListModel.apiHandler(getActivity(), (byte) 0);
 
@@ -138,7 +138,7 @@ public class MALEditFragment extends Fragment {
     private void calendarPicker(final TextView textView, final boolean start) {
         final Calendar calendar = Calendar.getInstance();
         if (getActivity() != null) {
-            DatePickerDialog dialog = new DatePickerDialog(getActivity(), R.style.dialog, (DatePicker datePicker, int i, int i1, int i2) -> {
+            final DatePickerDialog dialog = new DatePickerDialog(getActivity(), R.style.dialog, (DatePicker datePicker, int i, int i1, int i2) -> {
                 i1 += 1;
                 if (start) {
                     myAnimeListModel.setStartYear(i + "-" + i1 + "-" + i2);

@@ -36,9 +36,9 @@ public class UpdateService extends Worker {
     @Override
     public Result doWork() {
         try {
-            JSONObject jsonObject = new JSONObject(new AnikumiiConnection().getStringResponse("GET", "https://api.github.com/repos/ZeeRooo/Anikumii-releases/releases/latest", null));
+            final JSONObject jsonObject = new JSONObject(new AnikumiiConnection().getStringResponse("GET", "https://api.github.com/repos/ZeeRooo/Anikumii-releases/releases/latest", null));
 
-            String tagName = jsonObject.getString("tag_name");
+            final String tagName = jsonObject.getString("tag_name");
 
             if (tagName.contains(BuildConfig.VERSION_NAME)) {
                 if (triggered)
@@ -63,14 +63,16 @@ public class UpdateService extends Worker {
     }
 
     private void displayNotification(String title, String subtitle) {
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), "com.zeerooo.anikumii.notifications");
-        NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getApplicationContext(), "com.zeerooo.anikumii.notifications");
+        final NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = new NotificationChannel("com.zeerooo.anikumii.notifications", "Actualizaciones", NotificationManager.IMPORTANCE_LOW);
-            notificationChannel.setShowBadge(true);
-            notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
-            mNotificationManager.createNotificationChannel(notificationChannel);
+            if (mNotificationManager.getNotificationChannel("com.zeerooo.anikumii.notifications") == null) {
+                final NotificationChannel notificationChannel = new NotificationChannel("com.zeerooo.anikumii.notifications", "Actualizaciones", NotificationManager.IMPORTANCE_LOW);
+                notificationChannel.setShowBadge(true);
+                notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+                mNotificationManager.createNotificationChannel(notificationChannel);
+            }
         } else {
             mBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
         }

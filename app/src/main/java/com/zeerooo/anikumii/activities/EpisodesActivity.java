@@ -24,7 +24,6 @@ import com.zeerooo.anikumii.adapters.ViewPagerAdapter;
 import com.zeerooo.anikumii.anikumiiparts.AnikumiiConnection;
 import com.zeerooo.anikumii.anikumiiparts.AnikumiiUiHelper;
 import com.zeerooo.anikumii.anikumiiparts.AnikumiiWebHelper;
-import com.zeerooo.anikumii.anikumiiparts.glide.GlideApp;
 import com.zeerooo.anikumii.fragments.MALInfoFragment;
 import com.zeerooo.anikumii.fragments.TioEpisodesFragment;
 import com.zeerooo.anikumii.misc.Utils;
@@ -36,19 +35,19 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableObserver;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.observers.DisposableObserver;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class EpisodesActivity extends AppCompatActivity {
+    private final Bundle tioAnimeBundle = new Bundle();
+    private final ArrayList<String> genreList = new ArrayList<>();
+    private final ArrayList<String> listRel = new ArrayList<>();
     private String animeID, url, animeName;
     private int malID;
     private byte malPosition;
     private ViewPager viewPager;
-    private final Bundle tioAnimeBundle = new Bundle();
-    private final ArrayList<String> genreList = new ArrayList<>();
-    private final ArrayList<String> listRel = new ArrayList<>();
     private Element element;
 
     @Override
@@ -56,7 +55,7 @@ public class EpisodesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_episodios);
 
-        MaterialToolbar materialToolbar = findViewById(R.id.episodesToolbar);
+        final MaterialToolbar materialToolbar = findViewById(R.id.episodesToolbar);
 
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
@@ -92,7 +91,7 @@ public class EpisodesActivity extends AppCompatActivity {
                     animeID = Utils.matcher(element.selectFirst("figure.backdrop > img").attr("src"), "/([0-9]+)");
                 })
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(aBoolean -> GlideApp.with(EpisodesActivity.this).load(Anikumii.dominium + "/uploads/fondos/" + animeID + ".jpg").error(Glide.with(EpisodesActivity.this).asDrawable().load("https://tioanime.com/uploads/portadas/" + animeID + ".jpg")).apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)).into((ImageView) findViewById(R.id.anime_cover)))
+                .doOnNext(aBoolean -> Glide.with(EpisodesActivity.this).load(Anikumii.dominium + "/uploads/fondos/" + animeID + ".jpg").error(Glide.with(EpisodesActivity.this).asDrawable().load("https://tioanime.com/uploads/portadas/" + animeID + ".jpg")).apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)).into((ImageView) findViewById(R.id.anime_cover)))
                 .observeOn(Schedulers.computation())
                 .doOnNext(aBoolean -> networkOperation())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -124,25 +123,26 @@ public class EpisodesActivity extends AppCompatActivity {
     }
 
     private void networkOperation() throws Exception {
-        String about = element.getElementsByClass("sinopsis").text();
+        final String about = element.getElementsByClass("sinopsis").text();
 
         String status = element.getElementsByClass("next-episode text-success rounded fa-calendar-alt far d-inline-flex align-items-center").text();
         if (status.isEmpty())
             status = "Finalizado";
 
-        Elements relElements = element.getElementsByClass("anime sm");
+        final Elements relElements = element.getElementsByClass("anime sm");
         for (byte relElementsCount = 0; relElementsCount < relElements.size(); relElementsCount++) {
             listRel.add(relElements.get(relElementsCount).text() + "-_" + (relElements.get(relElementsCount).getElementsByTag("a").attr("href")));
         }
 
-        Elements genresElements = element.getElementsByClass("btn btn-sm btn-light rounded-pill");
+        final Elements genresElements = element.getElementsByClass("btn btn-sm btn-light rounded-pill");
         for (byte genresCount = 0; genresCount < genresElements.size(); genresCount++) {
             genreList.add(genresElements.get(genresCount).text());
         }
 
         try {
-            MALInfoFragment.MAL = new JSONObject(new AnikumiiConnection().getStringResponse("GET", "https://api.jikan.moe/v3/search/anime/?q=" + Utils.encodeString(animeName), null));
-            JSONArray jsonArray = MALInfoFragment.MAL.getJSONArray("results");
+            MALInfoFragment.MAL = new JSONObject(new AnikumiiConnection().getStringResponse("GET", "https://api.jikan.moe/v3/search/anime?q=" + Utils.encodeString(animeName), null));
+
+            final JSONArray jsonArray = MALInfoFragment.MAL.getJSONArray("results");
 
             for (byte i = 0; i < jsonArray.length(); i++) {
                 if (jsonArray.getJSONObject(i).getString("title").toLowerCase().replace(" ", "").equals(animeName.toLowerCase().replace(" ", ""))) {
@@ -165,6 +165,7 @@ public class EpisodesActivity extends AppCompatActivity {
                 episodes = episodes.substring(0, 3);
             tioAnimeBundle.putString("ratingStr", episodes);
         } catch (Exception e) {
+            e.printStackTrace();
             tioAnimeBundle.putString("ratingStr", "0.0");
             tioAnimeBundle.putString("animeType", "-");
             tioAnimeBundle.putString("malUrl", "");
@@ -178,18 +179,18 @@ public class EpisodesActivity extends AppCompatActivity {
     }
 
     private void onCompleteMethod() {
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), 1);
+        final ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), 1);
 
         tioAnimeBundle.putString("animeId", animeID);
         tioAnimeBundle.putString("animeUrl", url);
         tioAnimeBundle.putString("animeName", animeName);
         tioAnimeBundle.putBoolean("isFav", false);
 
-        TioEpisodesFragment tioEpisodesFragment = new TioEpisodesFragment();
+        final TioEpisodesFragment tioEpisodesFragment = new TioEpisodesFragment();
         tioEpisodesFragment.setArguments(tioAnimeBundle);
         viewPagerAdapter.addFragment(tioEpisodesFragment, "Episodios");
 
-        Bundle malBundle = new Bundle();
+        final Bundle malBundle = new Bundle();
         malBundle.putInt("malID", malID);
         MALInfoFragment malInfoFragment = new MALInfoFragment();
         malInfoFragment.setArguments(malBundle);
@@ -214,7 +215,7 @@ public class EpisodesActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.shareAnime:
-                Intent sendIntent = new Intent();
+                final Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.putExtra(Intent.EXTRA_TEXT, url);
                 sendIntent.setType("text/plain");

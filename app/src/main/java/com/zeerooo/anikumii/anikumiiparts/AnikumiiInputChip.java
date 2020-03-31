@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class AnikumiiInputChip extends ArrayList<String> {
 
     public AnikumiiInputChip(View rootView, String[] preloadedTags) {
-        AppCompatAutoCompleteTextView autoCompleteTextView = rootView.findViewById(R.id.preloadedTags);
+        final AppCompatAutoCompleteTextView autoCompleteTextView = rootView.findViewById(R.id.preloadedTags);
 
         if (preloadedTags != null)
             autoCompleteTextView.setAdapter(new ArrayAdapter<>(rootView.getContext(), android.R.layout.simple_dropdown_item_1line, preloadedTags));
@@ -43,7 +43,7 @@ public class AnikumiiInputChip extends ArrayList<String> {
         if (add)
             add(text);
 
-        Chip chip = new Chip(rootView.getContext());
+        final Chip chip = new Chip(rootView.getContext());
         chip.setChipBackgroundColor(ColorStateList.valueOf(rootView.getResources().getColor(R.color.mtrl_textinput_default_box_stroke_color)));
         chip.setText(text);
         chip.setTag(text);

@@ -117,7 +117,7 @@ public class AnikumiiSharedPreferences implements SharedPreferences {
     }
 
     private KeyStore.PrivateKeyEntry getPrivateKey() throws KeyStoreException, IOException, CertificateException, NoSuchAlgorithmException, UnrecoverableEntryException, NoSuchProviderException, InvalidAlgorithmParameterException {
-        KeyStore ks = KeyStore.getInstance("AndroidKeyStore");
+        final KeyStore ks = KeyStore.getInstance("AndroidKeyStore");
         ks.load(null);
 
         KeyStore.Entry entry;
@@ -134,7 +134,7 @@ public class AnikumiiSharedPreferences implements SharedPreferences {
                 createKeys();
                 privateKey = (PrivateKey) ks.getKey("ZeeRooo@Anikumii!!", null);
             }
-            Certificate certificate = ks.getCertificate("ZeeRooo@Anikumii!!");
+            final Certificate certificate = ks.getCertificate("ZeeRooo@Anikumii!!");
             entry = new KeyStore.PrivateKeyEntry(privateKey, new Certificate[]{certificate});
         }
 

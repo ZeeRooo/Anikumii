@@ -88,10 +88,10 @@
             android:theme="@style/SettingsTheme" />
         <activity
             android:name="com.zeerooo.anikumii.activities.VideoPlayerActivity"
-            android:configChanges="orientation|screenSize|screenLayout|screenSize|smallestScreenSize"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:launchMode="singleTop"
             android:resizeableActivity="true"
-            android:screenOrientation="sensorLandscape"
+            android:screenOrientation="fullSensor"
             android:supportsPictureInPicture="true"
             android:theme="@style/AppTheme">
             <intent-filter>

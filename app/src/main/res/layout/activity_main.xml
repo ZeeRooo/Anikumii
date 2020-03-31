@@ -30,6 +30,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:background="@drawable/gradient"
+            app:layout_anchor="@id/bottom_navigation"
+            app:layout_anchorGravity="top"
+            app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior" />
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_anchor="@id/tabLayout"
+            app:layout_anchorGravity="bottom"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
@@ -42,22 +58,6 @@
                 android:theme="@style/TabLayout"
                 app:layout_scrollFlags="scroll|enterAlways" />
         </com.google.android.material.appbar.AppBarLayout>
-
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/viewPager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_anchor="@id/tabLayout"
-            app:layout_anchorGravity="bottom"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="8dp"
-            android:background="@drawable/gradient"
-            app:layout_anchor="@id/bottom_navigation"
-            app:layout_anchorGravity="top"
-            app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation"

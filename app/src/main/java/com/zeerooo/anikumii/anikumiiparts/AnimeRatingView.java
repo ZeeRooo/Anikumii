@@ -15,10 +15,10 @@ import android.widget.ProgressBar;
  */
 
 public class AnimeRatingView extends ProgressBar {
-    private String number = "0.0";
-    private short aShort;
     private final Paint paint;
     private final Rect rect;
+    private String number = "0.0";
+    private short aShort;
     private byte xPos, yPos;
 
     public AnimeRatingView(Context context, AttributeSet attrs) {
@@ -50,7 +50,7 @@ public class AnimeRatingView extends ProgressBar {
     public void init(String number) {
         this.number = number;
 
-        aShort = Short.valueOf(number.replace(".", ""));
+        aShort = Short.parseShort(number.replace(".", ""));
 
         paint.setAntiAlias(true);
         paint.setTextAlign(Paint.Align.CENTER);
@@ -67,14 +67,14 @@ public class AnimeRatingView extends ProgressBar {
         else
             color = Color.parseColor("#03804e");
 
-        GradientDrawable gradientDrawable = (GradientDrawable) getProgressDrawable();
+        final GradientDrawable gradientDrawable = (GradientDrawable) getProgressDrawable();
         gradientDrawable.setColor(color);
         paint.setColor(color);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
         canvas.drawText(number, xPos, yPos, paint);
+        super.onDraw(canvas);
     }
 }

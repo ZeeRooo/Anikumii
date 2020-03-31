@@ -4,6 +4,7 @@ import android.util.Base64;
 
 import com.htetznaing.xgetter.Core.Fruits;
 import com.zeerooo.anikumii.misc.Utils;
+import com.zeerooo.anikumii.misc.ZippyshareModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,6 +17,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -87,36 +89,130 @@ public class XGetter {
     }
 
     public String mediafire(String url) throws IOException {
-        final String regex = "aria-label=\"Download file\" href=\"(.*)\"";
-        final Pattern pattern = Pattern.compile(regex);
-        String html = Jsoup.connect(url).userAgent(agent).get().body().toString();
-        final Matcher matcher = pattern.matcher(html);
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-        return null;
+        return Jsoup.connect(url).userAgent(agent).get().getElementsByClass("input popsok").attr("href");
     }
 
     public String zippyshare(String url) throws IOException {
-        String es = Jsoup.connect(url).get().selectFirst("script:containsData(document.getElementById('dlbutton'))").toString();
-        try {
-            String[] parts = es.replace(" ", "")
-                    .split("\\+\\(")[1].split("\\)\\+")[0].split("\\+");
-            int a = Integer.parseInt(parts[0].split("%")[0]);
-            int b = Integer.parseInt(parts[0].split("%")[1]);
-            int c = Integer.parseInt(parts[1].split("%")[0]);
-            int d = Integer.parseInt(parts[1].split("%")[1]);
-            return url.substring(0, url.indexOf(".")) + ".zippyshare.com" + es.substring(es.indexOf("/d/")).split("\";")[0].replaceAll("\".*?\"", Integer.toString((a % b) + (c % d)));
-        } catch (Exception e) {
-            int a = Integer.parseInt(es.split("= ")[1].split(";")[0]);
-            int b = Integer.valueOf(es.split("= ")[2].split(";")[0]);
-            int c = (int) Math.floor(a / 3);
-            return url.substring(0, url.indexOf(".")) + ".zippyshare.com" + es.substring(es.indexOf("/d/")).split("\";")[0].replaceAll("\".*?\"", String.valueOf(c + (a % b)));
-        }
+        final String javascript = Jsoup.connect(url).get().selectFirst("script:containsData(document.getElementById('dlbutton'))").toString();
+
+        final String[] lines = javascript.replaceAll(" ", "").split("\n");
+
+       /* final ArrayList<ZippyshareModel> arrayList = new ArrayList<ZippyshareModel>();
+
+        String operation = null;
+
+        for (byte a = 0; a < lines.length; a++) {
+            if (lines[a].contains("var")) {
+                System.out.println("----");
+                arrayList.add(new ZippyshareModel(lines[a].replace("var", "").split("=")[0], lines[a].split("=")[1].replace(";", "")));
+            } else if (lines[a].contains("/d/")) {// operation
+                operation = lines[a].split("\\+\\(")[1].split("\\)\\+")[0];
+                System.out.println(operation);
+
+                for (byte b = 0; b < arrayList.size(); b++) {
+                    operation = operation.replaceAll(arrayList.get(b).getVar(), arrayList.get(b).getValue());
+                }
+
+                break;
+            }
+        }*/
+
+        return url.substring(0, url.indexOf(".")) + ".zippyshare.com" + javascript.substring(javascript.indexOf("/d/")).split("\";")[0].replaceAll("\".*?\"", String.valueOf(getMaths(lines[1].split("\\+\\(")[1].split("\\)\\+")[0])));
+    }
+
+    /*
+    https://stackoverflow.com/a/26227947
+     */
+    private int getMaths(final String str) {
+        return new Object() {
+            int pos = -1, ch;
+
+            void nextChar() {
+                ch = (++pos < str.length()) ? str.charAt(pos) : -1;
+            }
+
+            boolean eat(int charToEat) {
+                while (ch == ' ') nextChar();
+                if (ch == charToEat) {
+                    nextChar();
+                    return true;
+                }
+                return false;
+            }
+
+            int parse() {
+                nextChar();
+                final int x = parseExpression();
+                if (pos < str.length()) throw new RuntimeException("Unexpected: " + (char) ch);
+                return x;
+            }
+
+            // Grammar:
+            // expression = term | expression `+` term | expression `-` term
+            // term = factor | term `*` factor | term `/` factor
+            // factor = `+` factor | `-` factor | `(` expression `)`
+            //        | number | functionName factor | factor `^` factor
+
+            int parseExpression() {
+                int x = parseTerm();
+                for (; ; ) {
+                    if (eat('+'))
+                        x += parseTerm(); // addition
+                    else if (eat('-'))
+                        x -= parseTerm(); // subtraction
+                    else
+                        return x;
+                }
+            }
+
+            int parseTerm() {
+                int x = parseFactor();
+                for (; ; ) {
+                    if (eat('*'))
+                        x *= parseFactor(); // multiplication
+                    else if (eat('/'))
+                        x /= parseFactor(); // division
+                    else if (eat('%'))
+                        x %= parseFactor(); // Modulo
+                    else
+                        return x;
+                }
+            }
+
+            int parseFactor() {
+                if (eat('+')) return parseFactor(); // unary plus
+                if (eat('-')) return -parseFactor(); // unary minus
+
+                int x;
+                int startPos = this.pos;
+                if (eat('(')) { // parentheses
+                    x = parseExpression();
+                    eat(')');
+                } else if ((ch >= '0' && ch <= '9') || ch == '.') { // numbers
+                    while ((ch >= '0' && ch <= '9') || ch == '.') nextChar();
+                    x = Integer.parseInt(str.substring(startPos, this.pos));
+                } else if (ch >= 'a' && ch <= 'z') { // functions
+                    while (ch >= 'a' && ch <= 'z') nextChar();
+                    final String func = str.substring(startPos, this.pos);
+                    x = parseFactor();
+                    if (func.equals("sqrt")) x = (int) Math.sqrt(x);
+                    else if (func.equals("sin")) x = (int) Math.sin(Math.toRadians(x));
+                    else if (func.equals("cos")) x = (int) Math.cos(Math.toRadians(x));
+                    else if (func.equals("tan")) x = (int) Math.tan(Math.toRadians(x));
+                    else throw new RuntimeException("Unknown function: " + func);
+                } else {
+                    throw new RuntimeException("Unexpected: " + (char) ch);
+                }
+
+                if (eat('^')) x = (int) Math.pow(x, parseFactor());
+
+                return x;
+            }
+        }.parse();
     }
 
     private void openload(final String url) throws IOException {
-        String html = Jsoup.connect(url).userAgent(agent).get().body().toString();
+        final String html = Jsoup.connect(url).userAgent(agent).get().body().toString();
         String longString = getLongEncrypt(html);
         if (longString == null) {
             longString = getLongEncrypt2(html);
@@ -133,9 +229,9 @@ public class XGetter {
 
     public String okru(String url) {
         try {
-            String html = Jsoup.connect(url).userAgent("Mozilla/5.0 (Linux; Android 4.1.1; Galaxy Nexus Build/JRO03C) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19").get().getElementsByClass("vid-card_cnt h-mod").attr("data-options");
-            String json = new JSONObject(html.replace("&quot;", "\"")).getJSONObject("flashvars").getString("metadata");
-            JSONArray jsonArray = new JSONObject(json).getJSONArray("videos");
+            final String html = Jsoup.connect(url).userAgent("Mozilla/5.0 (Linux; Android 4.1.1; Galaxy Nexus Build/JRO03C) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19").get().getElementsByClass("vid-card_cnt h-mod").attr("data-options");
+            final String json = new JSONObject(html.replace("&quot;", "\"")).getJSONObject("flashvars").getString("metadata");
+            final JSONArray jsonArray = new JSONObject(json).getJSONArray("videos");
 
             for (int i = 0; i < jsonArray.length(); i++) {
                 url = jsonArray.getJSONObject(i).getString("url");
@@ -152,10 +248,10 @@ public class XGetter {
 
         String line;
 
-        URL url = new URL(mUrl);
-        InputStream is = url.openStream();
-        BufferedReader br = new BufferedReader(new InputStreamReader(is));
-        StringBuilder result = new StringBuilder();
+        final URL url = new URL(mUrl);
+        final InputStream is = url.openStream();
+        final BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        final StringBuilder result = new StringBuilder();
         while ((line = br.readLine()) != null) {
             result.append(line);
         }

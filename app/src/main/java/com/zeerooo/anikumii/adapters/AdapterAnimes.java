@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.TooltipCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.button.MaterialButton;
@@ -23,7 +24,6 @@ import com.zeerooo.anikumii.activities.EpisodesActivity;
 import com.zeerooo.anikumii.activities.VideoPlayerActivity;
 import com.zeerooo.anikumii.anikumiiparts.AnikumiiBottomSheetDialog;
 import com.zeerooo.anikumii.anikumiiparts.AnikumiiUiHelper;
-import com.zeerooo.anikumii.anikumiiparts.glide.GlideApp;
 import com.zeerooo.anikumii.misc.ItemsModel;
 
 /**
@@ -31,10 +31,10 @@ import com.zeerooo.anikumii.misc.ItemsModel;
  */
 
 public class AdapterAnimes extends AdapterMain {
-    private Context context;
     private final boolean isHistory;
-    private ItemsModel itemsModel;
     private final RequestOptions requestOptions;
+    private Context context;
+    private ItemsModel itemsModel;
 
     public AdapterAnimes(boolean isHistory) {
         this.isHistory = isHistory;
@@ -58,14 +58,14 @@ public class AdapterAnimes extends AdapterMain {
         ((AdapterAnimes.MyViewHolder) viewHolder).titleTextView.setText(itemsModel.getTitle());
         ((AdapterAnimes.MyViewHolder) viewHolder).numberTextView.setText(itemsModel.getNumber());
 
-        GlideApp.with(context).load(itemsModel.getImgUrl()).apply(requestOptions).into(((AdapterAnimes.MyViewHolder) viewHolder).animeImageView);
+        Glide.with(context).load(itemsModel.getImgUrl()).apply(requestOptions).into(((AdapterAnimes.MyViewHolder) viewHolder).animeImageView);
         super.onBindViewHolder(viewHolder, i);
     }
 
     private void bottomSheetAction(String title, String animeName, View.OnClickListener onClickListener) {
-        AnikumiiBottomSheetDialog anikumiiBottomSheetDialog = new AnikumiiBottomSheetDialog(context);
+        final AnikumiiBottomSheetDialog anikumiiBottomSheetDialog = new AnikumiiBottomSheetDialog(context);
 
-        MaterialButton materialButton = new MaterialButton(context);
+        final MaterialButton materialButton = new MaterialButton(context);
         materialButton.setText(title);
         materialButton.setStrokeWidth(1);
         materialButton.setStrokeColor(ColorStateList.valueOf(context.getResources().getColor(R.color.celestito)));
@@ -97,8 +97,9 @@ public class AdapterAnimes extends AdapterMain {
                             type = "/anime/";
                         else
                             type = "/hentai/";
+                        context.startActivity(new Intent(context, EpisodesActivity.class).putExtra("animeUrl", itemsModel.getChapterUrl().replace("/ver/", type).split("(-\\d+)\\D*$")[0]));
 
-                        context.startActivity(new Intent(context, EpisodesActivity.class).putExtra("animeUrl", itemsModel.getChapterUrl().replace("/ver/", type).replaceAll("(-\\d+)\\D*$", "")));
+                        //context.startActivity(new Intent(context, EpisodesActivity.class).putExtra("animeUrl", itemsModel.getChapterUrl().replace("/ver/", type).replaceAll("(-\\d+)\\D*$", "")));
                     });
                 } else if (isHistory) {
                     bottomSheetAction("Ir al último episodio", itemsModel.getTitle(), view1 -> context.startActivity(new Intent(context, VideoPlayerActivity.class).putExtra("chapterUrl", itemsModel.getChapterUrl().replace("/anime/", "/ver/").replace("/hentai/", "/ver/") + "-" + itemsModel.getNumber().split("- Episodio ")[1])));
@@ -107,13 +108,13 @@ public class AdapterAnimes extends AdapterMain {
             });
 
             if (isHistory) {
-                ImageButton dateImageButton = view.findViewById(R.id.item_history_about);
+                final ImageButton dateImageButton = view.findViewById(R.id.item_history_about);
                 AnikumiiUiHelper.transparentBackground(dateImageButton);
                 TooltipCompat.setTooltipText(dateImageButton, "Información");
                 dateImageButton.setOnClickListener(view2 -> {
-                    AnikumiiBottomSheetDialog anikumiiBottomSheetDialog = new AnikumiiBottomSheetDialog(context);
+                    final AnikumiiBottomSheetDialog anikumiiBottomSheetDialog = new AnikumiiBottomSheetDialog(context);
 
-                    TextView dateTextView = new TextView(context);
+                    final TextView dateTextView = new TextView(context);
                     dateTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
                     dateTextView.setTextAppearance(context, R.style.TextAppearance_Material_Body);
                     dateTextView.setText((animeList.get(getAdapterPosition()).getDate()));
@@ -128,11 +129,11 @@ public class AdapterAnimes extends AdapterMain {
         public void onClick(View view) {
             final ItemsModel itemsModel = animeList.get(getAdapterPosition());
             if (itemsModel.getChapterUrl().contains("/ver/")) {
-                Intent videoAct = new Intent(context, VideoPlayerActivity.class);
+                final Intent videoAct = new Intent(context, VideoPlayerActivity.class);
                 videoAct.putExtra("chapterUrl", itemsModel.getChapterUrl());
                 context.startActivity(videoAct);
             } else {
-                Intent episodesAct = new Intent(context, EpisodesActivity.class);
+                final Intent episodesAct = new Intent(context, EpisodesActivity.class);
                 episodesAct.putExtra("animeUrl", itemsModel.getChapterUrl());
                 context.startActivity(episodesAct);
             }

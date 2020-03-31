@@ -19,6 +19,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.chip.Chip;
@@ -63,26 +66,26 @@ public class AnikumiiBottomSheetDialog extends BottomSheetDialog {
 
         final Dialog dialog = new Dialog(getContext());
 
-        LinearLayout linearLayout = new LinearLayout(getContext());
+        final LinearLayout linearLayout = new LinearLayout(getContext());
 
-        WebView webView = new WebView(getContext());
+        final WebView webView = new WebView(getContext());
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(new JavaScriptInterface(), "HTMLOUT");
         webView.getSettings().setUserAgentString("Mozilla/5.0 (X11; Linux x86_64; rv:66.0) Gecko/20100101 Firefox/66.0");
 
-        View loginRootView = getLayoutInflater().inflate(R.layout.bottom_sheet_log_in, null);
+        final View loginRootView = getLayoutInflater().inflate(R.layout.bottom_sheet_log_in, null);
 
-        AppCompatButton malButton = loginRootView.findViewById(R.id.bottom_sheet_log_in_mal_btn);
+        final AppCompatButton malButton = loginRootView.findViewById(R.id.bottom_sheet_log_in_mal_btn);
         malButton.setSupportBackgroundTintList(ContextCompat.getColorStateList(getContext(), R.color.myanimelist));
         setLoginButton(malButton, "https://myanimelist.net/login.php?from=%2F", webView, dialog);
 
-        FloatingActionButton facebookFab = loginRootView.findViewById(R.id.bottom_sheet_log_in_facebook_btn);
+        final FloatingActionButton facebookFab = loginRootView.findViewById(R.id.bottom_sheet_log_in_facebook_btn);
         setLoginButton(facebookFab, "https://myanimelist.net/sns/login/facebook?from=%2F", webView, dialog);
 
-        FloatingActionButton twitterFab = loginRootView.findViewById(R.id.bottom_sheet_log_in_twitter_btn);
+        final FloatingActionButton twitterFab = loginRootView.findViewById(R.id.bottom_sheet_log_in_twitter_btn);
         setLoginButton(twitterFab, "https://myanimelist.net/sns/login/twitter?from=%2F", webView, dialog);
 
-        FloatingActionButton googleFab = loginRootView.findViewById(R.id.bottom_sheet_log_in_google_btn);
+        final FloatingActionButton googleFab = loginRootView.findViewById(R.id.bottom_sheet_log_in_google_btn);
         setLoginButton(googleFab, "https://myanimelist.net/sns/login/google?from=%2F", webView, dialog);
 
         dialog.requestWindowFeature(Window.FEATURE_LEFT_ICON);
@@ -117,20 +120,20 @@ public class AnikumiiBottomSheetDialog extends BottomSheetDialog {
         if (selectedServer == null)
             selectedServer = "Zippyshare";
 
-        ChipGroup chipGroup = new ChipGroup(getContext());
+        final ChipGroup chipGroup = new ChipGroup(getContext());
         chipGroup.setPadding(30, 30, 30, 30);
         chipGroup.setChipSpacing(10);
         chipGroup.setSingleSelection(true);
 
-        Chip streamangoChip = new Chip(getContext());
+       /* final Chip streamangoChip = new Chip(getContext());
         streamangoChip.setText(getContext().getString(R.string.streamango));
         streamangoChip.setCheckable(true);
         streamangoChip.setTextColor(Color.WHITE);
         streamangoChip.setChipBackgroundColor(ColorStateList.valueOf(Color.parseColor("#664bf1")));
         streamangoChip.setChecked(selectedServer.equals("Streamango"));
-        chipGroup.addView(streamangoChip);
+        chipGroup.addView(streamangoChip);*/
 
-        Chip zippyshareChip = new Chip(getContext());
+        final Chip zippyshareChip = new Chip(getContext());
         zippyshareChip.setText(getContext().getString(R.string.zippyshare));
         zippyshareChip.setCheckable(true);
         zippyshareChip.setChipBackgroundColor(ColorStateList.valueOf(Color.parseColor("#fffdd1")));
@@ -138,7 +141,7 @@ public class AnikumiiBottomSheetDialog extends BottomSheetDialog {
         zippyshareChip.setChecked(selectedServer.equals("Zippyshare"));
         chipGroup.addView(zippyshareChip);
 
-        Chip mediafireChip = new Chip(getContext());
+        final Chip mediafireChip = new Chip(getContext());
         mediafireChip.setText(getContext().getString(R.string.mediafire));
         mediafireChip.setCheckable(true);
         mediafireChip.setChipBackgroundColor(ColorStateList.valueOf(Color.parseColor("#0077ff")));
@@ -146,7 +149,7 @@ public class AnikumiiBottomSheetDialog extends BottomSheetDialog {
         mediafireChip.setChecked(selectedServer.equals("MediaFire"));
         chipGroup.addView(mediafireChip);
 
-        Chip okruChip = new Chip(getContext());
+        final Chip okruChip = new Chip(getContext());
         okruChip.setText(getContext().getString(R.string.okru));
         okruChip.setCheckable(true);
         okruChip.setChipBackgroundColor(ColorStateList.valueOf(Color.parseColor("#ee8208")));
@@ -163,8 +166,8 @@ public class AnikumiiBottomSheetDialog extends BottomSheetDialog {
         @JavascriptInterface
         public void processHTML(String token, boolean cookie) {
             if (cookie) {
-                StringBuilder cookiesBuilder = new StringBuilder();
-                String[] strings = CookieManager.getInstance().getCookie("https://myanimelist.net/").split(";");
+                final StringBuilder cookiesBuilder = new StringBuilder();
+                final String[] strings = CookieManager.getInstance().getCookie("https://myanimelist.net/").split(";");
                 for (int i = 0; i < strings.length; i++) {
                     if (strings[i].contains("MALHLOGSESSID") || strings[i].contains("MALSESSIONID"))
                         cookiesBuilder.append(strings[i]).append(";");

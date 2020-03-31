@@ -24,6 +24,7 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.TooltipCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.zeerooo.anikumii.Anikumii;
@@ -34,7 +35,6 @@ import com.zeerooo.anikumii.activities.VideoPlayerActivity;
 import com.zeerooo.anikumii.anikumiiparts.AnikumiiBottomSheetDialog;
 import com.zeerooo.anikumii.anikumiiparts.AnikumiiUiHelper;
 import com.zeerooo.anikumii.anikumiiparts.AnimeRatingView;
-import com.zeerooo.anikumii.anikumiiparts.glide.GlideApp;
 import com.zeerooo.anikumii.misc.ItemsModel;
 import com.zeerooo.anikumii.misc.Utils;
 
@@ -43,33 +43,33 @@ import org.jsoup.nodes.Element;
 
 import java.util.ArrayList;
 
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableObserver;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.observers.DisposableObserver;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 /**
  * Created by ZeeRooo on 07/01/18
  */
 
 public class AdapterEpisodes extends AdapterMain {
-    private byte parentID = 0;
-    private boolean loadHeader = true;
-    private Context context;
     private final String ratingStr;
     private final String nextEpisodeDate;
     private final String aboutStr;
     private final String typeStr;
     private final String malUrl;
     private final String tioId;
+    private final ArrayList<String> genreList;
+    private final ArrayList<String> listRel;
+    private byte parentID = 0;
+    private boolean loadHeader = true;
+    private Context context;
     private View rootViewHeader;
     private TextView numberTextView, statusTextView, aboutTextView, readMore, typeTextView;
     // private ImageView animeImageView;
     private AnimeRatingView ratingView;
     private SearchView episodesSearchView;
     private ArrayList<ItemsModel> prevAnimeList;
-    private final ArrayList<String> genreList;
-    private final ArrayList<String> listRel;
     private EpisodesFilter episodesFilter;
     private ItemsModel items;
 
@@ -105,7 +105,7 @@ public class AdapterEpisodes extends AdapterMain {
             numberTextView.setText(items.getNumber());
             numberTextView.setTextColor(items.getTextColor());
 
-            //GlideApp.with(context).load(items.getImgUrl()).into(animeImageView);
+            //Glide.with(context).load(items.getImgUrl()).into(animeImageView);
         } else if (holder instanceof Header && loadHeader) {
             ratingView.init(ratingStr);
             ratingView.setAnimatesProgress();
@@ -117,7 +117,7 @@ public class AdapterEpisodes extends AdapterMain {
 
             for (byte genreCount = 0; genreCount < genreList.size(); genreCount++) {
                 final String genre = genreList.get(genreCount);
-                Chip genreChip = new Chip(context);
+                final Chip genreChip = new Chip(context);
                 genreChip.setText(genre);
                 genreChip.setTextSize(14);
                 genreChip.setOnClickListener(view -> context.startActivity(new Intent(context, AnimeActivity.class)
@@ -190,7 +190,7 @@ public class AdapterEpisodes extends AdapterMain {
             for (byte listRelCount = 0; listRelCount < listRel.size(); listRelCount++) {
                 final String s = listRel.get(listRelCount);
                 parentID++;
-                Chip chipRel = new Chip(context);
+                final Chip chipRel = new Chip(context);
                 chipRel.setId(parentID);
                 chipRel.setEllipsize(TextUtils.TruncateAt.END);
                 chipRel.setText(s.split("-_")[0]);
@@ -198,11 +198,11 @@ public class AdapterEpisodes extends AdapterMain {
                 chipRel.setChipBackgroundColor(ColorStateList.valueOf(Color.parseColor("#5901bcf2")));
                 chipRel.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
                 chipRel.setOnClickListener(view -> {
-                    Intent episodesAct = new Intent(context, EpisodesActivity.class);
+                    final Intent episodesAct = new Intent(context, EpisodesActivity.class);
                     episodesAct.putExtra("animeUrl", Anikumii.dominium + s.split("-_")[1]);
                     context.startActivity(episodesAct);
                 });
-                RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                final RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 
                 if (parentID == 1) {
                     if (episodesSearchView.getVisibility() == View.VISIBLE)
@@ -244,7 +244,7 @@ public class AdapterEpisodes extends AdapterMain {
 
             numberTextView = view.findViewById(R.id.item_episodes_number);
 
-            ImageButton aboutEpisode = view.findViewById(R.id.item_episode_about);
+            final ImageButton aboutEpisode = view.findViewById(R.id.item_episode_about);
             AnikumiiUiHelper.transparentBackground(aboutEpisode);
             TooltipCompat.setTooltipText(aboutEpisode, "Información");
             aboutEpisode.setOnClickListener(v ->
@@ -285,17 +285,17 @@ public class AdapterEpisodes extends AdapterMain {
 
                                 @Override
                                 public void onComplete() {
-                                    AnikumiiBottomSheetDialog anikumiiBottomSheetDialog = new AnikumiiBottomSheetDialog(context);
-                                    View specificView = LayoutInflater.from(context).inflate(R.layout.bottom_sheet_episodes_about, null);
+                                    final AnikumiiBottomSheetDialog anikumiiBottomSheetDialog = new AnikumiiBottomSheetDialog(context);
+                                    final View specificView = LayoutInflater.from(context).inflate(R.layout.bottom_sheet_episodes_about, null);
 
-                                    ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.rgb(66, 104, 179));
-                                    StyleSpan styleSpan = new StyleSpan(Typeface.BOLD);
+                                    final ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.rgb(66, 104, 179));
+                                    final StyleSpan styleSpan = new StyleSpan(Typeface.BOLD);
 
                                     ((TextView) specificView.findViewById(R.id.episodes_bottom_sheet_about_aired)).setText(Utils.getBold("Emitido: " + aired, foregroundColorSpan, styleSpan));
 
                                     ((TextView) specificView.findViewById(R.id.episodes_bottom_sheet_about_duration)).setText(Utils.getBold("Duración: " + duration, foregroundColorSpan, styleSpan));
 
-                                    GlideApp.with(context).load(imageUrl).into((ImageView) specificView.findViewById(R.id.episodes_bottom_sheet_about_header));
+                                    Glide.with(context).load(imageUrl).into((ImageView) specificView.findViewById(R.id.episodes_bottom_sheet_about_header));
 
                                     ((TextView) specificView.findViewById(R.id.episodes_bottom_sheet_about_synopsis)).setText(Utils.getBold(synopsis.replace("Synopsis", "Sinopsis:"), foregroundColorSpan, styleSpan));
 
@@ -311,7 +311,7 @@ public class AdapterEpisodes extends AdapterMain {
 
         @Override
         public void onClick(View view) {
-            ItemsModel items = animeList.get(getAdapterPosition());
+            final ItemsModel items = animeList.get(getAdapterPosition());
             Intent videoAct = new Intent(context, VideoPlayerActivity.class);
             videoAct.putExtra("chapterUrl", items.getChapterUrl());
             context.startActivity(videoAct);

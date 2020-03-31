@@ -62,8 +62,6 @@
 
     <string name="rxerror_no_connection">No hay conexión a internet</string>
     <string name="comments">Comentarios</string>
-    <string name="enablePip">Picture-in-Picture</string>
-    <string name="enablePipSummary">Continuar reproduciendo en miniatura tras tocar el botón de home</string>
     <string name="defaultServer">Server por defecto</string>
     <string name="defaultServerSummary">El server por defecto es %s</string>
 

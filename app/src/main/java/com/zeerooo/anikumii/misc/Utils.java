@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 public class Utils {
 
     public static String matcher(String string, String regex) {
-        Matcher m = Pattern.compile(regex).matcher(string);
+       final Matcher m = Pattern.compile(regex).matcher(string);
         while (m.find()) {
             return m.group(1);
         }
@@ -47,13 +47,14 @@ public class Utils {
     }
 
     public static String removeLastNumberAndSpace(String string) {
-        return string.replaceAll("( \\d+)\\D*$", "");
+        // return string.replaceAll("( \\d+)\\D*$", "");
+        return string.split("( \\d+)\\D*$")[0];
     }
 
     public static SpannableStringBuilder getBold(String string, ForegroundColorSpan foregroundColorSpan, StyleSpan styleSpan) {
         if (string == null)
             string = "";
-        SpannableStringBuilder sb = new SpannableStringBuilder(string.replace("null", "-"));
+        final SpannableStringBuilder sb = new SpannableStringBuilder(string.replace("null", "-"));
         sb.setSpan(foregroundColorSpan, 0, string.indexOf(":") + 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
         sb.setSpan(styleSpan, 0, string.indexOf(":") + 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
         return sb;

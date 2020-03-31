@@ -14,12 +14,12 @@ import androidx.core.app.NotificationCompat;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.zeerooo.anikumii.R;
 import com.zeerooo.anikumii.activities.VideoPlayerActivity;
 import com.zeerooo.anikumii.anikumiiparts.AnikumiiSharedPreferences;
 import com.zeerooo.anikumii.anikumiiparts.AnikumiiWebHelper;
-import com.zeerooo.anikumii.anikumiiparts.glide.GlideApp;
 import com.zeerooo.anikumii.misc.Utils;
 
 import org.jsoup.select.Elements;
@@ -42,17 +42,19 @@ public class NotificationService extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        AnikumiiSharedPreferences anikumiiSharedPreferences = new AnikumiiSharedPreferences(getApplicationContext());
+        final AnikumiiSharedPreferences anikumiiSharedPreferences = new AnikumiiSharedPreferences(getApplicationContext());
 
         byte headsUpValue;
         mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         mBuilder = new NotificationCompat.Builder(getApplicationContext(), "com.zeerooo.anikumii.notif");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = new NotificationChannel("com.zeerooo.anikumii.notif", "Nuevos episodios", NotificationManager.IMPORTANCE_HIGH);
-            notificationChannel.setShowBadge(true);
-            notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
-            mNotificationManager.createNotificationChannel(notificationChannel);
+            if (mNotificationManager.getNotificationChannel("com.zeerooo.anikumii.episodes.notifications") == null) {
+                final NotificationChannel notificationChannel = new NotificationChannel("com.zeerooo.anikumii.episodes.notifications", "Nuevos episodios", NotificationManager.IMPORTANCE_HIGH);
+                notificationChannel.setShowBadge(true);
+                notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+                mNotificationManager.createNotificationChannel(notificationChannel);
+            }
         } else {
             if (anikumiiSharedPreferences.getBoolean("headsUp", false))
                 headsUpValue = NotificationCompat.PRIORITY_HIGH;
@@ -77,8 +79,8 @@ public class NotificationService extends Worker {
     private void syncAnimes(String url, AnikumiiSharedPreferences anikumiiSharedPreferences, String knownKey) throws ExecutionException, InterruptedException, IOException {
         String knownAnimesStr = anikumiiSharedPreferences.getString(knownKey, ""), title, number, image, animeUrl;
 
-        Elements episodes = AnikumiiWebHelper.go(url, getApplicationContext()).get().select("article.episode");
-        StringBuilder knownAnimes = new StringBuilder();
+        final Elements episodes = AnikumiiWebHelper.go(url, getApplicationContext()).get().select("article.episode");
+        final StringBuilder knownAnimes = new StringBuilder();
 
         if (anikumiiSharedPreferences.getBoolean("enableNotif", false)) {
 
@@ -91,7 +93,7 @@ public class NotificationService extends Worker {
                     animeUrl = url + episodes.get(episodesCount).select("a").attr("href");
                     image = url + episodes.get(episodesCount).selectFirst("a > div > figure > img").attr("src");
 
-                    displayNotification(animeUrl, "Episodio " + number, GlideApp.with(getApplicationContext()).asBitmap().load(image).apply(RequestOptions.circleCropTransform()).into(128, 128).get(), title, (byte) System.currentTimeMillis());
+                    displayNotification(animeUrl, "Episodio " + number, Glide.with(getApplicationContext()).asBitmap().load(image).apply(RequestOptions.circleCropTransform()).into(128, 128).get(), title, (byte) System.currentTimeMillis());
                 }
 
                 knownAnimes.append(title).append(number);
@@ -111,7 +113,7 @@ public class NotificationService extends Worker {
                 .setContentText(number)
                 .setAutoCancel(true);
 
-        Intent videoAct = new Intent(getApplicationContext(), VideoPlayerActivity.class);
+        final Intent videoAct = new Intent(getApplicationContext(), VideoPlayerActivity.class);
         videoAct.putExtra("chapterUrl", url);
 
         mBuilder.setContentIntent(PendingIntent.getActivity(getApplicationContext(), notificationId, videoAct, PendingIntent.FLAG_UPDATE_CURRENT));

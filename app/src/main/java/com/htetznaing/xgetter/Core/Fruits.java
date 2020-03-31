@@ -10,19 +10,19 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class Fruits {
     public static String fetch(String url) throws IOException {
-        URL obj = new URL(url);
-        HttpsURLConnection conn = (HttpsURLConnection) obj.openConnection();
-        InputStream is = conn.getInputStream();
+        final URL obj = new URL(url);
+        final HttpsURLConnection conn = (HttpsURLConnection) obj.openConnection();
+        final InputStream is = conn.getInputStream();
         int ptr = 0;
-        StringBuilder response = new StringBuilder();
+        final StringBuilder response = new StringBuilder();
         while ((ptr = is.read()) != -1) {
             response.append((char) ptr);
         }
 
         is.close();
 
-        String start = getStart(response.toString());
-        String end = getEnd(response.toString());
+        final String start = getStart(response.toString());
+        final String end = getEnd(response.toString());
 
         if (null != start && null != end) {
             return "https:" + getStreamURL(start, Integer.parseInt(end));
@@ -35,8 +35,8 @@ public class Fruits {
     }
 
     private static String getStreamURL(String hashCode, int intVal) {
-        String chars = "=/+9876543210zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA";
-        StringBuilder retVal = new StringBuilder();
+        final String chars = "=/+9876543210zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA";
+        final StringBuilder retVal = new StringBuilder();
         int hashCharCode_0, hashCharCode_1, hashCharCode_2, hashCharCode_3;
         hashCode = hashCode.replace("[^A-Za-z0-9\\+\\/\\=]", "");
         for (int hashIndex = 0; hashIndex < hashCode.length(); hashIndex += 4) {

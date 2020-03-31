@@ -24,23 +24,22 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Function;
-import io.reactivex.processors.PublishProcessor;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Single;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.processors.PublishProcessor;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class AnikumiiRecyclerView extends RecyclerView {
+    private final ArrayList<ItemsModel> arrayList = new ArrayList<>();
+    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private final PublishProcessor<Short> publishProcessor = PublishProcessor.create();
     private short page;
     private int findFirstVisibleItemPosition;
     private boolean loading;
     private byte maxDisplayedItems;
     private String toLoad, elementClass, title, number, img_url, chapterUrl, episodesStr;
-    private final ArrayList<ItemsModel> arrayList = new ArrayList<>();
-    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
     private Document document;
-    private final PublishProcessor<Short> publishProcessor = PublishProcessor.create();
     private View rootView;
     private Cursor cursor;
     private DataBaseHelper dataBaseHelper;
@@ -208,7 +207,7 @@ public class AnikumiiRecyclerView extends RecyclerView {
                     } else {
                         document = AnikumiiWebHelper.go(toLoad + "&p=" + page, getContext()).get();
 
-                        Elements episodes = document.select(elementClass);
+                        final Elements episodes = document.select(elementClass);
 
                         for (short episodesCount = 0; episodesCount < episodes.size(); episodesCount++) {
                             title = episodes.get(episodesCount).getElementsByClass("title").text();

@@ -32,7 +32,7 @@ public class UpdateActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update);
 
-        WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
+        final WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
         layoutParams.dimAmount = 0;
         layoutParams.flags = WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
         getWindow().setAttributes(layoutParams);
@@ -41,16 +41,16 @@ public class UpdateActivity extends AppCompatActivity {
 
         tagName = getIntent().getStringExtra("tagName");
 
-        ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.rgb(66, 104, 179));
+        final ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.rgb(66, 104, 179));
         StyleSpan styleSpan = new StyleSpan(Typeface.BOLD);
 
-        TextView newVersionTextView = findViewById(R.id.update_new_version);
+        final TextView newVersionTextView = findViewById(R.id.update_new_version);
         newVersionTextView.setText(Utils.getBold("Código de versión: " + tagName, foregroundColorSpan, styleSpan));
 
-        TextView dateTextView = findViewById(R.id.update_date);
+        final TextView dateTextView = findViewById(R.id.update_date);
         dateTextView.setText(Utils.getBold("Fecha: " + getIntent().getStringExtra("publishDate"), foregroundColorSpan, styleSpan));
 
-        TextView changelogTextView = findViewById(R.id.update_changelog);
+        final TextView changelogTextView = findViewById(R.id.update_changelog);
         changelogTextView.setText(getIntent().getStringExtra("changelog"));
     }
 
@@ -78,7 +78,7 @@ public class UpdateActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            DownloadManager mDownloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+            final DownloadManager mDownloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
 
             final DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
             request.setDestinationInExternalPublicDir("/Anikumii!!/versiones/", tagName + ".apk");

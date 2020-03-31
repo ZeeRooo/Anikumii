@@ -6,6 +6,11 @@
                 android:action="android.intent.action.VIEW"
                 android:data="https://github.com/ZeeRooo" />
         </androidx.preference.PreferenceScreen>
+        <androidx.preference.PreferenceScreen android:title="Licencia">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://raw.githubusercontent.com/ZeeRooo/Anikumii/master/LICENCE" />
+        </androidx.preference.PreferenceScreen>
     </androidx.preference.PreferenceCategory>
     <androidx.preference.PreferenceCategory android:title="Sin ellos la aplicación no sería posible. ¡Gracias!">
         <androidx.preference.PreferenceScreen android:title="TioAnime">

@@ -29,20 +29,22 @@ import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
-import com.zeerooo.anikumii.BuildConfig;
 import com.zeerooo.anikumii.R;
 import com.zeerooo.anikumii.anikumiiparts.AnikumiiBottomSheetDialog;
-import com.zeerooo.anikumii.anikumiiparts.glide.GlideApp;
+import com.zeerooo.anikumii.anikumiiparts.glide.AnikumiiGlideModule;
 import com.zeerooo.anikumii.services.AccountsService;
 import com.zeerooo.anikumii.services.NotificationService;
 import com.zeerooo.anikumii.services.UpdateService;
 
 import java.util.concurrent.TimeUnit;
+
+import ch.acra.acra.BuildConfig;
 
 public class SettingsActivity extends AppCompatActivity {
     private static boolean reloadMain;
@@ -89,7 +91,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    static class SettingsFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
+    public static class SettingsFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -138,7 +140,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    static class AccountFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
+    public static class AccountFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
         private TextView malName;
         private ImageView malAvatarView;
         private boolean sync = true;
@@ -150,14 +152,14 @@ public class SettingsActivity extends AppCompatActivity {
             getPreferenceManager().setSharedPreferencesMode(MODE_PRIVATE);
             setPreferencesFromResource(R.xml.pref_account, rootKey);
 
-            View rootView = getActivity().findViewById(R.id.pref_accLayout);
+            final View rootView = getActivity().findViewById(R.id.pref_accLayout);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 rootView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
                     @Override
                     public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
                         v.removeOnLayoutChangeListener(this);
-                        Animator anim = ViewAnimationUtils.createCircularReveal(v, (left + right) / 2, (bottom + top) / 2, 0, (char) Math.hypot(right, bottom));
+                        final Animator anim = ViewAnimationUtils.createCircularReveal(v, (left + right) / 2, (bottom + top) / 2, 0, (char) Math.hypot(right, bottom));
                         anim.setInterpolator(new AccelerateDecelerateInterpolator());
                         anim.setDuration(350);
                         anim.start();
@@ -189,10 +191,10 @@ public class SettingsActivity extends AppCompatActivity {
         public void onResume() {
             super.onResume();
             if (sync) {
-                String malAvatar = getPreferenceManager().getSharedPreferences().getString("malUserAvatar", null);
+                final String malAvatar = getPreferenceManager().getSharedPreferences().getString("malUserAvatar", null);
                 malAvatarView = getActivity().findViewById(R.id.pref_malAvatar);
                 if (malAvatar != null)
-                    GlideApp.with(getActivity()).load(malAvatar).apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).circleCrop()).into(malAvatarView);
+                    Glide.with(getActivity()).load(malAvatar).apply(new RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).circleCrop()).into(malAvatarView);
                 malName = getActivity().findViewById(R.id.pref_malName);
                 malName.setText(getPreferenceManager().getSharedPreferences().getString("malUserName", getString(R.string.warning_not_logged)));
             }
@@ -214,9 +216,9 @@ public class SettingsActivity extends AppCompatActivity {
                         CookieManager.getInstance().removeAllCookies(null);
                         CookieManager.getInstance().flush();
                     } else {
-                        CookieSyncManager cookieSyncManager = CookieSyncManager.createInstance(getActivity());
+                        final CookieSyncManager cookieSyncManager = CookieSyncManager.createInstance(getActivity());
                         cookieSyncManager.startSync();
-                        CookieManager cookieManager = CookieManager.getInstance();
+                        final CookieManager cookieManager = CookieManager.getInstance();
                         cookieManager.removeAllCookie();
                         cookieManager.removeSessionCookie();
                         cookieSyncManager.stopSync();
@@ -238,7 +240,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    static class NotificationFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
+    public static class NotificationFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
 
         private WorkManager workManager;
 
@@ -291,7 +293,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    static class AdvancedFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
+    public static class AdvancedFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
         private Preference serverPreference;
 
         @Override
@@ -304,16 +306,13 @@ public class SettingsActivity extends AppCompatActivity {
             serverPreference.setOnPreferenceClickListener(this);
             serverPreference.setSummary(getString(R.string.defaultServerSummary, getPreferenceManager().getSharedPreferences().getString("defaultServer", "Zippyshare")));
 
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
-                getPreferenceScreen().removePreference(findPreference("enablePip"));
-
             Preference columns;
             columns = findPreference("gridColumns");
             columns.setOnPreferenceClickListener(this);
             columns.setSummary(getString(R.string.columnsSummary, getPreferenceManager().getSharedPreferences().getInt("gridColumnsPortrait", Math.round((float) getResources().getDisplayMetrics().widthPixels / 300)), getPreferenceManager().getSharedPreferences().getInt("gridColumnsLandscape", Math.round((float) getResources().getDisplayMetrics().heightPixels / 300))));
 
             findPreference("updater_now").setOnPreferenceClickListener(this);
-            Preference updater = findPreference("updater_enable");
+            final Preference updater = findPreference("updater_enable");
             if (BuildConfig.VERSION_NAME.endsWith("github"))
                 updater.setOnPreferenceChangeListener((Preference preference, Object newValue) -> {
                     if ((boolean) newValue) {
@@ -337,7 +336,7 @@ public class SettingsActivity extends AppCompatActivity {
         public boolean onPreferenceClick(Preference preference) {
             switch (preference.getKey()) {
                 case "defaultServer":
-                    AnikumiiBottomSheetDialog defaultServer = new AnikumiiBottomSheetDialog(getActivity());
+                    final AnikumiiBottomSheetDialog defaultServer = new AnikumiiBottomSheetDialog(getActivity());
                     defaultServer.serverDialog(preference.getSharedPreferences().getString("defaultServer", "Zippyshare")).setOnCheckedChangeListener((ChipGroup group, int checkedId) -> {
                         if (checkedId != -1) {
                             preference.getSharedPreferences().edit().putString("defaultServer", ((Chip) group.findViewById(checkedId)).getText().toString()).apply();
@@ -348,8 +347,8 @@ public class SettingsActivity extends AppCompatActivity {
                     });
                     break;
                 case "gridColumns":
-                    AnikumiiBottomSheetDialog columnsDialog = new AnikumiiBottomSheetDialog(getActivity());
-                    View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.bottom_sheet_column, null);
+                    final AnikumiiBottomSheetDialog columnsDialog = new AnikumiiBottomSheetDialog(getActivity());
+                    final View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.bottom_sheet_column, null);
 
                     final NumberPicker portraitNumberPicker = dialogView.findViewById(R.id.numberPickerColumnsPortrait);
                     portraitNumberPicker.setMinValue(1);
@@ -359,7 +358,7 @@ public class SettingsActivity extends AppCompatActivity {
                     landscapeNumberPicker.setMinValue(1);
                     landscapeNumberPicker.setMaxValue(Math.round((float) getResources().getDisplayMetrics().heightPixels / 300));
 
-                    MaterialButton positiveButton = dialogView.findViewById(R.id.column_positive_button);
+                    final MaterialButton positiveButton = dialogView.findViewById(R.id.column_positive_button);
                     positiveButton.setOnClickListener(v -> {
                         getPreferenceManager().getSharedPreferences().edit().putInt("gridColumnsPortrait", portraitNumberPicker.getValue()).apply();
                         getPreferenceManager().getSharedPreferences().edit().putInt("gridColumnsLandscape", landscapeNumberPicker.getValue()).apply();
@@ -368,7 +367,7 @@ public class SettingsActivity extends AppCompatActivity {
                         columnsDialog.dismiss();
                     });
 
-                    AppCompatButton negativeButton = dialogView.findViewById(R.id.column_negative_button);
+                    final AppCompatButton negativeButton = dialogView.findViewById(R.id.column_negative_button);
                     negativeButton.setOnClickListener(v -> {
                         // getPreferenceManager().getSharedPreferences().edit().putInt("gridColumnsPortrait", portraitNumberPicker.getValue()).apply();
                         getPreferenceManager().getSharedPreferences().edit().remove("gridColumnsPortrait").apply();
@@ -392,7 +391,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    static class AboutFragment extends PreferenceFragmentCompat {
+    public static class AboutFragment extends PreferenceFragmentCompat {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.pref_about, rootKey);

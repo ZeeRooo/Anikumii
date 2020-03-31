@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyAnimeListModel {
+    private final StringBuilder params = new StringBuilder();
+    private final List<String> tagsList = new ArrayList<>();
     private int id, seenEpisodes, totalEpisodes;
     private byte score, priority, rewatched, rewatchValue, storageType, status;
     private boolean isInList;
@@ -22,8 +24,6 @@ public class MyAnimeListModel {
     private String endYear;
     private String startYear;
     private String[] strings = new String[0];
-    private final StringBuilder params = new StringBuilder();
-    private final List<String> tagsList = new ArrayList<>();
     private JSONObject jsonObject;
 
     public MyAnimeListModel(String name, String username, boolean fetchFullUserData) throws IOException {
@@ -40,7 +40,7 @@ public class MyAnimeListModel {
         } catch (JSONException | FileNotFoundException e) {
             //e.printStackTrace();
             try {
-                jsonObject = new JSONObject(new AnikumiiConnection().getStringResponse("GET", "https://api.jikan.moe/v3/search/anime/?q=" + name, null)).getJSONArray("results").getJSONObject(0);
+                jsonObject = new JSONObject(new AnikumiiConnection().getStringResponse("GET", "https://api.jikan.moe/v3/search/anime?q=" + name, null)).getJSONArray("results").getJSONObject(0);
                 id = jsonObject.getInt("mal_id");
                 totalEpisodes = jsonObject.getInt("episodes");
             } catch (Exception c) {

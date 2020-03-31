@@ -23,8 +23,8 @@ import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.material.appbar.MaterialToolbar;
 import com.zeerooo.anikumii.Anikumii;
 import com.zeerooo.anikumii.R;
 
@@ -38,7 +38,7 @@ public class CommentsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
 
-        Toolbar mToolbar = findViewById(R.id.toolbar);
+        final MaterialToolbar mToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(getString(R.string.comments));
@@ -52,7 +52,7 @@ public class CommentsActivity extends AppCompatActivity {
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        String rawUrl = getIntent().getStringExtra("rawUrl"), data;
+        final String rawUrl = getIntent().getStringExtra("rawUrl"), data;
 
         webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         webView.getSettings().setJavaScriptEnabled(true);
@@ -122,7 +122,7 @@ public class CommentsActivity extends AppCompatActivity {
                     }
                 });
 
-                WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
+                final WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
                 transport.setWebView(loginWebView);
                 resultMsg.sendToTarget();
 

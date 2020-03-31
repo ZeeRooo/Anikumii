@@ -5,11 +5,6 @@
         android:key="acra.disable"
         android:summary="@string/disableAcraSummary"
         android:title="@string/disableAcraTitle" />
-    <SwitchPreferenceCompat
-        android:defaultValue="true"
-        android:key="enablePip"
-        android:summary="@string/enablePipSummary"
-        android:title="@string/enablePip" />
     <androidx.preference.PreferenceScreen
         android:key="defaultServer"
         android:summary="@string/defaultServerSummary"

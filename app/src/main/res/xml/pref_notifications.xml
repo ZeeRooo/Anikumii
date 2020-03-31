@@ -11,7 +11,7 @@
         android:key="headsUp"
         android:summary="@string/headsUpSummary"
         android:title="@string/headsUp" />
-    <ListPreference
+    <androidx.preference.ListPreference
         android:defaultValue="3"
         android:dependency="enableNotif"
         android:entries="@array/intervalPrefTitles"

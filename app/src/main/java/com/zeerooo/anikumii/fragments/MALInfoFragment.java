@@ -34,10 +34,10 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableObserver;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.observers.DisposableObserver;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -50,7 +50,7 @@ public class MALInfoFragment extends Fragment {
     public static JSONObject MAL;
     private short episodes;
     private int malID;
-    private StringBuilder genre, stringBuilder;
+    private final StringBuilder genre = new StringBuilder(), stringBuilder= new StringBuilder();
     private String title_english, title_japanese, synonyms, score, type, premiered, airedStatus, synopsis, source, duration, classification, background, rank, popularity, members, favorites, producers, licensor, studio, title;
     private boolean isFirstTime = true;
     private ImageButton goToSite, editStats;
@@ -72,8 +72,6 @@ public class MALInfoFragment extends Fragment {
         if (menuVisible && isFirstTime) {
             if (getArguments() != null && getActivity() != null) {
                 malID = getArguments().getInt("malID");
-                genre = new StringBuilder();
-                stringBuilder = new StringBuilder();
 
                 Observable
                         .just(true)
@@ -168,7 +166,7 @@ public class MALInfoFragment extends Fragment {
             studio = "Estudio: ";
 
         source = "Fuente: " + MAL.getString("source");
-        JSONArray genresArray = MAL.getJSONArray("genres");
+        final JSONArray genresArray = MAL.getJSONArray("genres");
         genre.append("Géneros: ");
         for (int genreCount = 0; genreCount < genresArray.length(); genreCount++) {
             genre.append(genresArray.getJSONObject(genreCount).getString("name"));
@@ -199,12 +197,12 @@ public class MALInfoFragment extends Fragment {
             if (getActivity().getSharedPreferences("ZeeRooo@Anikumii!!", MODE_PRIVATE).getString("malUserAvatar", null) == null) {
                 Snackbar.make(getActivity().findViewById(R.id.act_episodes_rootView), getActivity().getString(R.string.warning_not_logged), Snackbar.LENGTH_LONG).show();
             } else {
-                Bundle bundle = new Bundle();
+                final Bundle bundle = new Bundle();
                 bundle.putString("malName", title);
                 bundle.putShort("episodes", episodes);
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                MALEditFragment fragment = new MALEditFragment();
+                final FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                final MALEditFragment fragment = new MALEditFragment();
                 fragment.setArguments(bundle);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.replace(R.id.MALAbout, fragment);
@@ -212,8 +210,8 @@ public class MALInfoFragment extends Fragment {
             }
         });
 
-        ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.rgb(66, 104, 179));
-        StyleSpan styleSpan = new StyleSpan(Typeface.BOLD);
+        final ForegroundColorSpan foregroundColorSpan = new ForegroundColorSpan(Color.rgb(66, 104, 179));
+        final StyleSpan styleSpan = new StyleSpan(Typeface.BOLD);
         for (byte count = 1; count < 22; count++) {
             String text = "";
 
@@ -283,8 +281,8 @@ public class MALInfoFragment extends Fragment {
                     break;
             }
 
-            TextView info = (TextView) getLayoutInflater().inflate(R.layout.mal_textview, null);
-           // info.setId(count);
+            final TextView info = (TextView) getLayoutInflater().inflate(R.layout.mal_textview, null);
+            // info.setId(count);
             info.setText(Utils.getBold(text, foregroundColorSpan, styleSpan));
 
             if (count <= 14)

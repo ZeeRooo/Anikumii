@@ -10,7 +10,7 @@ import java.net.URL;
 public class AnikumiiConnection {
 
     public String getStringResponse(String request, String url, String params) throws IOException {
-        HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(url).openConnection();
+        final HttpURLConnection httpURLConnection = (HttpURLConnection) new URL(url).openConnection();
         httpURLConnection.setRequestMethod(request);
 
         if (request.equals("POST")) {
@@ -22,13 +22,13 @@ public class AnikumiiConnection {
         httpURLConnection.connect();
 
         if (params != null) {
-            DataOutputStream dataOutputStream = new DataOutputStream(httpURLConnection.getOutputStream());
+            final DataOutputStream dataOutputStream = new DataOutputStream(httpURLConnection.getOutputStream());
             dataOutputStream.writeBytes(params);
             dataOutputStream.close();
         }
 
-        InputStreamReader inputStreamReader = new InputStreamReader(httpURLConnection.getInputStream(), "UTF-8");
-        StringBuilder response = new StringBuilder();
+        final InputStreamReader inputStreamReader = new InputStreamReader(httpURLConnection.getInputStream(), "UTF-8");
+        final StringBuilder response = new StringBuilder();
 
         try (BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
             String responseLine;

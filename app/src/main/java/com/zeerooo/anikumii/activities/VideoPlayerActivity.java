@@ -19,7 +19,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Rational;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -66,10 +65,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableObserver;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.observers.DisposableObserver;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 /**
  * Created by ZeeRooo on 09/03/18
@@ -77,18 +76,18 @@ import io.reactivex.schedulers.Schedulers;
 
 public class VideoPlayerActivity extends AppCompatActivity {
 
+    private final Handler handler = new Handler();
+    private final Handler headerHandler = new Handler();
     private AnikumiiVideoView anikumiiVideoView;
     private int primaryProgress, secondaryProgressMax;
     private short episode = -1;
-    private boolean isLogedIn, enablePip;
+    private boolean isLogedIn;
     private RelativeLayout mButtonsHeader;
     private SeekBar mSeekbar;
     private TextView remainingTime;
-    private String url, animeName, nextUrl, prevUrl, episodes, rawUrl, serverOptionDefault;
+    private String url, animeName, nextUrl, prevUrl, episodes, rawUrl, serverOptionDefault, connect;
     private BottomSheetBehavior mBottomSheetBehavior;
     private ImageButton previous, next, pause;
-    private final Handler handler = new Handler();
-    private final Handler headerHandler = new Handler();
     private ServerHelper serverHelper;
     private AnikumiiSharedPreferences sharedPreferences;
     private ProgressBar progressBar;
@@ -101,7 +100,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
     @SuppressWarnings("deprecation")
     private boolean isConnected() {
-        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+        final NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnected();
     }
 
@@ -210,8 +209,6 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
         bottomSheetSetup();
 
-        enablePip = sharedPreferences.getBoolean("enablePip", true);
-
         serverHelper = new ServerHelper();
 
         isLogedIn = !sharedPreferences.getString("malUserName", "").equals("");
@@ -241,10 +238,10 @@ public class VideoPlayerActivity extends AppCompatActivity {
                     }
                 };
 
-                IntentFilter filter = new IntentFilter("com.zeerooo.anikumii.Broadcast");
+               final IntentFilter filter = new IntentFilter("com.zeerooo.anikumii.Broadcast");
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    Intent intent = new Intent();
+                    final Intent intent = new Intent();
                     intent.setAction("com.zeerooo.anikumii.Broadcast");
 
                     countDown();
@@ -252,7 +249,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
                     pause.setImageResource(android.R.drawable.ic_media_play);
                     anikumiiVideoView.pause();
 
-                    NetworkRequest.Builder builder = new NetworkRequest.Builder();
+                    final NetworkRequest.Builder builder = new NetworkRequest.Builder();
                     connectivityManager.registerNetworkCallback(builder.build(), new ConnectivityManager.NetworkCallback() {
                         @Override
                         public void onAvailable(@NonNull Network network) {
@@ -281,7 +278,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (isPlaying())
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                DownloadManager mDownloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+                final DownloadManager mDownloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
 
                 final DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
                 request.setDestinationInExternalPublicDir("/Anikumii!!/" + animeName, episode + ".mp4");
@@ -328,8 +325,15 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
     @Override
     public void onUserLeaveHint() {
-        if (Build.VERSION.SDK_INT > 26 && enablePip)
-            enterPictureInPictureMode(new PictureInPictureParams.Builder().setAspectRatio(new Rational(anikumiiVideoView.getWidth(), anikumiiVideoView.getHeight())).build());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && getPackageManager().hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                final PictureInPictureParams.Builder builder = new PictureInPictureParams.Builder();
+
+                enterPictureInPictureMode(builder.build());
+            } else {
+                enterPictureInPictureMode();
+            }
+        }
     }
 
     @Override
@@ -346,7 +350,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
 
-        if (Build.VERSION.SDK_INT >= 24)
+        if (Build.VERSION.SDK_INT >= 24 && !isInPictureInPictureMode())
             anikumiiVideoView.pause();
 
         try {
@@ -383,7 +387,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus) {
-            Window window = getWindow();
+            final Window window = getWindow();
             window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -422,6 +426,13 @@ public class VideoPlayerActivity extends AppCompatActivity {
         return string.split("\\?")[0];
     }
 
+  /*  private class JavaScriptInterface {
+        @JavascriptInterface
+        public void processHTML(String result) {
+            url = result;
+        }
+    }*/
+
     private void setReactive(final Intent intent) {
         if (serverHelper != null && serverHelper.isAlive())
             serverHelper.stop();
@@ -438,6 +449,27 @@ public class VideoPlayerActivity extends AppCompatActivity {
                 .observeOn(Schedulers.io())
                 .doOnNext(aBoolean -> networkRequest(intent))
                 .observeOn(AndroidSchedulers.mainThread())
+                /*   .doOnNext(a -> {
+                       if (serverOptionDefault.equals("Zippyshare")) {
+                           WebView mWebView = new WebView(this);
+                           mWebView.getSettings().setJavaScriptEnabled(true);
+                           mWebView.addJavascriptInterface(new JavaScriptInterface(), "HTMLOUT");
+
+                           try {
+                               mWebView.loadUrl("data:text/html;charset=utf-8;base64," + Base64.encodeToString(("<p id=\"dlbutton\"></p>" + url.replaceAll("href", "innerHTML")).getBytes("UTF-8"), Base64.DEFAULT));
+                           } catch (UnsupportedEncodingException e) {
+                               e.printStackTrace();
+                           }
+
+                           mWebView.setWebViewClient(new WebViewClient() {
+                               @Override
+                               public void onPageFinished(WebView view, String url) {
+                                   super.onPageFinished(view, url);
+                                   view.loadUrl("javascript:window.HTMLOUT.processHTML(document.getElementById('dlbutton').innerHTML);");
+                               }
+                           });
+                       }
+                   })*/
                 .doOnComplete(() -> {
                     if (!isDestroyed())
                         setVideoStuff();
@@ -445,14 +477,13 @@ public class VideoPlayerActivity extends AppCompatActivity {
                 .observeOn(Schedulers.io())
                 .doOnNext(a -> {
                     myAnimeListModel = new MyAnimeListModel(Utils.encodeString(Utils.removeLastNumberAndSpace(animeName).split("\\(")[0]), sharedPreferences.getString("malUserName", null), false);
-
                     String type;
                     if (Anikumii.dominium.startsWith("https://tioanime.com"))
                         type = "https://tioanime.com/anime/";
                     else
                         type = "https://tiohentai.com/hentai/";
 
-                    DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
+                    final DataBaseHelper dataBaseHelper = new DataBaseHelper(this);
 
                     Cursor cursor = null;
 
@@ -519,7 +550,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
     }
 
     private void networkRequest(Intent intent) throws IOException, StringIndexOutOfBoundsException {
-        Element controls = AnikumiiWebHelper.go(rawUrl, this).get();
+        final Element controls = AnikumiiWebHelper.go(rawUrl, this).get();
 
         animeName = Utils.removeLastNumberAndSpace(controls.getElementsByClass("anime-title text-center mb-4").text());
 
@@ -528,8 +559,6 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
         if (serverOptionDefault == null)
             serverOptionDefault = sharedPreferences.getString("defaultServer", "Zippyshare");
-
-        String connect;
 
         switch (serverOptionDefault) {
             case "MediaFire":
@@ -579,7 +608,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
     }
 
     private void bottomSheetSetup() {
-        ImageButton changeServer = findViewById(R.id.changeServer);
+        final ImageButton changeServer = findViewById(R.id.changeServer);
         AnikumiiUiHelper.transparentBackground(changeServer);
         TooltipCompat.setTooltipText(changeServer, getString(R.string.changeServer));
         changeServer.setOnClickListener(view -> {
@@ -588,7 +617,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         });
 
-        ImageButton download = findViewById(R.id.downloadEpisode);
+        final ImageButton download = findViewById(R.id.downloadEpisode);
         AnikumiiUiHelper.transparentBackground(download);
         TooltipCompat.setTooltipText(download, getString(R.string.download));
         download.setOnClickListener(view -> {
@@ -600,7 +629,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
                 mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         });
 
-        ImageButton stream = findViewById(R.id.streamButtom);
+        final ImageButton stream = findViewById(R.id.streamButtom);
         AnikumiiUiHelper.transparentBackground(stream);
         TooltipCompat.setTooltipText(stream, getString(R.string.bottom_sheet_stream));
         stream.setOnClickListener(view -> {
@@ -614,13 +643,13 @@ public class VideoPlayerActivity extends AppCompatActivity {
                     ioe.printStackTrace();
                 }
 
-                View sheetView = getLayoutInflater().inflate(R.layout.video_player_stream_bottom_sheet, null);
+                final View sheetView = getLayoutInflater().inflate(R.layout.video_player_stream_bottom_sheet, null);
                 final BottomSheetDialog dialog = new BottomSheetDialog(VideoPlayerActivity.this);
                 dialog.setContentView(sheetView);
 
                 ((TextView) sheetView.findViewById(R.id.ipText)).setText(serverHelper.getMyIp(VideoPlayerActivity.this));
 
-                Button disconnect = sheetView.findViewById(R.id.disconnectStream);
+                final Button disconnect = sheetView.findViewById(R.id.disconnectStream);
                 disconnect.setOnClickListener(v -> {
                     serverHelper.stop();
                     dialog.dismiss();
@@ -678,7 +707,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
     }*/
 
     private void serverSwitcherDialog() {
-        AnikumiiBottomSheetDialog changeServer = new AnikumiiBottomSheetDialog(this);
+        final AnikumiiBottomSheetDialog changeServer = new AnikumiiBottomSheetDialog(this);
         changeServer.serverDialog(serverOptionDefault).setOnCheckedChangeListener((ChipGroup group, int checkedId) -> {
             if (checkedId != -1) {
                 serverOptionDefault = ((Chip) group.findViewById(checkedId)).getText().toString();
@@ -692,7 +721,8 @@ public class VideoPlayerActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                remainingTime.setText(dateFormatter(anikumiiVideoView.getDuration() - anikumiiVideoView.getCurrentPosition()));
+                if (simpleDateFormat != null)
+                    remainingTime.setText(dateFormatter(anikumiiVideoView.getDuration() - anikumiiVideoView.getCurrentPosition()));
                 mSeekbar.setProgress(anikumiiVideoView.getCurrentPosition());
 
                 if (anikumiiVideoView.isPlaying()) {

@@ -29,7 +29,7 @@ public class AnimeActivity extends AppCompatActivity {
 
         isHistory = getIntent().getStringExtra("title").equals("Historial");
 
-        MaterialToolbar mToolbar = findViewById(R.id.toolbar);
+        final MaterialToolbar mToolbar = findViewById(R.id.toolbar);
         mToolbar.setTitle(getIntent().getStringExtra("title"));
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
