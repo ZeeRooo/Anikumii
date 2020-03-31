@@ -36,7 +36,7 @@ public class UpdateService extends Worker {
     @Override
     public Result doWork() {
         try {
-            final JSONObject jsonObject = new JSONObject(new AnikumiiConnection().getStringResponse("GET", "https://api.github.com/repos/ZeeRooo/Anikumii-releases/releases/latest", null));
+            final JSONObject jsonObject = new JSONObject(new AnikumiiConnection().getStringResponse("GET", "https://api.github.com/repos/ZeeRooo/Anikumii/releases/latest", null));
 
             final String tagName = jsonObject.getString("tag_name");
 
