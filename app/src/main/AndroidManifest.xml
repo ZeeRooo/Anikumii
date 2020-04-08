@@ -91,7 +91,7 @@
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:launchMode="singleTop"
             android:resizeableActivity="true"
-            android:screenOrientation="fullSensor"
+            android:screenOrientation="sensorLandscape"
             android:supportsPictureInPicture="true"
             android:theme="@style/AppTheme">
             <intent-filter>

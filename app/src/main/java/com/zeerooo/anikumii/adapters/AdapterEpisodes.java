@@ -255,8 +255,9 @@ public class AdapterEpisodes extends AdapterMain {
                                 element = Jsoup.connect(malUrl + animeList.get(getAdapterPosition()).getNumber().replace("Episodio ", "/episode/")).get().selectFirst("div.js-scrollfix-bottom-rel");
 
                                 try {
-                                    imageUrl = element.selectFirst("div.contents-video-embed > div > a > img").attr("src");
+                                    imageUrl = element.selectFirst("a.btn-embedded-denied > img").attr("data-src");
                                 } catch (NullPointerException npe) {
+                                    npe.printStackTrace();
                                     imageUrl = Anikumii.dominium + "/uploads/portadas/" + tioId + ".jpg";
                                 }
 

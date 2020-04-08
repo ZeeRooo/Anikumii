@@ -35,6 +35,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.zeerooo.anikumii.BuildConfig;
 import com.zeerooo.anikumii.R;
 import com.zeerooo.anikumii.anikumiiparts.AnikumiiBottomSheetDialog;
 import com.zeerooo.anikumii.anikumiiparts.glide.AnikumiiGlideModule;
@@ -43,8 +44,6 @@ import com.zeerooo.anikumii.services.NotificationService;
 import com.zeerooo.anikumii.services.UpdateService;
 
 import java.util.concurrent.TimeUnit;
-
-import ch.acra.acra.BuildConfig;
 
 public class SettingsActivity extends AppCompatActivity {
     private static boolean reloadMain;

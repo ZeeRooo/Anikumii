@@ -7,8 +7,8 @@ android {
         applicationId 'com.zeerooo.anikumii'
         minSdkVersion 18
         targetSdkVersion 29
-        versionCode 13
-        versionName 'beta-1.1.0.7'
+        versionCode 14
+        versionName 'beta-1.1.0.8'
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
 
         vectorDrawables.useSupportLibrary = true

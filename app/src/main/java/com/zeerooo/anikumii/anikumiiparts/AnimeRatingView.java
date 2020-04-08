@@ -19,7 +19,7 @@ public class AnimeRatingView extends ProgressBar {
     private final Rect rect;
     private String number = "0.0";
     private short aShort;
-    private byte xPos, yPos;
+    private int xPos, yPos;
 
     public AnimeRatingView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -41,9 +41,11 @@ public class AnimeRatingView extends ProgressBar {
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        paint.setTextSize(getWidth() / 3);
-        xPos = (byte) (getWidth() / 2 - rect.centerX());
-        yPos = (byte) ((getHeight() / 2) - ((paint.descent() + paint.ascent()) / 2));
+        paint.setTextSize(getWidth() / 3f);
+        paint.getTextBounds(number, 0, number.length(), rect);
+
+        xPos = getWidth() / 2;
+        yPos = (getHeight() / 2) - rect.centerY();
         super.onLayout(changed, left, top, right, bottom);
     }
 
@@ -73,8 +75,10 @@ public class AnimeRatingView extends ProgressBar {
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
-        canvas.drawText(number, xPos, yPos, paint);
+    protected synchronized void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+
+        canvas.drawText(number, xPos, yPos, paint);
+
     }
 }
