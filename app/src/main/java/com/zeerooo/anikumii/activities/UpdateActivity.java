@@ -58,7 +58,7 @@ public class UpdateActivity extends AppCompatActivity {
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
-        findViewById(R.id.update_all).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("https://github.com/ZeeRooo/Anikumii-releases/releases"))));
+        findViewById(R.id.update_all).setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("https://github.com/ZeeRooo/Anikumii/releases"))));
 
         findViewById(R.id.update_cancel).setOnClickListener(v -> finish());
 
@@ -87,17 +87,5 @@ public class UpdateActivity extends AppCompatActivity {
             mDownloadManager.enqueue(request);
         } else
             AnikumiiUiHelper.errorSnackbar(findViewById(R.id.update_root_view), Snackbar.LENGTH_LONG, "permission_denied", null).show();
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        finish();
     }
 }

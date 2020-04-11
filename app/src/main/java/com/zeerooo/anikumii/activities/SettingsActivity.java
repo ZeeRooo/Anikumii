@@ -310,12 +310,11 @@ public class SettingsActivity extends AppCompatActivity {
             columns.setOnPreferenceClickListener(this);
             columns.setSummary(getString(R.string.columnsSummary, getPreferenceManager().getSharedPreferences().getInt("gridColumnsPortrait", Math.round((float) getResources().getDisplayMetrics().widthPixels / 300)), getPreferenceManager().getSharedPreferences().getInt("gridColumnsLandscape", Math.round((float) getResources().getDisplayMetrics().heightPixels / 300))));
 
-            findPreference("updater_now").setOnPreferenceClickListener(this);
-            final Preference updater = findPreference("updater_enable");
-            if (BuildConfig.VERSION_NAME.endsWith("github"))
-                updater.setOnPreferenceChangeListener((Preference preference, Object newValue) -> {
+            if (BuildConfig.VERSION_NAME.endsWith("github")) {
+                findPreference("updater_now").setOnPreferenceClickListener(this);
+                findPreference("updater_enable").setOnPreferenceChangeListener((Preference preference, Object newValue) -> {
                     if ((boolean) newValue) {
-                        WorkManager.getInstance().enqueue(new PeriodicWorkRequest.Builder(UpdateService.class, 1, TimeUnit.DAYS)
+                        WorkManager.getInstance().enqueue(new PeriodicWorkRequest.Builder(UpdateService.class, 7, TimeUnit.DAYS)
                                 .addTag("weekly_updater_work")
                                 .setConstraints(new Constraints.Builder()
                                         .setRequiredNetworkType(NetworkType.UNMETERED)
@@ -326,8 +325,8 @@ public class SettingsActivity extends AppCompatActivity {
                     }
                     return true;
                 });
-            else
-                updater.setVisible(false);
+            } else
+                findPreference("updates_preference_category").setVisible(false);
         }
 
 

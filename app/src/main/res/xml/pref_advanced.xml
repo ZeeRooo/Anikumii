@@ -13,7 +13,7 @@
         android:key="gridColumns"
         android:title="@string/columnsTitle" />
 
-    <androidx.preference.PreferenceCategory android:title="Actualizaciones">
+    <androidx.preference.PreferenceCategory android:title="Actualizaciones" android:key="updates_preference_category">
         <SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="updater_enable"

@@ -40,7 +40,7 @@ public class UpdateService extends Worker {
 
             final String tagName = jsonObject.getString("tag_name");
 
-            if (tagName.contains(BuildConfig.VERSION_NAME)) {
+            if (BuildConfig.VERSION_NAME.contains(tagName)) {
                 if (triggered)
                     displayNotification("Última versión instalada de Anikumii!!", BuildConfig.VERSION_NAME);
 
