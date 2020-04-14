@@ -16,6 +16,14 @@
         <Preference
             android:key="pref_more"
             android:title="Conoce más" />
+        <androidx.preference.PreferenceScreen
+            android:key="pref_monitas_chinas_encueradas"
+            android:summary="Podrás descargar una versión alternativa que te permitirá disfrutar de animes H, que por razones obvias, no puede distribuirse por Google Play."
+            android:title="Monitas chinas encueradas (+18)">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://github.com/ZeeRooo/Anikumii/releases/latest" />
+        </androidx.preference.PreferenceScreen>
     </androidx.preference.PreferenceCategory>
 
 </androidx.preference.PreferenceScreen>

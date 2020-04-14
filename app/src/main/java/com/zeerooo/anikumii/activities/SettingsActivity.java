@@ -101,6 +101,7 @@ public class SettingsActivity extends AppCompatActivity {
             findPreference("pref_more").setOnPreferenceClickListener(this);
             findPreference("pref_accounts").setOnPreferenceClickListener(this);
             findPreference("pref_advanced").setOnPreferenceClickListener(this);
+            findPreference("pref_monitas_chinas_encueradas").setVisible(BuildConfig.VERSION_NAME.endsWith("googlePlay"));
         }
 
         @Override

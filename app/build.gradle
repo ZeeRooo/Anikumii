@@ -21,8 +21,13 @@ android {
             dimension "version"
             versionNameSuffix "-github"
         }
+        aptoide {
+            dimension "version"
+            versionNameSuffix "-aptoide"
+        }
         googlePlay {
             dimension "version"
+            applicationId 'com.zeerooo.anikumii_googlePlay'
             versionNameSuffix "-googlePlay"
         }
     }
@@ -49,7 +54,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.preference:preference:1.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.google.android.material:material:1.2.0-alpha05'
+    implementation 'com.google.android.material:material:1.2.0-alpha06'
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
     implementation 'org.nanohttpd:nanohttpd:2.3.1'

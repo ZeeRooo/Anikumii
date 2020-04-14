@@ -13,7 +13,7 @@ public class AnikumiiUiHelper {
     public static Snackbar snackbar;
 
     public static void transparentBackground(View view) {
-        TypedValue typedValue = new TypedValue();
+        final TypedValue typedValue = new TypedValue();
         int bg;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             bg = android.R.attr.selectableItemBackgroundBorderless;

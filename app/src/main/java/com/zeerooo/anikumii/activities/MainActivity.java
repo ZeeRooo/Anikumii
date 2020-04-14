@@ -113,7 +113,8 @@ public class MainActivity extends AppCompatActivity {
 
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager(), 0);
         viewPagerAdapter.addFragment(new TioAnimeFragment(anikumiiSharedPreferences), "Anime");
-        viewPagerAdapter.addFragment(new TioHentaiFragment(anikumiiSharedPreferences), "Hentai");
+        if (!BuildConfig.VERSION_NAME.endsWith("googlePlay"))
+            viewPagerAdapter.addFragment(new TioHentaiFragment(anikumiiSharedPreferences), "Hentai");
 
         final ViewPager viewPager = findViewById(R.id.viewPager);
 
