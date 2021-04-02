@@ -205,7 +205,7 @@ public class AnikumiiRecyclerView extends RecyclerView {
                             page--;
                         }
                     } else {
-                        document = AnikumiiWebHelper.go("https://tioanime.com/"/*toLoad + "&p=" + page*/, getContext()).get();
+                        document = AnikumiiWebHelper.go(toLoad + "&p=" + page, getContext()).get();
 
                         final Elements episodes = document.select(elementClass);
 
