@@ -94,30 +94,13 @@ public class XGetter {
 
     public String zippyshare(String url) throws IOException {
         final String javascript = Jsoup.connect(url).get().selectFirst("script:containsData(document.getElementById('dlbutton'))").toString();
-
+        
         final String[] lines = javascript.replaceAll(" ", "").split("\n");
-
-       /* final ArrayList<ZippyshareModel> arrayList = new ArrayList<ZippyshareModel>();
-
-        String operation = null;
-
-        for (byte a = 0; a < lines.length; a++) {
-            if (lines[a].contains("var")) {
-                System.out.println("----");
-                arrayList.add(new ZippyshareModel(lines[a].replace("var", "").split("=")[0], lines[a].split("=")[1].replace(";", "")));
-            } else if (lines[a].contains("/d/")) {// operation
-                operation = lines[a].split("\\+\\(")[1].split("\\)\\+")[0];
-                System.out.println(operation);
-
-                for (byte b = 0; b < arrayList.size(); b++) {
-                    operation = operation.replaceAll(arrayList.get(b).getVar(), arrayList.get(b).getValue());
-                }
-
-                break;
-            }
-        }*/
-
-        return url.substring(0, url.indexOf(".")) + ".zippyshare.com" + javascript.substring(javascript.indexOf("/d/")).split("\";")[0].replaceAll("\".*?\"", String.valueOf(getMaths(lines[1].split("\\+\\(")[1].split("\\)\\+")[0])));
+        
+        String a = lines[1].replaceAll("\\D", "");
+        String b = lines[2].replaceAll("\\D", "");
+        
+        return url.substring(0, url.indexOf(".")) + ".zippyshare.com" + javascript.substring(javascript.indexOf("/d/")).split("\";")[0].replaceAll("\".*?\"", String.valueOf(getMaths(javascript.split("\\+\\(")[1].split("\\)\\+")[0].replace("a", a).replace("b", b))));
     }
 
     /*

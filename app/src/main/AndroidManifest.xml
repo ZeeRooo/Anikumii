@@ -18,6 +18,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:usesCleartextTraffic="true">
+
         <activity
             android:name="com.zeerooo.anikumii.activities.MainActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"

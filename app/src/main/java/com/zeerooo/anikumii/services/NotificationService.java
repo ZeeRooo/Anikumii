@@ -44,9 +44,9 @@ public class NotificationService extends Worker {
     public Result doWork() {
         final AnikumiiSharedPreferences anikumiiSharedPreferences = new AnikumiiSharedPreferences(getApplicationContext());
 
-        byte headsUpValue;
+        int headsUpValue;
         mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        mBuilder = new NotificationCompat.Builder(getApplicationContext(), "com.zeerooo.anikumii.notif");
+        mBuilder = new NotificationCompat.Builder(getApplicationContext(), "com.zeerooo.anikumii.episodes.notifications");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if (mNotificationManager.getNotificationChannel("com.zeerooo.anikumii.episodes.notifications") == null) {
@@ -87,6 +87,8 @@ public class NotificationService extends Worker {
             for (byte episodesCount = 0; episodesCount < 5; episodesCount++) {
                 title = episodes.get(episodesCount).getElementsByClass("title").text();
                 number = Utils.matcher(title, "(\\d+)\\D*$");
+                if (number == null)
+                    number = "";
                 title = title.replace(number, "");
 
                 if (!knownAnimesStr.contains(title + number)) {
@@ -107,9 +109,8 @@ public class NotificationService extends Worker {
         mBuilder.setContentTitle(title)
                 .setWhen(System.currentTimeMillis())
                 .setLargeIcon(bitmap)
-                .setSmallIcon(R.mipmap.ic_notif);
-
-        mBuilder.setDefaults(NotificationCompat.DEFAULT_LIGHTS | NotificationCompat.DEFAULT_SOUND)
+                .setSmallIcon(R.mipmap.ic_notif)
+                .setDefaults(NotificationCompat.DEFAULT_LIGHTS | NotificationCompat.DEFAULT_SOUND)
                 .setContentText(number)
                 .setAutoCancel(true);
 

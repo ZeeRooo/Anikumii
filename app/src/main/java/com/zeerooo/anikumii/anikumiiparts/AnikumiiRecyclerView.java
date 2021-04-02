@@ -205,7 +205,7 @@ public class AnikumiiRecyclerView extends RecyclerView {
                             page--;
                         }
                     } else {
-                        document = AnikumiiWebHelper.go(toLoad + "&p=" + page, getContext()).get();
+                        document = AnikumiiWebHelper.go("https://tioanime.com/"/*toLoad + "&p=" + page*/, getContext()).get();
 
                         final Elements episodes = document.select(elementClass);
 
@@ -214,6 +214,10 @@ public class AnikumiiRecyclerView extends RecyclerView {
 
                             if (elementClass.equals("article.episode")) {
                                 number = Utils.matcher(title, "( \\d+)\\D*$");
+
+                                if (number == null)
+                                    number = "";
+
                                 title = title.replace(number, "");
                                 number = "Episodio" + number;
                             } else
